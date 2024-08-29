@@ -1,0 +1,244 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/* @var $block \Magento\Catalog\Block\Product\View\Options */
+?>
+<?php $_options = $block->decorateArray($block->getOptions()) ?>
+<?php $_productId = $block->getProduct()->getId() ?>
+<?php $productPrice = $block->getProduct()->getFinalPrice() ?>
+<?php $customBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\Swatch::class); ?>
+<?php
+$wishlistFormId = base64_encode($_productId . "-product_view_wishlist_form");
+$wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
+?>
+<?php if (count($_options)): ?>
+    <?php foreach ($_options as $_option): ?>
+        <?= $block->getOptionHtml($_option) ?>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var datepickerInputs = document.querySelectorAll('.datePicker');
+        if (datepickerInputs.length) {
+            datepickerInputs.forEach(function(elem) {
+                var config = JSON.parse(elem.dataset.post);
+                new Datepicker(elem, {
+                    buttonImage: config.getImage,
+                    dateFormat: config.getDateFormat,
+                    minDate: new Date(config.yearStart, 0, 1),
+                    maxDate: new Date(config.yearEnd, 11, 31),
+                    firstDay: config.getFirstDay,
+                    yearRange: config.yearStart + ':' + config.yearEnd,
+                    changeMonth: config.change_month === 'true',
+                    changeYear: config.change_year === 'true',
+                    showOn: config.show_on
+                });
+                var newValue = config.getValue;
+                elem.value = newValue;
+            });
+        }
+
+        const intervalId = setInterval(() => {
+            clearInterval(intervalId);
+            var divElement = document.getElementById("product-options-wrapper");
+            var productCustomOption = divElement.querySelectorAll(".product-custom-option");
+            if (productCustomOption.length) {
+                productCustomOption.forEach(function(customOption) {
+                    var event = new Event("change");
+                    customOption.dispatchEvent(event);
+                });
+            }
+
+            var productDateOption = divElement.querySelectorAll(".datepicker-input");
+            if (productDateOption.length) {
+                productDateOption.forEach(function(dateOption) {
+                    var event = new Event("blur");
+                    dateOption.dispatchEvent(event);
+                });
+            }
+        }, 600);
+    });
+    function changeCustomizableOption(event) {
+        const optionConfig = <?= /* @noEscape */ $block->getJsonConfig() ?>;
+        const simpleProductPrice = document.getElementById('product-price-<?= /* @noEscape */ $_productId ?>');
+        const storeLocale = '<?= /* @noEscape */ $customBlock->getStoreLocale() ?>';
+        const currentCurrencyCode = '<?= /* @noEscape */ $customBlock->getCurrentCurrencyCode() ?>';
+        const attributeValue = <?= /* @noEscape */ $productPrice ?>;
+        const simpleSpr = simpleProductPrice.querySelector("span");
+        const divElement = document.getElementById("product-options-wrapper");
+        const targetOptionId = event.target.id.split("_")[1];
+
+        let finalValues = [];
+
+        // Collect values from select elements
+        const selectTags = Array.from(divElement.getElementsByTagName("select"));
+        selectTags.forEach(select => {
+            if (select.classList.contains("multiselect")) {
+                finalValues.push(...getMultipleSelectValue(select.id, optionConfig));
+            } else {
+                const singleSelectValue = getSingleSelectValue(select.id, optionConfig);
+                if (singleSelectValue) finalValues.push(singleSelectValue);
+            }
+        });
+
+        // Collect values from radio and checkbox elements
+        const preSelectedVals = Array.from(divElement.getElementsByClassName("simple-radio-checkbox"));
+        preSelectedVals.forEach(element => {
+            const selectedValue = getSelectedValues(element.id, optionConfig);
+            if (selectedValue) finalValues.push(selectedValue);
+        });
+
+        // Add base attribute value
+        finalValues.push(attributeValue);
+
+        // Collect values from file inputs
+        const fileInputs = Array.from(divElement.querySelectorAll('input[type="file"]'));
+        fileInputs.forEach(fileInput => {
+            const fileValue = getFileInputValue(fileInput, optionConfig);
+            if (fileValue) finalValues.push(fileValue);
+        });
+
+        // Collect values from text inputs and textareas
+        const inputElements = Array.from(divElement.querySelectorAll('input[type="text"]:not(.datepicker-input)'));
+        const textareas = Array.from(divElement.querySelectorAll('textarea'));
+        finalValues.push(...getTextAndTextareaValues([...inputElements, ...textareas], optionConfig));
+
+        // Collect values from date and time inputs
+        // Select all input elements of type text and all textareas
+        var dateSelectElements = divElement.querySelectorAll('.datetime-'+targetOptionId);
+        if (dateSelectElements.length) {
+            var dateSelectedValue = []
+            if (dateSelectElements.length > 1){
+                dateSelectElements.forEach(function (dateSelect) {
+                    if (dateSelect) {
+                        if (dateSelect.options) {
+                            if (dateSelect.options[dateSelect.selectedIndex].value) dateSelectedValue.push(dateSelect.options[dateSelect.selectedIndex].value);
+                        } else {
+                            dateSelectedValue.push(dateSelect.value);
+                        }
+                    }
+                });
+            } else {
+                dateSelectedValue.push(dateSelectElements[0].value);
+            }
+            var dateTimeHidden = document.getElementById('datetime_'+targetOptionId);
+
+            if (dateSelectedValue.length == dateSelectElements.length) {
+                if (dateSelectedValue.length === 1 && !dateSelectElements[0].value) {
+                    dateTimeHidden.removeAttribute('value')
+                } else {
+                    dateTimeHidden.value = optionConfig[targetOptionId]['prices']['finalPrice']['amount'];
+                }
+            } else {
+                dateTimeHidden.removeAttribute('value')
+            }
+        }
+
+        // Collect hidden date values
+        const dateHiddenElements = Array.from(divElement.querySelectorAll('.datetime-hidden'));
+        dateHiddenElements.forEach(dateHidden => {
+            if (dateHidden.value) finalValues.push(dateHidden.value);
+        });
+
+        // Calculate and update the total price
+        const totalValue = finalValues.filter(Boolean).reduce((acc, val) => acc + parseInt(val), 0);
+        simpleSpr.innerHTML = totalValue.toLocaleString(storeLocale.replace("_", "-"), {
+            style: 'currency',
+            currency: currentCurrencyCode
+        });
+    }
+
+    // Helper Functions
+    function getSelectedValues(id, config) {
+        const element = document.getElementById(id);
+        return element.checked ? config[id.split("_")[1]][element.value]?.prices?.finalPrice?.amount : null;
+    }
+
+    function getSingleSelectValue(id, config) {
+        const select = document.getElementById(id);
+        const selectedOption = select.options[select.selectedIndex];
+        return selectedOption ? config[id.split("_")[1]][selectedOption.value]?.prices?.finalPrice?.amount : null;
+    }
+
+    function getMultipleSelectValue(id, config) {
+        const select = document.getElementById(id);
+        return Array.from(select.options).filter(option => option.selected).map(option => 
+            config[id.split("_")[1]][option.value]?.prices?.finalPrice?.amount).filter(Boolean);
+    }
+
+    function getFileInputValue(fileInput, config) {
+        if (fileInput.files[0]) {
+            return config[fileInput.id.split("_")[1]]?.prices?.finalPrice?.amount;
+        } else {
+            const fileTriggers = document.querySelectorAll('.options_' + fileInput.id.split("_")[1] + '_file_name');
+            return Array.from(fileTriggers).some(trigger => trigger.textContent) ? 
+                config[fileInput.id.split("_")[1]]?.prices?.finalPrice?.amount : null;
+        }
+    }
+
+    function getTextAndTextareaValues(elements, config) {
+        return elements.filter(el => el.value).map(el => 
+            config[el.id.split("_")[1]]?.prices?.finalPrice?.amount).filter(Boolean);
+    }
+
+    function getDateSelectValues(divElement, dateSelectElements, dateTimeHidden, config, targetOptionId) {
+        var dateSelectElements = divElement.querySelectorAll('.datetime-'+targetOptionId);
+        if (dateSelectElements.length) {
+            var dateSelectedValue = []
+            if (dateSelectElements.length > 1){
+                dateSelectElements.forEach(function (dateSelect) {
+                    if (dateSelect) {
+                        if (dateSelect.options) {
+                            if (dateSelect.options[dateSelect.selectedIndex].value) dateSelectedValue.push(dateSelect.options[dateSelect.selectedIndex].value);
+                        } else {
+                            dateSelectedValue.push(dateSelect.value);
+                        }
+                    }
+                });
+            } else {
+                dateSelectedValue.push(dateSelectElements[0].value);
+            }
+            var dateTimeHidden = document.getElementById('datetime_'+targetOptionId);
+
+            if (dateSelectedValue.length == dateSelectElements.length) {
+                if (dateSelectedValue.length === 1 && !dateSelectElements[0].value) {
+                    dateTimeHidden.removeAttribute('value')
+                } else {
+                    dateTimeHidden.value = config[targetOptionId]['prices']['finalPrice']['amount'];
+                }
+            } else {
+                dateTimeHidden.removeAttribute('value')
+            }
+        }
+        var dateHiddenElements = divElement.querySelectorAll('.datetime-hidden');
+        if (dateHiddenElements.length) {
+            dataArr = []
+            dateHiddenElements.forEach(function (dateHidden) {
+                if (dateHidden.value) {
+                    dataArr.push(dateHidden.value);
+                }
+            });
+            return dataArr;
+        }
+    }
+
+</script>

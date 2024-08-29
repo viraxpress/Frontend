@@ -1,0 +1,35 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/* @var \Magento\Wishlist\Block\Customer\Wishlist\Item\Column\Comment $block  */
+
+/* @var \Magento\Wishlist\Model\Item $item */
+$item = $block->getItem();
+?>
+
+<div class="field comment-box my-3">
+    <label class="label" for="product-item-comment-<?= $escaper->escapeHtmlAttr($item->getWishlistItemId()) ?>">
+        <span class="sr-only"><?= $escaper->escapeHtml(__('Comment')) ?></span>
+    </label>
+    <div class="control">
+        <textarea id="product-item-comment-<?= $escaper->escapeHtmlAttr($item->getWishlistItemId()) ?>" placeholder="<?= /* @noEscape */ $this->helper(\Magento\Wishlist\Helper\Data::class)->defaultCommentString() ?>" rows="3" name="description[<?= $escaper->escapeHtmlAttr($item->getWishlistItemId()) ?>]" title="<?= $escaper->escapeHtmlAttr(__('Comment')) ?>" class="product-item-comment resize-none block w-full rounded-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-400 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 " <?= $item->getProduct()->isSaleable() ? '' : 'disabled="disabled"' ?>><?= ($escaper->escapeHtml($item->getDescription())) ?></textarea>
+    </div>
+</div>

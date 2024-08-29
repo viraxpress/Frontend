@@ -1,0 +1,144 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * @var \Magento\Review\Block\Customer\ListCustomer $block
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+
+/** @var \Magento\Review\Helper\Data $reviewHelper */
+$reviewHelper = $block->getData('reviewHelper');
+?>
+<div class="w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6">
+    <?php if ($block->getReviews() && count($block->getReviews())): ?>
+        <div class="table-wrapper reviews block overflow-x-auto mb-5">
+            <table class="data table table-reviews w-full" id="my-reviews-table">
+                <caption class="table-caption text-left hidden"><?= $escaper->escapeHtml(__('Product Reviews')) ?></caption>
+                <thead class="border-b border-gray-200 hidden md:table-header-group">
+                    <tr>
+                        <td scope="col" class="col p-2 py-3 font-semibold date"><?= $escaper->escapeHtml(__('Created')) ?></td>
+                        <td scope="col" class="col p-2 py-3 min-w-[130px] font-semibold item"><?= $escaper->escapeHtml(__('Product Name')) ?></td>
+                        <td scope="col" class="col p-2 py-3 font-semibold summary"><?= $escaper->escapeHtml(__('Rating')) ?></td>
+                        <td scope="col" class="col p-2 py-3 font-semibold description"><?= $escaper->escapeHtml(__('Review')) ?></td>
+                        <td scope="col" class="col p-2 py-3 font-semibold actions">&nbsp;</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($block->getReviews() as $review): ?>
+                    <tr class="border-b border-gray-200 pb-4 mb-4 block md:table-row last:border-b-0">
+                        <td data-th="<?= $escaper->escapeHtml(__('Created')) ?>"
+                            class="col date p-2 py-3 before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2"><?= $escaper->escapeHtml($block->dateFormat($review->getReviewCreatedAt())) ?>
+                        </td>
+                        <td data-th="<?= $escaper->escapeHtml(__('Product Name')) ?>" class="col item p-2 py-3 before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                            <strong class="product-name">
+                                <a href="<?= $escaper->escapeUrl($block->getProductUrl($review)) ?>">
+                                    <?= $escaper->escapeHtml($review->getName()) ?>
+                                </a>
+                            </strong>
+                        </td>
+                        <td data-th="<?= $escaper->escapeHtml(__('Rating')) ?>" class="col summary p-2 py-3 before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                        <?php if ($review->getSum()): ?>
+                            
+                            <!-- Rating % change to stars -->
+                            <div class="rating-summary stars">
+                                <svg class="hidden">
+                                    <symbol id="star" width="32" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                                    </symbol>
+                                </svg>
+                                <div class="relative inline-block leading-[normal]">
+                                    <div class="text-gray-200 inline-flex space-x-1">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                    </div>
+                                    <div class="overflow-hidden absolute left-0 top-0 text-primary flex space-x-1" style="width:<?= ((int)$review->getSum() / (int)$review->getCount()) ?>%">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                            <use xlink:href="#star"></use>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <?php endif; ?>
+                        </td>
+                        <td data-th="<?= $escaper->escapeHtmlAttr(__('Review')) ?>" class="col description p-2 py-3 before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                            <?= $reviewHelper->getDetailHtml($review->getDetail()) ?>
+                        </td>
+                        <td data-th="<?= $escaper->escapeHtmlAttr(__('Actions')) ?>" class="col actions p-2 py-3 text-primary before:absolute before:left-0 before:font-semibold before:text-black before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                            <a href="<?= $escaper->escapeUrl($block->getReviewUrl($review)) ?>" class="action more">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 block mx-0 md:mx-auto">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </span>
+                            </a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php if ($block->getToolbarHtml()): ?>
+            <div class="toolbar products-reviews-toolbar bottom flex flex-col sm:flex-row flex-wrap justify-end items-center md:items-start gap-5 mt-5 pt-5 border-t border-gray-200">
+                <?= $block->getToolbarHtml() ?>
+            </div>
+        <?php endif; ?>
+    <?php else: ?>
+        <div class="message info empty"><span class="text-md"><?= $escaper->escapeHtml(__('You have submitted no reviews.')) ?></span></div>
+    <?php endif; ?>
+    <div class="actions-toolbar pt-4">
+        <div class="secondary">
+            <a class="action back inline-flex items-center gap-2 hover:underline" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+                <span><?= $escaper->escapeHtml(__('Back')) ?></span>
+            </a>
+        </div>
+    </div>
+</div>

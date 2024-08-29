@@ -1,0 +1,92 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+?>
+
+<?php if ($block->getLinks()): ?>
+    <?php if ($block->getCssClass() != 'nav items'): ?>
+        <div class="flex items-center justify-end space-x-6 order-4" x-data="initializeMyAccount()" x-on:keydown.escape.prevent.stop="close($refs.button)" x-on:focusin.window="! $refs.panel.contains($event.target) && close()" x-id="['my-account']">
+            <div class="relative inline-block text-left">
+                <div class="hidden lg:inline-block">
+                    <button type="button" role="button" title="Login"
+                    class="p-2 text-black lg:text-gray-700 hover:text-black" x-ref="button"
+                    x-on:click="toggle()" :aria-expanded="isMenuOpen" :aria-controls="$id('my-account')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </button>
+                </div>
+                <div x-cloak x-ref="panel" x-show="isMenuOpen"
+                x-transition.origin.top.right x-on:click.outside="close($refs.button)"
+                :id="$id('my-account')"
+                class="absolute right-0 z-50 p-2 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                    <div role="none">
+                        <ul class="<?= $escaper->escapeHtmlAttr($block->getCssClass()) ?>">
+                            <?php foreach ($block->getLinks() as $link): ?>
+                                <?= $block->renderChildLink($link) ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php else: ?>
+        <ul class="<?= $escaper->escapeHtmlAttr($block->getCssClass()) ?>  space-y-2">
+            <?php foreach ($block->getLinks() as $link): ?>
+                <?= $block->renderChildLink($link) ?>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+    <script>
+        function initializeMyAccount() {
+            return {
+                isMenuOpen: false,
+                toggle() {
+                    if (this.isMenuOpen) {
+                        return this.close()
+                    }
+                    this.$refs.button.focus();
+                    this.isMenuOpen = true;
+                },
+                close(focusAfter) {
+                    if (!this.isMenuOpen) return;
+                    this.isMenuOpen = false;
+                    focusAfter && focusAfter.focus()
+                }
+            }
+        }
+
+        function storeCurrentUrl() {
+            var currentUrl = window.location.href;
+            var expireTime = new Date();
+            expireTime.setTime(expireTime.getTime() + (5 * 60 * 1000));
+            document.cookie = 'loginpreviousurl=' + encodeURIComponent(currentUrl) + '; expires=' + expireTime.toUTCString() + '; path=/';
+        }
+    </script>
+
+<?php endif; ?>

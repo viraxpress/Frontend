@@ -1,0 +1,108 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+//phpcs:disable Squiz.ControlStructures.ControlSignature.NewlineAfterOpenBrace
+//phpcs:disable Squiz.WhiteSpace.ScopeClosingBrace.ContentBefore
+//phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+//phpcs:disable Magento2.Files.LineLength.MaxExceeded
+?>
+<?php /** @var  $block \Magento\Shipping\Block\Items */ ?>
+<?php  $_order = $block->getOrder() ?>
+<div class="actions-toolbar w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white text-right">
+    <?php if ($_order->getTracksCollection()->count()): ?>
+        <?= $block->getChildHtml('track-all-link') ?>
+    <?php endif; ?>
+    <a href="<?= $escaper->escapeUrl($block->getPrintAllShipmentsUrl($_order)) ?>"
+       class="action print text-primary hover:underline inline-flex"
+       target="_blank"
+       onclick="var newWindow = window.open(this.href, '_blank'); setTimeout(function() { newWindow.print(); }, 500); return false;"
+       rel="noopener">
+        <span><?= $escaper->escapeHtml(__('Print All Shipments')) ?></span>
+    </a>
+</div>
+<?php foreach ($_order->getShipmentsCollection() as $_shipment): ?>
+    <div class="w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white">
+        <div class="order-title flex flex-wrap items-baseline md:items-center justify-between py-3 gap-2 border-b border-gray-100 mb-4">
+            <strong><?= $escaper->escapeHtml(__('Shipment #')) ?><?= $escaper->escapeHtml($_shipment->getIncrementId()) ?></strong>
+            <div class="order_links flex items-center gap-3">
+                <a href="<?= $escaper->escapeUrl($block->getPrintShipmentUrl($_shipment)) ?>"
+                   class="action print text-primary hover:underline inline-flex"
+                   target="_blank"
+                   onclick="var newWindow = window.open(this.href, '_blank'); setTimeout(function() { newWindow.print(); }, 500); return false;"
+                   rel="noopener">
+                    <span><?= $escaper->escapeHtml(__('Print Shipment')) ?></span>
+                </a>
+                <button type="button"
+                   title="<?= $escaper->escapeHtml(__('Track this shipment')) ?>"
+                   class="action track text-primary hover:underline"
+                   onclick="openPopup('<?= $escaper->escapeUrl($this->helper(Magento\Shipping\Helper\Data::class)->getTrackingPopupUrlBySalesModel($_shipment)) ?>', 'Track this shipment')"
+                   rel="noopener">
+                    <span><?= $escaper->escapeHtml(__('Track this shipment')) ?></span>
+                </button>
+            </div>
+        </div>
+        <?php $tracks = $_shipment->getTracksCollection(); ?>
+        <?php  if ($tracks->count()): ?>
+            <dl class="order-tracking flex gap-3" id="my-tracking-table-<?= (int) $_shipment->getId() ?>">
+                <dt class="tracking-title">
+                    <?= $escaper->escapeHtml(__('Tracking Number(s):')) ?>
+                </dt>
+                <dd class="tracking-content">
+                    <?php
+                    $i = 1;
+                    $_size = $tracks->count();
+                    foreach ($tracks as $track): ?>
+                        <?php if ($track->isCustom()): ?>
+                            <?= $escaper->escapeHtml($track->getNumber()) ?>
+                        <?php else: ?>
+                            <a href="?= $block->escapeUrl($this->helper(Magento\Shipping\Helper\Data::class)->getTrackingPopupUrlBySalesModel($track)) ?>"
+                                class="action track"><span><?= $escaper->escapeHtml($track->getNumber()) ?></span>
+                                </a>
+                        <?php endif; ?>
+                        <?php if ($i != $_size): ?>, <?php endif; ?>
+                        <?php $i++;
+                    endforeach; ?>
+                </dd>
+            </dl>
+        <?php  endif; ?>
+        <div class="table-wrapper order-items-shipment mt-2">
+            <table class="data table table-order-items shipment w-full" id="my-shipment-table-<?= (int) $_shipment->getId() ?>">
+                <caption class="table-caption hidden"><?= $escaper->escapeHtml(__('Items Shipped')) ?></caption>
+                <thead class="border-b border-gray-200 hidden md:table-header-group">
+                    <tr>
+                        <th class="col name p-2 font-semibold text-left"><?= $escaper->escapeHtml(__('Product Name')) ?></th>
+                        <th class="col sku p-2 font-semibold"><?= $escaper->escapeHtml(__('SKU')) ?></th>
+                        <th class="col qty p-2 font-semibold"><?= $escaper->escapeHtml(__('Qty Shipped')) ?></th>
+                    </tr>
+                </thead>
+                <?php $_items = $_shipment->getAllItems(); ?>
+                <tbody>
+                    <?php foreach ($_items as $_item): ?>
+                        <?php if (!$_item->getOrderItem()->getParentItem()): ?>
+                            <?= $block->getItemHtml($_item) ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?= $block->getCommentsHtml($_shipment) ?>
+    </div>
+<?php endforeach; ?>

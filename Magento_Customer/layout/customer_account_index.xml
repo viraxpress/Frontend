@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <body>
+        <referenceBlock name="main">
+            <block class="Magento\Theme\Block\Html\Title" name="page.main.title" template="Magento_Customer::html/title.phtml" before="-">
+                <action method="setPageTitle">
+                    <argument translate="true" name="title" xsi:type="string">Dashboard</argument>
+                </action>
+            </block>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <container name="customer_account_dashboard_container"  as="dashboard_container" htmlTag="div" htmlClass="space-y-6 mb-6">
+                <block class="Magento\Customer\Block\Account\Dashboard\Info" name="customer_account_dashboard_info" as="info" template="Magento_Customer::account/dashboard/info.phtml" cacheable="false">
+                    <container name="customer.account.dashboard.info.blocks" as="additional_blocks"/>
+                </block>
+                <block class="Magento\Customer\Block\Account\Dashboard\Address" name="customer_account_dashboard_address" as="address" template="Magento_Customer::account/dashboard/address.phtml" cacheable="false"/>
+            </container>
+        </referenceContainer>
+    </body>
+</page>

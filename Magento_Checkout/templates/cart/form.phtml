@@ -1,0 +1,144 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/**  @var $block \Magento\Checkout\Block\Cart\Grid */
+?>
+<?php $mergedCells = ($this->helper(Magento\Tax\Helper\Data::class)->displayCartBothPrices() ? 2 : 1); ?>
+<?= $block->getChildHtml('form_before') ?>
+<form class="block w-full" id="shopping-cart-list-form" x-data="updateShoppingCart">
+    <input type="hidden" name="form_key" :value="formKey">
+    <div class="block">
+        <table id="shopping-cart-table" class="cart items data table w-full  divide-y divide-gray-200">
+            <thead class="hidden lg:table-header-group">
+                <tr>
+                    <th class="col item p-4 text-left pt-0 font-semibold" scope="col">
+                        <span><?= $escaper->escapeHtml(__('Item')) ?></span>
+                    </th>
+                    <th class="col price p-4 pt-0 text-cent font-semibold" scope="col">
+                        <span><?= $escaper->escapeHtml(__('Price')) ?></span>
+                    </th>
+                    <th class="col qty p-4 pt-0 font-semibold" scope="col">
+                        <span><?= $escaper->escapeHtml(__('Qty')) ?></span>
+                    </th>
+                    <th class="col subtotal p-4 pt-0 text-right font-semibold" scope="col">
+                        <span><?= $escaper->escapeHtml(__('Subtotal')) ?></span>
+                    </th>
+                </tr>
+            </thead>
+            <?php foreach ($block->getItems() as $_item): ?>
+                <?= $block->getItemHtml($_item) ?>
+            <?php endforeach ?>
+        </table>
+
+        <?php if ($block->getPagerHtml()): ?>
+            <div class="cart-products-toolbar cart-products-toolbar-bottom toolbar flex flex-col sm:flex-row flex-wrap justify-end items-center md:items-start gap-5 mt-5 pt-5 border-t border-gray-200" data-attribute="cart-products-toolbar-bottom">
+                <?= $block->getPagerHtml() ?>
+            </div>
+        <?php endif ?>
+
+        <div class="cart main actions mt-6 sm:mt-10 flex flex-col sm:flex-row gap-x-4 gap-y-4 justify-between">
+            <?php if ($block->getContinueShoppingUrl()): ?>
+                <a class="action continue primary-btn" href="<?= $escaper->escapeUrl($block->getContinueShoppingUrl()) ?>" title="<?= $escaper->escapeHtml(__('Continue Shopping')) ?>">
+                    <span><?= $escaper->escapeHtml(__('Continue Shopping')) ?></span>
+                </a>
+            <?php endif; ?>
+            <div class="cart_clear-update-wrapper flex gap-x-4 gap-y-4">
+                <?php if ($block->getViewModel()->isClearShoppingCartEnabled()): ?>
+                    <button type="button" @click="clearShoppingCartButton(event)" name="update_cart_action" data-cart-empty="" value="empty_cart" title="<?= $escaper->escapeHtml(__('Clear Shopping Cart')) ?>" class="delete-btn flex-auto sm:flex-none" id="empty_cart_button">
+                        <span><?= $escaper->escapeHtml(__('Clear Cart')) ?></span>
+                    </button>
+                <?php endif ?>
+                <button type="button" @click="updateShoppingCartButton(event)" name="update_cart_action" data-cart-item-update="" value="update_qty" title="<?= $escaper->escapeHtml(__('Update Shopping Cart')) ?>" class="action update secondary-btn flex-auto sm:flex-none">
+                    <span><?= $escaper->escapeHtml(__('Update Cart')) ?></span>
+                </button>
+            </div>
+            <input type="hidden" value="" id="update_cart_action_container" data-cart-item-update="" />
+        </div>
+    </div>
+</form>
+<?= $block->getChildHtml('checkout.cart.order.actions') ?>
+<?= $block->getChildHtml('shopping.cart.table.after') ?>
+<script>
+    function updateShoppingCart() {
+        return {
+            url: "",
+            formKey: getFormKeyCookie(),
+            clearShoppingCartButton(event) {
+                var form = document.getElementById("shopping-cart-list-form");
+                    form.method = "post";
+                var type = document.getElementById("update_cart_action_container");
+                type.name = "update_cart_action";
+                type.value = event.currentTarget.value;
+                this.url = "<?= $escaper->escapeUrl($block->getUrl('checkout/cart/updatePost')) ?>";
+                form.action = this.url;
+                form.submit();
+            },
+            handleError(error) {
+                console.error("Fetch error:", error);
+            },
+            reloadLocation() {
+                window.location.reload();
+            }
+        }
+    }
+
+    async function updateShoppingCartButton(event) {
+        try {
+            const updatePostUrl = "<?= $escaper->escapeUrl($block->getUrl('checkout/cart/updatePost')) ?>";
+            const updateQtyUrl = "<?= $escaper->escapeUrl($block->getUrl('checkout/cart/updateItemQty')) ?>";
+
+            var form = document.getElementById("shopping-cart-list-form");
+            form.addEventListener("submit", function (event) { event.preventDefault(); });
+            const formData = new FormData(form);
+            formData.append('form_key', getFormKeyCookie());
+
+            if (event.currentTarget.value === 'update_qty') {
+                console.log('Updating quantity with URL:', updateQtyUrl);
+                await fetchWithRetry(updateQtyUrl, formData);
+
+                console.log('Updating cart with URL:', updatePostUrl);
+                await fetchWithRetry(updatePostUrl, formData);
+
+                console.log('Reloading page');
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
+
+    async function fetchWithRetry(url, formData) {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+            },
+            body: formData,
+        });
+        if (!response.ok) {
+            console.error(`Request to ${url} failed with status: ${response.status}`);
+            throw new Error(`Error: ${response.status}`);
+        }
+        return response;
+    }
+</script>

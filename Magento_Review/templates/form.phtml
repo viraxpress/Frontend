@@ -1,0 +1,214 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Review\Block\Form $block */
+//phpcs:disable Generic.Files.LineLength
+?>
+<div class="block static lg:sticky w-full top-0" x-data="reviewSubmit()">
+    <h2 class="text-base font-semibold leading-7 text-gray-900"><?= $escaper->escapeHtml(__('Write Your Own Review')) ?></h2>
+    <p class="mt-1 text-sm leading-6 text-gray-600">
+        <span class="inline-block"><?= $escaper->escapeHtml(__("You're reviewing:")) ?></span>
+        <span class="inline-block font-semibold"><?= $escaper->escapeHtml($block->getProductInfo()->getName()) ?></span>
+    </p>
+    <span id="input-message-box"></span>
+    <?php if ($block->getAllowWriteReviewFlag()): ?>
+        <form id="reviewform">
+            <?= $block->getChildHtml('form_fields_before') ?>
+            <div class="mt-10 space-y-5 max-w-xl">
+                <div class="w-full block review-field-rating required">
+                    <label for="rating_field" class="block text-sm leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Your Rating')) ?> <span class="ml-[2px] inline-block text-required">*</span></label>
+                    <div class="my-2 flex flex-col justify-start items-start gap-x-5 space-y-3">
+                        <?php foreach ($block->getRatings() as $_rating): ?>
+                            <div class="flex flex-col items-start gap-x-3">
+                                <label for="<?= $escaper->escapeHtmlAttr($_rating->getRatingCode()) ?>_rating_field" class="block text-sm leading-6 text-gray-900" id="<?= $escaper->escapeHtml($_rating->getRatingCode()) ?>_rating_label">
+                                    <span><?= $escaper->escapeHtml($_rating->getRatingCode()) ?></span>
+                                </label>
+                                <div x-data="{ selectedRating: null }" class="inline-flex">
+                                    <?php $options = $_rating->getOptions(); ?>
+                                    <?php $iterator = 1;
+                                    foreach ($options as $_option): ?>
+                                        <label x-on:click="selectedRating = <?= $escaper->escapeHtml($_option->getValue()) ?>" role="button" for="<?= $escaper->escapeHtmlAttr($_rating->getRatingCode()) ?>_<?= $escaper->escapeHtmlAttr($_option->getValue()) ?>" :class="{ 'text-primary': selectedRating >= <?= $escaper->escapeHtml($_option->getValue()) ?> }" class="rounded-sm text-gray-200 fill-current focus:outline-none focus:shadow-outline p-1 w-12 m-0 cursor-pointer review-star-ratings">
+                                            <input type="radio"  name="ratings[<?= $escaper->escapeHtmlAttr($_rating->getId()) ?>]" id="<?= $escaper->escapeHtmlAttr($_rating->getRatingCode()) ?>_<?= $escaper->escapeHtmlAttr($_option->getValue()) ?>" x-on:click="onClickValidationStar" value="<?= $escaper->escapeHtmlAttr($_option->getId()) ?>" class="radio sr-only" data-validate="{'rating-required':true}" aria-labelledby="<?= $escaper->escapeHtmlAttr($_rating->getRatingCode()) ?>_rating_label <?= $escaper->escapeHtmlAttr($_rating->getRatingCode()) ?>_<?= $escaper->escapeHtmlAttr($_option->getValue()) ?>_label" :checked="selectedRating == <?= $escaper->escapeHtml($_option->getValue()) ?>" />
+                                            <svg viewBox="0 0 32 30" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="w-15 h-15 transition duration-150 flex-shrink-0">
+                                                <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor"></path>
+                                            </svg>
+                                        </label>
+                                        <?php $iterator++; ?>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <template x-if="starFieldError">
+                        <div class="vira-form-validation">
+                            <div id="nickname_field_error" class="error-message text-error mt-1 text-xs" x-text="starFieldError"></div>
+                        </div>
+                    </template>
+                </div>
+                <div class="w-full block review-field-nickname required">
+                    <label for="nickname_field" class="block text-sm leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Nickname')) ?><span class="ml-[2px] inline-block text-required">*</span></label>
+                    <div class="my-2">
+                        <input id="nickname_field" name="nickname" x-model="nicknameField" x-bind:value="nicknameField" x-on:input="onChangeValidation" type="text" autocomplete="name" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                    </div>
+                    <template x-if="nickNameFieldError">
+                        <div class="vira-form-validation">
+                            <div id="nickname_field_error" class="error-message text-error mt-1 text-xs" x-text="nickNameFieldError"></div>
+                        </div>
+                    </template>
+                </div>
+                <div class="w-full block review-field-summary required">
+                    <label for="summary_field" class="block text-sm leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Summary')) ?><span class="ml-[2px] inline-block text-required">*</span></label>
+                    <div class="my-2">
+                        <input id="summary_field" name="title" type="text" autocomplete="title" x-on:input="onChangeValidation" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                    </div>
+                    <template x-if="summaryFieldError">
+                        <div class="vira-form-validation">
+                            <div id="summary_field_error" class="error-message text-error mt-1 text-xs" x-text="summaryFieldError"></div>
+                        </div>
+                    </template>
+                </div>
+                <div class="w-full block review-field-summary required">
+                    <label for="review_field" class="block text-sm leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Review')) ?><span class="ml-[2px] inline-block text-required">*</span></label>
+                    <div class="my-2">
+                        <textarea id="review_field" name="detail" cols="5" rows="3" x-on:input="onChangeValidation" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"></textarea>
+                    </div>
+                    <template x-if="reviewFieldError">
+                        <div class="vira-form-validation">
+                            <div id="review_field_error" class="error-message text-error mt-1 text-xs" x-text="reviewFieldError"></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="mt-8 flex items-center justify-start">
+                <button id="submitReviewButton" type="submit" x-on:click.prevent="reviewFormSubmit" role="button" title="Submit Review" class="primary-btn">
+                    <span class="inline-flex justify-center items-center gap-x-3">
+                        <template x-if="isLoader">
+                            <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
+                        </template>
+                        <?= $escaper->escapeHtml(__('Submit Review')) ?>
+                    </span>
+                </button>
+            </div>
+        </form>
+    <?php else: ?>
+        <div class="message info notlogged" id="review-form">
+            <div>
+                <?= $escaper->escapeHtml(__('Only registered users can write reviews. Please <a href="%1">Sign in</a> or <a href="%2">create an account</a>', $block->getLoginLink(), $block->getRegisterUrl()), ['a']) ?>
+            </div>
+        </div>
+    <?php endif ?>
+</div>
+
+<script>
+    function reviewSubmit() {
+        return {
+            reviewResponseMessage: '',
+            nicknameField: null,
+            summaryField: null,
+            starRatings: [],
+            reviewField: null,
+            summaryFieldError: '',
+            nickNameFieldError: '',
+            reviewFieldError: '',
+            starFieldError: '',
+            isLoader: false,
+
+            init() {
+                if (customerData.get('customer') && customerData.get('customer').fullname) {
+                    this.nicknameField = customerData.get('customer').firstname;
+                }
+            },
+
+            onChangeValidation() {
+                this.validateForm();
+            },
+
+            onClickValidationStar() {
+                this.starFieldError = '';
+                this.starRatings = [];
+                document.querySelectorAll('.review-star-ratings').forEach((label) => {
+                    const input = label.querySelector('input[type="radio"]:checked');
+                    if (input) {
+                        const ratingId = input.name.match(/\d+/)[0];
+                        this.starRatings[ratingId] = input.value;
+                    }
+                });
+
+                if (!(Object.keys(this.starRatings).length === <?= count($block->getRatings()) ?>)) {
+                    this.starFieldError = 'Please select one of each of the ratings above.';
+                }
+            },
+
+            validateForm() {
+                this.nicknameField = document.getElementById('nickname_field').value;
+                this.summaryField = document.getElementById('summary_field').value;
+                this.reviewField = document.getElementById('review_field').value;
+
+                this.nickNameFieldError = !this.nicknameField ? 'Required field' : '';
+                this.summaryFieldError = !this.summaryField ? 'Required field' : '';
+                this.reviewFieldError = !this.reviewField ? 'Required field' : '';
+                this.starFieldError = !(Object.keys(this.starRatings).length === <?= count($block->getRatings()) ?>) ? 'Please select one of each of the ratings above.' : '';
+
+                return !(this.nickNameFieldError || this.summaryFieldError || this.reviewFieldError || this.starFieldError);
+            },
+
+            reviewFormSubmit() {
+                if (!this.validateForm()) {
+                    return;
+                }
+                var form = document.getElementById("reviewform");
+                const formData = new FormData(form);
+                formData.append('form_key', getFormKeyCookie());
+                var url = '<?= $escaper->escapeUrl($block->getAction()) ?>';
+                this.isLoader = true;
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        return response.ok;
+                    } else {                        
+                        throw new Error('Failed to freeze basket');
+                    }
+                })
+                .then(function(data) {
+                    getCookie("mage-messages");
+                    var submitReviewButton = document.getElementById('submitReviewButton');
+                    if (submitReviewButton && data == true) {
+                        submitReviewButton.remove();
+                        document.getElementById('nickname_field').readOnly = true;
+                        document.getElementById('summary_field').readOnly = true;
+                        document.getElementById('review_field').readOnly = true;
+                        var starInputs = document.querySelectorAll('.review-star-ratings');
+                        starInputs.forEach(function(starInput) {
+                            starInput.classList.add('pointer-events-none');
+                        });
+                    }
+                }.bind(this))
+                .catch(function(error) {
+                    console.error('Error:', error);
+                });
+            }
+        }
+    }
+</script>

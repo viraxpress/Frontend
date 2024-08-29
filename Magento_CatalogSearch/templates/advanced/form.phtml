@@ -1,0 +1,285 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Framework\Escaper;
+
+/**
+ * Catalog advanced search form
+ *
+ * @var $block \Magento\CatalogSearch\Block\Advanced\Form
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ * @var Escaper $escaper
+ */
+?>
+
+<?php
+/** @var \Magento\CatalogSearch\Helper\Data $catalogSearchHelper */
+$catalogSearchHelper = $block->getData('catalogSearchHelper'); ?>
+<?php $maxQueryLength = $catalogSearchHelper->getMaxQueryLength(); ?>
+
+<div class="my-6 lg:w-[70%] xxl:w-1/2 mb-10" x-data="advancedSearch()">
+    <form class="form search advanced" id="form-validate" x-on:submit.prevent="onSubmit">
+        <fieldset class="fieldset space-y-5 w-full">
+            <?php foreach ($block->getSearchableAttributes() as $_attribute): ?>
+                <?php $_code = $_attribute->getAttributeCode() ?>
+                <div class="field <?= $escaper->escapeHtmlAttr($_code) ?>">
+                    <label class="label block text-sm font-medium leading-6 text-gray-900" for="<?= $escaper->escapeHtmlAttr($_code) ?>">
+                        <span><?= $escaper->escapeHtml(__($block->getAttributeLabel($_attribute))) ?></span>
+                    </label>
+                    <div class="control mt-2">
+                        <?php
+                        switch ($block->getAttributeInputType($_attribute)):
+                            case 'number':
+                                ?>
+                                <div class="range fields group group-2 flex items-center gap-2">
+                                    <div class="field no-label grow-0 shrink-1 basis-full">
+                                        <div class="control">
+                                            <input type="text" name="<?= $escaper->escapeHtmlAttr($_code) ?>[from]" value="<?= $escaper->escapeHtml($block->getAttributeValue($_attribute, 'from')) ?>" id="<?= $escaper->escapeHtmlAttr($_code) ?>" title="<?= $escaper->escapeHtml($block->getAttributeLabel($_attribute)) ?>" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" x-on:input.debounce="onChange" maxlength="<?= $escaper->escapeHtmlAttr($maxQueryLength) ?>" />
+                                        </div>
+                                    </div>
+                                    <span class="w-6 text-center leading-10">-</span>
+                                    <div class="field no-label grow-0 shrink-1 basis-full">
+                                        <div class="control">
+                                            <input type="text" name="<?= $escaper->escapeHtmlAttr($_code) ?>[to]" value="<?= $escaper->escapeHtml($block->getAttributeValue($_attribute, 'to')) ?>" id="<?= $escaper->escapeHtmlAttr($_code) ?>_to" title="<?= $escaper->escapeHtml($block->getAttributeLabel($_attribute)) ?>" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" x-on:input.debounce="onChange" maxlength="<?= $escaper->escapeHtmlAttr($maxQueryLength) ?>" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                                break;
+                            case 'price':
+                                ?>
+                                <div class="range price fields group group-2 flex gap-2 flex-col sm:flex-row">
+                                    <div class="field no-label grow-0 shrink-1 basis-full">
+                                        <div class="control">
+                                            <input name="<?= $escaper->escapeHtmlAttr($_code) ?>[from]" value="<?= $escaper->escapeHtml($block->getAttributeValue($_attribute, 'from')) ?>" id="<?= $escaper->escapeHtmlAttr($_code) ?>" title="<?= $escaper->escapeHtml($block->getAttributeLabel($_attribute)) ?>" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" type="text" x-on:input.debounce="onChange" maxlength="<?= $escaper->escapeHtmlAttr($maxQueryLength) ?>" data-validate="{
+                                                number:true,
+                                                'validate-not-negative-number':true,
+                                                'less-than-equals-to':'#<?= $escaper->escapeHtmlAttr($_code) ?>_to'
+                                            }" />
+                                        </div>
+                                    </div>
+                                    <span class="w-6 text-center sm:leading-10">-</span>
+                                    <div class="field with-addon no-label grow-0 shrink-1 basis-full">
+                                        <div class="control">
+                                            <div class="addon flex items-center gap-1">
+                                                <input name="<?= $escaper->escapeHtmlAttr($_code) ?>[to]" value="<?= $escaper->escapeHtml($block->getAttributeValue($_attribute, 'to')) ?>" id="<?= $escaper->escapeHtmlAttr($_code) ?>_to" title="<?= $escaper->escapeHtml($block->getAttributeLabel($_attribute)) ?>" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" type="text" x-on:input.debounce="onChange" maxlength="<?= $escaper->escapeHtmlAttr($maxQueryLength) ?>" data-validate="{
+                                                    number:true,
+                                                    'validate-not-negative-number':true,
+                                                    'greater-than-equals-to':'#<?= $escaper->escapeHtmlAttr($_code) ?>'
+                                                }" />
+                                                <input type="hidden" name="<?= $escaper->escapeHtmlAttr($_code) ?>[currency]" value="<?= $escaper->escapeHtml($block->getCurrency($_attribute)) ?>">
+                                                <label class="addafter text-sm font-medium leading-6 text-gray-900 flex items-center" for="<?= $escaper->escapeHtmlAttr($_code) ?>_to">
+                                                    <?= $escaper->escapeHtml($block->getCurrency($_attribute)) ?>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                                break;
+                            case 'select':
+                                ?>
+                                <?= /* @noEscape */ $block->getAttributeSelectElement($_attribute) ?>
+                                <?php
+                                break;
+                            case 'yesno':
+                                ?>
+                                <?= /* @noEscape */ $block->getAttributeYesNoElement($_attribute) ?>
+                                <?php
+                                break;
+                            case 'date':
+                                ?>
+                                <div class="range dates fields group group-2 flex gap-2 flex-col sm:flex-row">
+                                    <div class="field date no-label grow-0 shrink-1 basis-full">
+                                        <div class="control">
+                                            <?= /* @noEscape */ $block->getDateInput($_attribute, 'from') ?>
+                                        </div>
+                                    </div>
+                                    <span class="w-6 text-center sm:leading-10">-</span>
+                                    <div class="field date no-label grow-0 shrink-1 basis-full">
+                                        <div class="control">
+                                            <?= /* @noEscape */ $block->getDateInput($_attribute, 'to') ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                                break;
+                            default:
+                                ?>
+                                <input type="text" name="<?= $escaper->escapeHtmlAttr($_code) ?>"
+                                id="<?= $escaper->escapeHtmlAttr($_code) ?>"
+                                value="<?= $escaper->escapeHtml($block->getAttributeValue($_attribute)) ?>"
+                                title="<?= $escaper->escapeHtml($block->getAttributeLabel($_attribute)) ?>"
+                                class="input-text <?= $escaper->escapeHtmlAttr($block->getAttributeValidationClass($_attribute)) ?> block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" maxlength="<?= $escaper->escapeHtmlAttr($maxQueryLength) ?>" />
+                        <?php endswitch; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </fieldset>
+        <div class="mt-8">
+            <button type="submit" class="action search primary primary-btn" title="<?= $escaper->escapeHtml(__('Search')) ?>">
+                <?= $escaper->escapeHtml(__('Search Product')) ?>
+            </button>
+        </div>
+    </form>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var datepickerInputs = document.querySelectorAll('.datePicker');
+        var today = new Date();
+        today.setFullYear(today.getFullYear() + 10);
+        if (datepickerInputs.length) {
+            datepickerInputs.forEach(function(elem) {
+                var config = JSON.parse(elem.dataset.post);
+                var picker = new Datepicker(elem, {
+                    closeText: config.closeText,
+                    prevText: config.prevText,
+                    nextText: config.nextText,
+                    currentText: config.currentText,
+                    monthNames: config.monthNames,
+                    monthNamesShort: config.monthNamesShort,
+                    dayNames: config.dayNames,
+                    dayNamesShort: config.dayNamesShort,
+                    dayNamesMin: config.dayNamesMin,
+                    maxDate: today,
+                    autohide: true
+                });
+            });
+        }
+    });
+
+function advancedSearch() {
+    return {
+        onSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const inputElements = form.querySelectorAll('input[type="text"], input[type="number"], [data-validate]');
+            let isValid = true;
+
+            inputElements.forEach(inputElement => {
+                if (!validateInput(inputElement)) {
+                    isValid = false;
+                }
+            });
+
+            if (isValid) {
+                submitForm(form);
+            }
+        }
+    };
+
+    function validateInput(inputElement) {
+        const maxLength = inputElement.getAttribute('maxlength');
+        let validationRules = inputElement.getAttribute('data-validate');
+        const fieldContainer = inputElement.closest('.field');
+        let errorMessageElement = getOrCreateErrorMessageElement(fieldContainer);
+
+        errorMessageElement.textContent = '';
+
+        if (maxLength && inputElement.value.length >= maxLength) {
+            errorMessageElement.textContent = `Field length should be at most ${maxLength}`;
+            return false;
+        }
+
+        if (validationRules) {
+            validationRules = validationRules.replace(/[{}]/g, '');
+            const rulesArray = validationRules.split(',').map(rule => rule.trim().replace(/'/g, '').split(':'));
+
+            for (const [ruleName, ruleValue] of rulesArray) {
+                if (!applyValidationRule(ruleName.trim(), ruleValue, inputElement, errorMessageElement)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    function getOrCreateErrorMessageElement(fieldContainer) {
+        let errorMessageElement = fieldContainer.querySelector('.error-message');
+
+        if (!errorMessageElement) {
+            const parentElement = document.createElement('div');
+            parentElement.setAttribute('class', 'vira-form-validation');
+            errorMessageElement = document.createElement('div');
+            errorMessageElement.classList.add('error-message');
+            parentElement.appendChild(errorMessageElement);
+            fieldContainer.appendChild(parentElement);
+        }
+
+        return errorMessageElement;
+    }
+
+    function applyValidationRule(ruleName, ruleValue, inputElement, errorMessageElement) {
+        switch (ruleName) {
+            case 'number':
+                if (isNaN(inputElement.value) || inputElement.value < 0) {
+                    errorMessageElement.textContent = 'Please enter a valid number.\n';
+                    return false;
+                }
+                break;
+            case 'validate-not-negative-number':
+                if (parseFloat(inputElement.value) < 0) {
+                    errorMessageElement.textContent = 'Please enter a number 0 or greater in this field.\n';
+                    return false;
+                }
+                break;
+            case 'greater-than-equals-to':
+                const comparedElement = document.querySelector(ruleValue.trim());
+                if (parseFloat(inputElement.value) < parseFloat(comparedElement.value)) {
+                    errorMessageElement.textContent = `Please enter a value greater than or equal to ${comparedElement.value}.\n`;
+                    return false;
+                }
+                break;
+            default:
+                if (inputElement.value < 0) {
+                    errorMessageElement.textContent = 'Please enter a valid number.\n';
+                    return false;
+                }
+        }
+
+        return true;
+    }
+
+    async function submitForm(form) {
+        const formData = new FormData(form);
+        formData.append('form_key', getFormKeyCookie());
+        const queryString = new URLSearchParams(formData).toString();
+        const actionUrl = '<?= $escaper->escapeUrl($block->getSearchPostUrl()) ?>' + '?' + queryString;
+
+        try {
+            const response = await fetch(actionUrl, {
+                method: 'POST',
+                body: '',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = response.url;
+            } else {
+                console.error('Error:', response.status);
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    }
+}
+</script>

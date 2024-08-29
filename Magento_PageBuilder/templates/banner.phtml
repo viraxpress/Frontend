@@ -1,0 +1,115 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<script>
+// (async () => {
+//     const debounce = (func, wait) => {
+//         let timeout;
+//         return (...args) => {
+//             clearTimeout(timeout);
+//             timeout = setTimeout(() => func.apply(this, args), wait);
+//         };
+//     };
+
+//     const initiateBanner = async (elements) => {
+//         const renderImage = async (banner) => {
+//             const decodeImageData = (data) => {
+//                 const desktopIndexStart = data.indexOf("https://");
+//                 const desktopIndexEnd = data.indexOf("\"", desktopIndexStart);
+//                 const desktopImage = data.substring(desktopIndexStart, desktopIndexEnd);
+//                 const mobileIndexStart = data.indexOf("https://", desktopIndexEnd);
+//                 const mobileIndexEnd = data.indexOf("\"", mobileIndexStart);
+//                 const mobileImage = data.substring(mobileIndexStart, mobileIndexEnd);
+
+//                 let cachedWidth = window.innerWidth;
+//                 const getImageSource = (width) => {
+//                     return width < 991 ? mobileImage.slice(0, -1) : desktopImage.slice(0, -1);
+//                 };
+
+//                 const updateImageSource = () => {
+//                     const windowWidth = window.innerWidth;
+//                     const newSource = getImageSource(windowWidth);
+//                     if (banner.style.backgroundImage !== `url(${newSource})`) {
+//                         requestAnimationFrame(() => {
+//                             banner.style.backgroundImage = `url(${newSource})`;
+//                         });
+//                     }
+//                 };
+
+//                 // Initial set
+//                 updateImageSource();
+
+//                 // Update on resize with debouncing
+//                 window.addEventListener("resize", debounce(() => {
+//                     cachedWidth = window.innerWidth;
+//                     updateImageSource();
+//                 }, 200));
+//             };
+
+//             const backgroundImageData = banner.dataset.backgroundImages;
+//             decodeImageData(backgroundImageData);
+//         };
+
+//         const renderVideo = async (banner) => {
+//             const overlayElement = banner.querySelector('[data-element="overlay"]');
+//             const videoSource = banner.dataset.videoSrc;
+//             const regex = /mp4:(.*)/;
+//             const match = regex.exec(videoSource);
+//             const videoURL = match[1];
+//             const newElement = `
+//                 <div class="banner__video">
+//                     <video autoplay loop muted playsinline>
+//                         <source src="${videoURL}" type="video/mp4">
+//                     </video>
+//                 </div>
+//             `;
+//             requestAnimationFrame(() => {
+//                 overlayElement.insertAdjacentHTML("afterend", newElement);
+//             });
+//         };
+
+//         for (const element of elements) {
+//             const banner = element.querySelector('[data-background-type]');
+//             if (banner.dataset.backgroundType === 'image') {
+//                 await renderImage(banner);
+//             }
+//             if (banner.dataset.backgroundType === 'video') {
+//                 await renderVideo(banner);
+//             }
+//         }
+//     };
+
+//     const loadBanners = async () => {
+//         const bannerElements = document.querySelectorAll(`[data-content-type="banner"]`);
+//         const slideElements = document.querySelectorAll(`[data-content-type="slide"]`);
+
+//         if (bannerElements.length > 0) {
+//             await initiateBanner(bannerElements);
+//         }
+//         if (slideElements.length > 0) {
+//             await initiateBanner(slideElements);
+//         }
+//     };
+
+//     await loadBanners();
+// })();
+
+</script>

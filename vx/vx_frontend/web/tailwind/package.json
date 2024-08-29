@@ -1,0 +1,30 @@
+{
+  "name": "viraxpress",
+  "version": "1.0.0",
+  "description": "Energize your E-commerce with ViraXpress's blazing fast Magento New Front End + Elegant Theme + >95% SEO score + Open Source",
+  "scripts": {
+    "success": "echo -e \"\\e[32mSuccess: Tailwind compiled successfully!\\e[0m\"",
+    "dev": "TAILWIND_MODE=WATCH postcss tailwind.css -o ../css/styles.css --watch --verbose",
+    "prod": "NODE_ENV=production postcss tailwind.css -o ../css/styles.css && npm run success"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "cssnano": "^7.0.1",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^3.4.9"
+  },
+  "dependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.13",
+    "postcss": "^8.4.41",
+    "postcss-import": "^16.1.0",
+    "postcss-nested": "^6.0.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

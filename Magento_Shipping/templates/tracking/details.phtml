@@ -1,0 +1,111 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var $block \Magento\Framework\View\Element\Template */
+//phpcs:disable Magento2.Files.LineLength.MaxExceeded
+
+$parentBlock = $block->getParentBlock();
+$track = $block->getData('track');
+$email = $block->getData('storeSupportEmail');
+$fields = [
+    'Status' => 'getStatus',
+    'Signed by' => 'getSignedby',
+    'Delivered to' => 'getDeliveryLocation',
+    'Shipped or billed on' => 'getShippedDate',
+    'Service Type' => 'getService',
+    'Weight' => 'getWeight',
+];
+$number = is_object($track) ? $track->getTracking() : $track['number'];
+?>
+<table class="data table order tracking w-full" id="tracking-table-popup-<?= $escaper->escapeHtml($number) ?>">
+    <caption class="table-caption text-gray-800 font-medium text-left mb-5 pb-2 border-b border-gray-100"><?= $escaper->escapeHtml(__('Order tracking')) ?></caption>
+    <tbody>
+    <?php if (is_object($track)): ?>
+        <tr class="border-b border-gray-200">
+            <th class="col label p-2 text-left" scope="row"><?= $escaper->escapeHtml(__('Tracking Number:')) ?></th>
+            <td class="col value p-2 text-left"><?= $escaper->escapeHtml($number) ?></td>
+        </tr>
+        <?php if ($track->getCarrierTitle()): ?>
+            <tr class="border-b border-gray-200">
+                <th class="col label p-2 text-left" scope="row"><?= $escaper->escapeHtml(__('Carrier:')) ?></th>
+                <td class="col value p-2 text-left"><?= $escaper->escapeHtml($track->getCarrierTitle()) ?></td>
+            </tr>
+        <?php endif; ?>
+        <?php if ($track->getErrorMessage()): ?>
+            <tr class="border-b border-gray-200">
+                <th class="col label p-2 text-left" scope="row"><?= $escaper->escapeHtml(__('Error:')) ?></th>
+                <td class="col error p-2 text-left">
+                    <?= $escaper->escapeHtml(__('Tracking information is currently not available. Please ')) ?>
+                    <?php if ($parentBlock->getContactUsEnabled()): ?>
+                        <a href="<?= $escaper->escapeUrl($parentBlock->getContactUs()) ?>" target="_blank"
+                           title="<?= $escaper->escapeHtml(__('contact us')) ?>">
+                            <?= $escaper->escapeHtml(__('contact us')) ?>
+                        </a>
+                        <?= $escaper->escapeHtml(__(' for more information or ')) ?>
+                    <?php endif; ?>
+                    <?= $escaper->escapeHtml(__('email us at ')) ?>
+                    <a href="mailto:<?= /* @noEscape */ $email ?>"><?= /* @noEscape */ $email ?></a>
+                </td>
+            </tr>
+        <?php elseif ($track->getTrackSummary()): ?>
+            <tr class="border-b border-gray-200">
+                <th class="col label p-2 text-left" scope="row"><?= $escaper->escapeHtml(__('Info:')) ?></th>
+                <td class="col value p-2 text-left"><?= $escaper->escapeHtml($track->getTrackSummary()) ?></td>
+            </tr>
+        <?php elseif ($track->getUrl()): ?>
+            <tr class="border-b border-gray-200">
+                <th class="col label p-2 text-left" scope="row"><?= $escaper->escapeHtml(__('Track:')) ?></th>
+                <td class="col value p-2 text-left">
+                    <a href="<?= $escaper->escapeUrl($track->getUrl()) ?>" target="_blank">
+                        <?= $escaper->escapeUrl($track->getUrl()) ?>
+                    </a>
+                </td>
+            </tr>
+        <?php else: ?>
+            <?php foreach ($fields as $title => $property): ?>
+                <?php if (!empty($track->$property())): ?>
+                    <tr class="border-b border-gray-200">
+                        <th class="col label p-2 text-left" scope="row"><?= /* @noEscape */ $escaper->escapeHtml(__($title . ':')) ?></th>
+                        <td class="col value p-2 text-left"><?= $escaper->escapeHtml($track->$property()) ?></td>
+                    </tr>
+                <?php endif;?>
+            <?php endforeach; ?>
+
+            <?php if ($track->getDeliverydate()): ?>
+                <tr class="border-b border-gray-200">
+                    <th class="col label p-2 text-left" scope="row"><?= $escaper->escapeHtml($parentBlock->getDeliveryDateTitle()->getTitle($track)) ?></th>
+                    <td class="col value p-2 text-left">
+                        <?= /* @noEscape */ $parentBlock->formatDeliveryDateTime($track->getDeliverydate(), $track->getDeliverytime()) ?>
+                    </td>
+                </tr>
+            <?php endif; ?>
+        <?php endif; ?>
+    <?php elseif (isset($track['title']) && isset($track['number']) && $track['number']): ?>
+        <?php /* if the tracking is custom value */ ?>
+        <tr class="border-b border-gray-200">
+            <th class="col label p-2 text-left" scope="row">
+                <?= ($track['title'] ? $escaper->escapeHtml($track['title']) : $escaper->escapeHtml(__('N/A'))) ?>:
+            </th>
+            <td class="col value p-2 text-left"><?= (isset($track['number']) ? $escaper->escapeHtml($track['number']) : '') ?></td>
+        </tr>
+    <?php endif; ?>
+    </tbody>
+</table>

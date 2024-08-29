@@ -1,0 +1,97 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate
+
+/** @var \Magento\Sales\Block\Order\Items $block */
+?>
+<div class="w-full shadow-sm border border-gray-200 rounded-lg p-4 bg-white mb-6 print:rounded-none print:shadow-none print:mt-5">
+    <div class="block overflow-x-auto">
+        <table class="min-w-full table border-collapse">
+            <tbody class="w-full">
+                <tr class="border-b border-gray-200 hidden md:table-row">
+                    <td class="col w-[115px]  product-name">
+                        <div class="p-2 text-left font-semibold text-gray-800">
+                            <?= $escaper->escapeHtml(__('Product Name')) ?>
+                        </div>
+                    </td>
+                    <td class="col w-[115px] sku">
+                        <div class="p-2 text-left font-semibold text-gray-800">
+                            <?= $escaper->escapeHtml(__('SKU')) ?>
+                        </div>
+                    </td>
+                    <td class="col w-[115px] price">
+                        <div class="p-2 text-left font-semibold text-gray-800">
+                            <?= $escaper->escapeHtml(__('Price')) ?>
+                        </div>
+                    </td>
+                    <td class="col w-[115px] qty">
+                        <div class="p-2 text-left font-semibold text-gray-800">
+                            <?= $escaper->escapeHtml(__('Qty')) ?>
+                        </div>
+                    </td>
+                    <td class="col w-[115px] qty">
+                        <div class="p-2 text-left font-semibold text-gray-800">
+                            <?= $escaper->escapeHtml(__('Subtotal')) ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php $items = $block->getItems(); ?>
+                <?php $giftMessage = '' ?>
+                <?php foreach ($items as $item):
+                    if ($item->getParentItem()):
+                        continue;
+                    endif;
+                    ?>
+                    <?= $block->getItemHtml($item) ?>
+                    <?php if ($this->helper(\Magento\GiftMessage\Helper\Message::class)->isMessagesAllowed('order_item', $item) && $item->getGiftMessageId()): ?>
+                        <?php $giftMessage = $this->helper(\Magento\GiftMessage\Helper\Message::class)->getGiftMessageForEntity($item); ?>
+                        <tr>
+                            <td class="col options w-[115px]">
+                                <a href="#" id="order-item-gift-message-link-<?= /* @noEscape */ (int) $item->getId() ?>" class="action show" aria-controls="order-item-gift-message-<?= /* @noEscape */ (int) $item->getId() ?>" data-item-id="<?= /* @noEscape */ (int) $item->getId() ?>">
+                                    <?= $escaper->escapeHtml(__('Gift Message')) ?>
+                                </a>
+                                <?php $giftMessage = $this->helper(\Magento\GiftMessage\Helper\Message::class)->getGiftMessageForEntity($item); ?>
+                                <div class="order-gift-message" id="order-item-gift-message-<?= (int) $item->getId() ?>" role="region" aria-expanded="false" tabindex="-1">
+                                    <a href="#" title="<?= $escaper->escapeHtml(__('Close')) ?>" aria-controls="order-item-gift-message-<?= (int) $item->getId() ?>" data-item-id="<?= (int) $item->getId() ?>" class="action close">
+                                        <?= $escaper->escapeHtml(__('Close')) ?>
+                                    </a>
+                                    <dl class="item-options">
+                                        <dt class="item-sender"><strong class="label"><?= $escaper->escapeHtml(__('From')) ?></strong><?= $escaper->escapeHtml($giftMessage->getSender()) ?></dt>
+                                        <dt class="item-recipient"><strong class="label"><?= $escaper->escapeHtml(__('To')) ?></strong><?= $escaper->escapeHtml($giftMessage->getRecipient()) ?></dt>
+                                        <dd class="item-message"><?= /* @noEscape */ $this->helper(\Magento\GiftMessage\Helper\Message::class)->getEscapedGiftMessage($item) ?></dd>
+                                    </dl>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endif ?>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php if ($block->isPagerDisplayed()): ?>
+            <div class="flex flex-col sm:flex-row flex-wrap justify-end items-center md:items-start gap-5 mt-5 pt-5 border-t border-gray-200">
+                <?= $block->getPagerHtml() ?>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+<?php if ($giftMessage): ?>
+    <!-- removed gift message code of require js -->
+<?php endif; ?>

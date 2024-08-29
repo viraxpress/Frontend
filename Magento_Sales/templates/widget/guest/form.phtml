@@ -1,0 +1,239 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * @var $block \Magento\Sales\Block\Widget\Guest\Form
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php if ($block->isEnable()): ?>
+    <div class="widget block block-orders-returns">
+        <div class="block-title">
+            <strong role="heading" aria-level="2"><?= $escaper->escapeHtml(__('Orders and Returns')) ?></strong>
+        </div>
+        <div class="block-content">
+            <form id="oar-widget-orders-and-returns-form" x-data="validateOrderAndReturn()" x-on:submit.prevent="onSubmit" class="form form-orders-search  mt-5 mb-10">
+                <fieldset class="fieldset space-y-5 w-full lg:w-1/2">
+                    <div class="field find required">
+                        <label class="label block text-sm font-medium leading-6 text-gray-900"><span><?= $escaper->escapeHtml(__('Find Order By')) ?></span></label>
+
+                        <div class="control mt-2">
+                            <select name="oar_type" id="quick-search-type-id" class="select" title="" x-on:change="selectQuickSearch">
+                                <option value="email"><?= $escaper->escapeHtml(__('Email')) ?></option>
+                                <option value="zip"><?= $escaper->escapeHtml(__('ZIP Code')) ?></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field id required">
+                        <label for="oar-order-id" class="label block text-sm font-medium leading-6 text-gray-900">
+                            <span><?= $escaper->escapeHtml(__('Order ID')) ?></span>
+                        </label>
+
+                        <div class="control mt-2">
+                            <input type="text" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="oar-order-id" name="oar_order_id" autocomplete="off" x-on:input.debounce="onChange" required />
+                        </div>
+                    </div>
+                    <div class="field lastname required">
+                        <label for="oar-billing-lastname"
+                               class="label block text-sm font-medium leading-6 text-gray-900"><span><?= $escaper->escapeHtml(__('Billing Last Name')) ?></span></label>
+
+                        <div class="control mt-2">
+                            <input type="text" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="oar-billing-lastname" name="oar_billing_lastname" autocomplete="off" x-on:input.debounce="onChange" required />
+                        </div>
+                    </div>
+                    <template x-if="isShowEmail">
+                        <div id="oar-email" class="field email required">
+                            <label for="oar_email" class="label block text-sm font-medium leading-6 text-gray-900"><span><?= $escaper->escapeHtml(__('Email')) ?></span></label>
+
+                            <div class="control mt-2">
+                                <input type="email" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="oar_email" name="oar_email" autocomplete="off" x-on:input.debounce="onChange" required />
+                                 <input type="text" class="input-text hidden" id="oar_zip" name="oar_zip" />
+                            </div>
+                        </div>
+                    </template>
+                    <template x-if="isShowZipCode">
+                        <div id="oar-zip" class="field zip required">
+                            <label for="oar_zip" class="label block text-sm font-medium leading-6 text-gray-900">
+                                <span><?= $escaper->escapeHtml(__('Billing ZIP Code')) ?></span>
+                            </label>
+
+                            <div class="control mt-2">
+                                <input type="text" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="oar_zip" name="oar_zip"  x-on:input.debounce="onChange" required />
+                                 <input type="email" class="input-text hidden" id="oar_email" name="oar_email" />
+                            </div>
+                        </div>
+                    </template>
+                          <input name="form_key" type="hidden" x-bind:value="getFormKeyCookie()">
+                    <?= /* @noEscape */ $secureRenderer->renderStyleAsTag("display: none;", 'div#oar-zip') ?>
+                </fieldset>
+                <div class="actions-toolbar mt-8">
+                    <div class="primary">
+                        <button type="submit" title="<?= $escaper->escapeHtml(__('Search')) ?>" class="action search primary-btn">
+                            <span><?= $escaper->escapeHtml(__('Search')) ?></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+<?php endif; ?>
+<script>
+    function novalidateForm(formElement) {
+        if (formElement.tagName === 'FORM') {
+            formElement.setAttribute('novalidate', '');
+        } else {
+            return;
+        }
+    }
+    function validateOrderAndReturn() {
+        var formElement = document.getElementById('oar-widget-orders-and-returns-form');
+        novalidateForm(formElement);
+        return {
+            email: '',
+            isSubmit: true,
+            isShowEmail: true,
+            inputValue: '',
+            isShowZipCode: false,
+            messages: {}, 
+            requiredMessage: 'Required field.',
+            emailPattern: /^([a-z0-9,!\#\$%&'\*\+\/=\?\^_`\{\|\}~-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z0-9,!\#\$%&'\*\+\/=\?\^_`\{\|\}~-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*@([a-z0-9-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z0-9-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*\.(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]){2,})$/i,
+
+            init() {
+                if (document.getElementById('oar_email')) {
+                    this.email = document.getElementById('oar_email').value;
+                }
+            },
+            selectQuickSearch(e) {
+                const selectedValue =  e.target.value;
+                if (selectedValue === 'email') {
+                    this.isShowEmail = true;
+                    this.isShowZipCode = false;
+                } else if (selectedValue === 'zip') {
+                    this.isShowEmail = false;
+                    this.isShowZipCode = true;
+                }
+            },
+            validateField() {
+                this.messages = {};
+                const form = document.getElementById('oar-widget-orders-and-returns-form'); 
+                const inputs = form.querySelectorAll('input');
+
+                inputs.forEach(input => {
+                    const value = input.value.trim();
+                    if (input.hasAttribute('required') && !value) {
+                        this.messages[input.id] = this.requiredMessage;
+                    }
+                    if (input.id === 'oar_email' && value && !this.emailPattern.test(value)) {
+                        this.messages[input.id] = 'Please enter a valid email address.';
+                    }
+                });
+                return Object.keys(this.messages).length === 0;
+            },
+
+            onSubmit(event) {
+                const formId = 'oar-widget-orders-and-returns-form';
+                var form = document.getElementById(formId);
+                form.addEventListener("submit", function (event) { event.preventDefault(); });
+                const formData = new FormData(form);
+                formData.append('form_key', getFormKeyCookie());
+
+                if (this.validateField()) {
+                    document.body.classList.add('vira-request');
+                    fetch('<?= $escaper->escapeUrl($block->getActionUrl()) ?>', {
+                        method: "POST",
+                        body: formData,
+                        credentials: "include"
+                    })
+                    .then(response => {
+                        document.body.classList.remove('vira-request');
+                        if (response.ok) {
+                            if (window.location.href !== response.url && response.url !== BASE_URL) {
+                                window.location.href = response.url;
+                            } else {
+                                form.reset();
+                                getCookie("mage-messages");
+                                const captchaCheckbox = document.querySelector('.required-captcha checkbox');
+                                if (captchaCheckbox) {
+                                    grecaptcha.reset();
+                                }
+                            }
+                        } else {
+                            console.error("Error:", response.status);
+                        }
+                    })
+                    .catch(error => { 
+                        console.error("Fetch error:", error);
+                        document.body.classList.remove('vira-request');
+                    });
+                } else {
+                    event.preventDefault();
+                    this.clearErrorMessages();
+                    for (const fieldId in this.messages) {
+                        if (this.messages.hasOwnProperty(fieldId)) {
+                            const inputField = document.getElementById(fieldId);
+                            const parentElement = document.createElement('div');
+                            parentElement.classList.add('vira-form-validation');
+                            const messageElement = document.createElement('div');
+                            messageElement.textContent = this.messages[fieldId];
+                            messageElement.classList.add('error-message');
+                            parentElement.appendChild(messageElement);
+                            inputField.parentNode.appendChild(parentElement);
+                        }
+                    }
+                }
+            },
+
+           onChange(event) {
+                const inputElement = event.target;
+                const fieldContainer = inputElement.closest('.field');
+                let errorMessageElement = fieldContainer.querySelector('.error-message');
+                if (!errorMessageElement) {
+                    const parentElement = document.createElement('div');
+                    parentElement.className = 'vira-form-validation';
+                    errorMessageElement = document.createElement('div');
+                    errorMessageElement.className = 'error-message';
+                    parentElement.appendChild(errorMessageElement);
+                    fieldContainer.appendChild(parentElement);
+                }
+
+                errorMessageElement.textContent = '';
+                const maxLength = inputElement.getAttribute('maxlength');
+                if (maxLength && inputElement.value.length >= maxLength) {
+                    errorMessageElement.textContent = `Field length should be at most ${maxLength}`;
+                    return;
+                }
+
+                const value = inputElement.value.trim();
+                if (inputElement.hasAttribute('required') && !value) {
+                    errorMessageElement.textContent = this.requiredMessage;
+                }
+            },
+
+            clearErrorMessages() {
+                var errorMessages = document.querySelectorAll('.vira-form-validation');
+                errorMessages.forEach(function (errorMessage) {
+                    errorMessage.parentNode.removeChild(errorMessage);
+                });
+            }
+        };
+    }
+</script>
+

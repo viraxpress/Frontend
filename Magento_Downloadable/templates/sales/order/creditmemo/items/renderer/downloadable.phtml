@@ -1,0 +1,107 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var $block \Magento\Downloadable\Block\Sales\Order\Item\Renderer\Downloadable */
+?>
+<?php $_item = $block->getItem() ?>
+<?php $_order = $block->getItem()->getOrderItem()->getOrder() ?>
+<tr class="border-b border-gray-200 pb-4 mb-4 block md:table-row" id="order-item-row-<?= $escaper->escapeHtmlAttr($_item->getId()) ?>">
+    <td class="col name text-left p-2 py-3 before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('Product Name')) ?>">
+        <div class="col-name-wrapper">
+            <strong class="product name product-item-name"><?= $escaper->escapeHtml($_item->getName()) ?></strong>
+            <?php if ($_options = $block->getItemOptions()): ?>
+                <div class="item-options block mt-2 space-y-2">
+                    <?php foreach ($_options as $_option): ?>
+                        <div class="text-xs">
+                            <span class="font-medium text-gray-800"><?= $escaper->escapeHtml($_option['label']) ?></span>
+                            <span class="inline-block mx-2">-</span>
+                            <?php if (!$block->getPrintStatus()): ?>
+                                <?php $_formatedOptionValue = $block->getFormatedOptionValue($_option) ?>
+                                <span<?php if (isset($_formatedOptionValue['full_view'])): ?> class="tooltip wrapper"<?php endif; ?>>
+                                    <?= /* @noEscape */ $_formatedOptionValue['value'] ?>
+                                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                        <div class="tooltip content">
+                                            <dl class="item options">
+                                                <dt><?= $escaper->escapeHtml($_option['label']) ?></dt>
+                                                <dd><?= /* @noEscape */ $_formatedOptionValue['full_view'] ?></dd>
+                                            </dl>
+                                        </div>
+                                    <?php endif; ?>
+                                    </span>
+                            <?php else: ?>
+                                <span><?= $escaper->escapeHtml((isset($_option['print_value']) ? $_option['print_value'] : $_option['value'])) ?></span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <?php /* downloadable */?>
+            <?php if ($links = $block->getLinks()): ?>
+                <div class="block mt-2 space-y-2">
+                    <div class="item-options links">
+                        <span class="font-semibold text-black"><?= $escaper->escapeHtml($block->getLinksTitle()) ?></span>
+                        <span class="inline-block mx-2">-</span>
+                        <?php foreach ($links->getPurchasedItems() as $link): ?>
+                            <span class="font-medium"><?= $escaper->escapeHtml($link->getLinkTitle()) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php /* EOF downloadable */?>
+
+            <?php $addInfoBlock = $block->getProductAdditionalInformationBlock(); ?>
+            <?php if ($addInfoBlock):?>
+                <?= $addInfoBlock->setItem($_item->getOrderItem())->toHtml() ?>
+            <?php endif; ?>
+            <?= $escaper->escapeHtml($_item->getDescription()) ?>
+        </div>
+    </td>
+    <td class="col sku text-left md:text-center p-2 py-3 text-sm before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('SKU')) ?>">
+        <div class="col-sku-wrapper">
+            <?= /* @noEscape */ $block->prepareSku($block->getSku()) ?>
+        </div>
+    </td>
+    <td class="col price text-left md:text-center p-2 py-3 before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none font-semibold grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('Price')) ?>">
+        <div class="col-price-wrapper">
+            <?= $block->getItemPriceHtml() ?>
+        </div>
+    </td>
+    <td class="col qty text-left md:text-center p-2 py-3 text-sm before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>">
+        <div class="col-qty-wrapper">
+            <?= (float)$_item->getQty() * 1 ?>
+        </div>
+    </td>
+    <td class="col subtotal text-left md:text-center p-2 py-3 before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none font-semibold grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('Subtotal')) ?>">
+        <div class="col-subtotal-wrapper">
+            <?= $block->getItemRowTotalHtml() ?>
+        </div>
+    </td>
+    <td class="col discount text-left md:text-center p-2 py-3 before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('Discount Amount')) ?>">
+        <div class="col-discount-wrapper">
+            <?= /* @noEscape */ $_order->formatPrice(-$_item->getDiscountAmount()) ?>
+        </div>
+    </td>
+    <td class="col total text-left md:text-center p-2 py-3 before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none font-semibold grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('Row Total')) ?>">
+        <div class="col-total-wrapper">
+            <?= $block->getItemRowTotalAfterDiscountHtml() ?>
+        </div>
+    </td>
+</tr>

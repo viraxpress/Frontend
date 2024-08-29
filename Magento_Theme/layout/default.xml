@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+-->
+<page layout="3columns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="default_head_blocks"/>
+    <body>
+        <attribute name="id" value="html-body"/>
+        <attribute name="class" value="antialiased"/>
+        <attribute name="class" value="font-regular"/>
+        <attribute name="class" value="text-base"/>
+        <attribute name="class" value="text-gray-900"/>
+
+        <referenceBlock name="js_cookies" remove="true"/>
+        <referenceContainer name="header.container" htmlClass="page-header bg-white transition-all duration-200 ease-in-out shadow">
+            <container name="header.panel.wrapper" htmlClass="panel wrapper bg-primary py-2" htmlTag="div" htmlId="header-panel" before="-">
+                <container name="header.panel" label="Page Header Panel" htmlTag="div" htmlClass="panel header mx-auto container flex justify-end text-center lg:text-left items-center gap-5 px-4 sm:px-6 lg:px-8">
+                    <block class="Magento\Framework\View\Element\Template" name="skip_to_content" template="Magento_Theme::html/skip.phtml">
+                        <arguments>
+                            <argument name="target" xsi:type="string">contentarea</argument>
+                            <argument name="label" translate="true" xsi:type="string">Skip to Content</argument>
+                        </arguments>
+                    </block>
+                    <block class="ViraXpress\Cms\Block\Block" name="cms_announcement" before="-" template="Magento_Cms::header/block.phtml" />
+                    <container name="desktop-store-settings" label="Desktop Store Settings" as="desktop-store-settings" htmlTag="div" htmlClass="desktop-store-settings hidden ml-auto w-max lg:flex">
+                        <block class="Magento\Store\Block\Switcher" name="store_language" as="store_language" template="Magento_Store::switch/languages.phtml">
+                            <arguments>
+                                <argument name="css_class" xsi:type="string">hidden xl:inline-block</argument>
+                                <argument name="view_model" xsi:type="object">Magento\Store\ViewModel\SwitcherUrlProvider</argument>
+                            </arguments>
+                        </block>
+                    </container>
+                </container>
+            </container>
+            <container name="header-wrapper" label="Page Header" as="header-wrapper" htmlTag="div" htmlClass="header content relative mx-auto container flex items-center p-4 sm:px-6 lg:px-8">
+                <block class="Magento\Theme\Block\Html\Header\Logo" name="logo">
+                    <arguments>
+                        <argument name="logoPathResolver" xsi:type="object">Magento\Theme\ViewModel\Block\Html\Header\LogoPathResolver</argument>
+                        <argument name="logo_size_resolver" xsi:type="object">Magento\Theme\ViewModel\Block\Html\Header\LogoSizeResolver</argument>
+                    </arguments>
+                </block>
+                <container name="desktop-menu" label="Desktop Menu" as="desktop-menu" htmlTag="div" htmlClass="desktop-navigations order-2 hidden lg:block" after="logo">
+                    <block class="Magento\Theme\Block\Html\Topmenu" name="desktop.menu" template="Magento_Theme::html/topmenu.phtml" />
+                </container>             
+                <block class="Magento\Customer\Block\Account\Navigation" name="top.links">
+                    <arguments>
+                        <argument name="css_class" xsi:type="string">header links divide-y divide-gray-200 lg:divide-transparent</argument>
+                    </arguments>
+                </block>
+            </container>
+        </referenceContainer>
+        <referenceContainer name="page.top">
+            <container name="mobile.navigation.sections" label="Mobile Navigation" as="mobile-menu" htmlTag="div" htmlClass="mobile-menu block lg:hidden">
+                <block class="Magento\Framework\View\Element\Template" name="navigation.sections" before="-" template="Magento_Theme::html/sections.phtml">
+                    <arguments>
+                        <argument name="group_name" xsi:type="string">navigation-sections</argument>
+                        <argument name="group_css" xsi:type="string">nav-sections</argument>
+                    </arguments>
+                    <block class="Magento\Framework\View\Element\Template" name="store.menu" group="navigation-sections" template="Magento_Theme::html/container.phtml">
+                        <arguments>
+                            <argument name="title" translate="true" xsi:type="string">Menu</argument>
+                        </arguments>
+                        <block class="Magento\Theme\Block\Html\Topmenu" name="catalog.topnav" template="Magento_Theme::html/topmenu.phtml" before="-"/>
+                    </block>
+                    <block class="Magento\Framework\View\Element\Text" name="store.links" group="navigation-sections">
+                        <arguments>
+                            <argument name="title" translate="true" xsi:type="string">Account</argument>
+                            <argument name="use_force" xsi:type="boolean">true</argument>
+                            <argument name="text" xsi:type="string"><![CDATA[<!-- Account links -->]]></argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Framework\View\Element\Template" name="store.settings" group="navigation-sections" template="Magento_Theme::html/container.phtml">
+                        <arguments>
+                            <argument name="title" translate="true" xsi:type="string">Settings</argument>
+                        </arguments>
+                        <block class="Magento\Store\Block\Switcher" name="store.settings.language" template="Magento_Store::switch/languages.phtml">
+                            <arguments>
+                                <argument name="id_modifier" xsi:type="string">nav</argument>
+                                <argument name="view_model" xsi:type="object">Magento\Store\ViewModel\SwitcherUrlProvider</argument>
+                            </arguments>
+                        </block>
+                        <block class="Magento\Directory\Block\Currency" name="store.settings.currency" template="Magento_Directory::currency.phtml">
+                            <arguments>
+                                <argument name="id_modifier" xsi:type="string">nav</argument>
+                            </arguments>
+                        </block>
+                    </block>
+                </block>
+            </container>
+            <container name="top.container" as="topContainer" label="After Page Header Top" htmlTag="div" htmlClass="top-container"/>
+            <block class="Magento\Theme\Block\Html\Breadcrumbs" name="breadcrumbs" as="breadcrumbs"/>
+        </referenceContainer>
+
+        <move element="breadcrumbs" destination="main.content" before="-" />
+
+        <referenceContainer name="columns.top">              
+            <block class="Magento\Theme\Block\Html\Title" name="page.main.title" template="Magento_Theme::html/title.phtml"/>            
+            <container name="page.messages" htmlTag="div" htmlClass="page messages">
+                <block class="Magento\Framework\View\Element\Messages" name="messages" as="messages" template="Magento_Theme::messages.phtml"/>
+            </container>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="page-scripts" template="Magento_Theme::page/js/scripts.phtml"/>
+            <block class="Magento\Framework\View\Element\Template" name="page-toolbar-script" template="Magento_Theme::html/toolbar-script.phtml" />
+            <block class="Magento\Framework\View\Element\Template" name="page-slider-script" template="Magento_Theme::page/js/slider.phtml"/>
+            <block class="Magento\Framework\View\Element\Template" name="page-sticky-script" ifconfig="viraxpress_config/header/enable_sticky_header" template="Magento_Theme::page/js/sticky.phtml"/>
+        </referenceContainer>
+        <referenceContainer name="footer-container" htmlClass="page-footer bg-slate-50">
+            <container name="footer" as="footer" label="Page Footer" htmlTag="div" htmlClass="footer content mx-auto container px-6 py-10 space-y-8 lg:px-8">
+                <container name="footer.cms.block" htmlTag="div" htmlClass="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-6 lg:gap-8">
+                    <container name="footer.cms.block.left" htmlTag="div" htmlClass="lg:col-span-2" before="-">
+                        <block class="Magento\Theme\Block\Html\Header\Logo" name="footer.logo" template="Magento_Theme::html/footer/logo/logo.phtml">
+                            <arguments>
+                                <argument name="logoPathResolver" xsi:type="object">Magento\Theme\ViewModel\Block\Html\Header\LogoPathResolver</argument>
+                                <argument name="logo_size_resolver" xsi:type="object">Magento\Theme\ViewModel\Block\Html\Header\LogoSizeResolver</argument>
+                            </arguments>
+                        </block>
+                        <block class="ViraXpress\Theme\Block\Html\Footer\Description" ifconfig="viraxpress_config/general/enable_viraxpress" name="why.viraxpress.desc" template="Magento_Theme::html/viraxpress_text.phtml"/>
+                        <block class="ViraXpress\Cms\Block\Block" name="footer.social.links" template="Magento_Theme::html/footer/social_links.phtml"/>
+                        <block class="Magento\Store\Block\Switcher" name="store_switcher" as="store_switcher" template="Magento_Store::switch/stores.phtml"/>
+                    </container>
+                    <container name="cms.footer.links" htmlTag="div" htmlClass="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:col-span-3" after="footer.cms.block.left">
+                        <block class="Magento\Framework\View\Element\Html\Links" name="footer_links">
+                            <arguments>
+                                <argument name="title" xsi:type="string">Explore</argument>
+                                <argument name="css_class" xsi:type="string">footer links mt-5 col-span-1 lg:space-y-3</argument>
+                            </arguments>
+                            <block class="Magento\Framework\View\Element\Html\Link\Current" ifconfig="contact/contact/enabled" name="contact-us-link" after="-">
+                                <arguments>
+                                    <argument name="label" xsi:type="string" translate="true">Contact Us</argument>
+                                    <argument name="path" xsi:type="string">contact</argument>
+                                </arguments>
+                            </block>
+                        </block>
+                        <container name="footer.links.block" htmlTag="div" htmlClass="xl:col-span-2" after="footer_links">
+                            <block class="ViraXpress\Cms\Block\Block" name="footer_links_block" template="Magento_Cms::footer/block.phtml" />
+                        </container>
+                    </container>
+                    <container name="cms.app.downloads" htmlTag="div" htmlClass="grid grid-cols-1 gap-5 lg:col-span-1" after="cms.footer.links">
+                        <block class="ViraXpress\Cms\Block\Block" name="app_download" template="Magento_Cms::footer/extra-block.phtml" />
+                    </container>
+                </container>
+                <block class="Magento\Theme\Block\Html\Footer" name="copyright" template="Magento_Theme::html/copyright.phtml"/>
+                <block class="Magento\Framework\View\Element\Template" name="report.bugs" template="Magento_Theme::html/bugreport.phtml" ifconfig="design/footer/report_bugs"/>
+            </container>
+        </referenceContainer>
+        <referenceBlock name="require-cookie" remove="true" />
+    </body>
+</page>

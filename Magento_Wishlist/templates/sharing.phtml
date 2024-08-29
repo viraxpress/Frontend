@@ -1,0 +1,146 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Wishlist\Block\Customer\Sharing $block */
+?>
+<form class="form wishlist share w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6" x-data="validateSharWishlist()" x-on:submit.prevent="onSubmit" id="wishlist-share-form" action="<?= $escaper->escapeUrl($block->getSendUrl()) ?>" method="post">
+    <fieldset class="fieldset space-y-5">
+        <input type="hidden" name="form_key" :value="formKey">
+        <legend class="legend pb-3 border-b border-gray-200 w-full text-lg text-gray-800 font-semibold"><span><?= $escaper->escapeHtml(__('Sharing Information')) ?></span></legend>
+        <div class="field emails required" x-data="{ emailError: '' }">
+            <label class="label" for="email_address"><span class="inline-block text-sm leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Email addresses, separated by commas')) ?></span><span class="inline-block ml-[2px] text-required">*</span></label>
+            <div class="control mt-1">
+                <textarea name="emails" cols="60" rows="5" required x-on:input.debounce="onChange" id="email_address" x-model="email" class="w-full max-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary"><?= /* @noEscape */ $block->getEnteredData('emails') ?></textarea>
+            </div>
+        </div>
+        <div class="field text">
+            <label class="label" for="message"><span class="inline-block text-sm leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Message')) ?></span></label>
+            <div class="control mt-1">
+                <textarea id="message" name="message" cols="60" rows="5" class="w-full max-w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary"><?= /* @noEscape */ $block->getEnteredData('message') ?></textarea>
+            </div>
+        </div>
+        <?php if ($this->helper(\Magento\Wishlist\Helper\Rss::class)->isRssAllow()): ?>
+            <div class="field choice rss">
+                <input type="checkbox" name="rss_url" id="rss_url" value="1" title="<?= $escaper->escapeHtmlAttr(__('Check here to link an RSS feed to your Wish List.')) ?>" class="checkbox">
+                <label class="label" for="rss_url">
+                    <span class="pb-1">
+                        <?= $escaper->escapeHtml(__('Check here to link an RSS feed to your Wish List.')) ?>
+                    </span>
+                </label>
+            </div>
+        <?php endif; ?>
+    </fieldset>
+    <?= $block->getChildHtml('captcha') ?>
+    <div class="actions-toolbar mt-5 flex flex-row-reverse justify-between items-center gap-3">
+        <div class="primary">
+            <button type="submit" title="<?= $escaper->escapeHtmlAttr(__('Share Wish List')) ?>" class="action submit primary primary-btn">
+                <span><?= $escaper->escapeHtml(__('Share Wish List')) ?></span>
+            </button>
+        </div>
+        <div class="secondary">
+            <a class="action back primary-btn" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>"><span><?= $escaper->escapeHtml(__('Back')) ?></span></a>
+        </div>
+    </div>
+</form>
+<script>
+    function novalidateForm(formElement) {
+        if (formElement.tagName === 'FORM') {
+            formElement.setAttribute('novalidate', '');
+        } else {
+            return;
+        }
+    }
+
+    function validateSharWishlist() {
+        var formElement = document.getElementById('wishlist-share-form');
+        novalidateForm(formElement);
+
+        return {
+            email: '',
+            isSubmit: true,
+            message: '',
+            formKey: getFormKeyCookie(),
+            requiredMessage: 'Required field.',
+            validateMessage: 'Please enter valid email addresses, separated by commas. For example, johndoe@domain.com, johnsmith@domain.com.',
+            emailPattern: /^([a-z0-9,!\#\$%&'\*\+\/=\?\^_`\{\|\}~-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z0-9,!\#\$%&'\*\+\/=\?\^_`\{\|\}~-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*@([a-z0-9-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z0-9-]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*\.(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]){2,})$/i,
+
+            validateEmail() {
+                this.message = '';
+                document.getElementById('email_address').focus();
+
+                const emails = this.email.split(',').map(email => email.trim());
+                if (!this.email.trim()) {
+                    this.message = this.requiredMessage;
+                    this.isSubmit = false;
+                } else {
+                    this.isSubmit = emails.every(email => {
+                        if (!email || !this.emailPattern.test(email)) {
+                            this.message = this.validateMessage;
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+
+                this.insertElement(this.message);
+                return this.isSubmit;
+            },
+
+            onSubmit(event) {
+                event.preventDefault();
+                var formId = event.target.id;
+                var form = document.getElementById(formId);
+
+                if(this.validateEmail()) {
+                    form.submit();
+                }
+            },
+
+            onChange() {
+                this.message = '';
+                if (!this.email.trim()) {
+                    this.message = this.requiredMessage;
+                }
+                this.insertElement(this.message);
+            },
+
+            insertElement(value) {
+                const emailControl = document.getElementById('email_address').closest('.control');
+                let errorDiv = emailControl.querySelector('.text-error');
+
+                if (value && !errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.classList.add('text-error', 'text-xs', 'mt-1');
+                    errorDiv.innerText = value;
+                    emailControl.appendChild(errorDiv);
+                } else if (!value && errorDiv) {
+                    errorDiv.remove();
+                }
+            }
+        };
+    }
+</script>
+
+
+
+
+
+

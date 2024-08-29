@@ -1,0 +1,69 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+/**
+ * @var $block \Magento\CatalogSearch\Block\Advanced\Result
+ */
+/** this changes need for valid apply filters and configuration before search process is started */
+$productList = $block->getProductListHtml();
+?>
+<?php if ($results = $block->getResultCount()): ?>
+    <div class="search found">
+        <?php if ($results == 1): ?>
+            <?= /* @noEscape */ __('<strong>%1 item</strong> were found using the following search criteria', $results) ?>
+        <?php else: ?>
+            <?= /* @noEscape */ __('<strong>%1 items</strong> were found using the following search criteria', $results) ?>
+        <?php endif; ?>
+    </div>
+<?php else: ?>
+    <div role="alert" class="message error">
+        <div class="p-3 bg-red-100 text-required w-full font-medium my-2">
+            <?= $escaper->escapeHtml(__('We can\'t find any items matching these search criteria.')) ?> 
+            <a class="underline" href="<?= $escaper->escapeUrl($block->getFormUrl()) ?>"><?= $escaper->escapeHtml(__('Modify your search.')) ?></a>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php $searchCriterias = $block->getSearchCriterias(); ?>
+<div class="search summary">
+    <?php foreach (['left', 'right'] as $side): ?>
+        <?php if (!empty($searchCriterias[$side])): ?>
+            <ul class="items">
+                <?php foreach ($searchCriterias[$side] as $criteria): ?>
+                    <li class="item"><strong><?= $escaper->escapeHtml(__($criteria['name'])) ?>:</strong> <?= $escaper->escapeHtml($criteria['value']) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</div>
+<?php if ($block->getResultCount()): ?>
+    <div class="message notice">
+        <div class="w-full p-3 bg-orange-100 my-2 font-medium text-gray-900">
+            <?= $escaper->escapeHtml(__("Don't see what you're looking for?")) ?>
+            <a class="underline" href="<?= $escaper->escapeUrl($block->getFormUrl()) ?>"><?= $escaper->escapeHtml(__('Modify your search.')) ?></a>
+        </div>
+    </div>
+<?php endif; ?>
+<?php if ($block->getResultCount()): ?>
+    <div class="search results"><?= /* @noEscape */ $productList ?></div>
+<?php endif; ?>
+<?php $block->getSearchCriterias(); ?>

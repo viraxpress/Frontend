@@ -1,0 +1,98 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Customer\Block\Address\Book $block */
+?>
+
+
+<div class="block w-full shadow-sm border border-gray-100 rounded-lg mb-5 p-4 bg-white">
+    <div class="font-semibold text-xl text-primary">
+        <?= $escaper->escapeHtml(__('Default Addresses')) ?>
+        <a class="action back" href="<?= $escaper->escapeUrl($block->getUrl('customer/account')) ?>"><span><?= $escaper->escapeHtml(__('Back')) ?></span></a>
+    </div>
+</div>
+<div class="grid grid-cols-12 gap-5">
+    <div class="col-span-12 md:col-span-6 w-full shadow-sm border border-gray-100 rounded-lg mb-5 p-4 bg-white">
+        <div class="block relative">
+            <?php if ($_pAddsses = $block->getDefaultBilling()): ?>
+                <div class="block">
+                    <div class="font-semibold mb-2 flex justify-between items-start gap-5">
+                        <?= $escaper->escapeHtml(__('Default Billing Address')) ?>
+                        <a class="action edit" href="<?= $escaper->escapeUrl($block->getAddressEditUrl($_pAddsses)) ?>" role="link" title="Change Billing Address">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                            </span>
+                        </a>
+                    </div>
+                    <address class="not-italic">
+                        <?= $block->getAddressHtml($block->getAddressById($_pAddsses)) ?>
+                    </address>
+
+                    <div class="box-actions">
+                        
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="box box-billing-address">
+                    <span><?= $escaper->escapeHtml(__('Default Billing Address')) ?></span>
+                    <div class="box-content">
+                        <p><?= $escaper->escapeHtml(__('You have no default billing address in your address book.')) ?></p>
+                    </div>
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+    <div class="col-span-12 md:col-span-6 w-full shadow-sm border border-gray-100 rounded-lg mb-5 p-4 bg-white">
+        <div class="block">
+            <?php if ($_pAddsses = $block->getDefaultShipping()): ?>
+                <div class="block">
+                    <div class="font-semibold mb-2 flex justify-between items-start gap-5">
+                        <?= $escaper->escapeHtml(__('Default Shipping Address')) ?>
+                        <a class="action edit" href="<?= $escaper->escapeUrl($block->getAddressEditUrl($_pAddsses)) ?>" role="link" title="Change Shipping Address">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                </svg>
+                            </span>
+                        </a>
+                    </div>
+                    <address class="not-italic">
+                        <?= $escaper->getAddressHtml($block->getAddressById($_pAddsses)) ?>
+                    </address>
+                </div>
+            <?php else: ?>
+                <div class="box box-shipping-address">
+                    <span><?= $escaper->escapeHtml(__('Default Shipping Address')) ?></span>
+                    <div class="box-content">
+                        <p><?= $escaper->escapeHtml(__('You have no default shipping address in your address book.')) ?></p>
+                    </div>
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+</div>
+
+
+
+
+

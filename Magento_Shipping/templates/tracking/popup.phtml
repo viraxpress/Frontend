@@ -1,0 +1,97 @@
+ <?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+ use Magento\Framework\View\Element\Template;
+
+/**
+ * @var $block \Magento\Shipping\Block\Tracking\Popup
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+
+ $results = $block->getTrackingInfo();
+    ?>
+<div class="page tracking w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white">
+    <?php if (!empty($results)): ?>
+        <?php foreach ($results as $shipId => $result): ?>
+            <?php if ($shipId): ?>
+                <div class="order subtitle caption font-semibold pb-2">
+                    <?= /* @noEscape */ $escaper->escapeHtml(__('Shipment #')) . $shipId ?>
+                </div>
+            <?php endif; ?>
+            <?php if (!empty($result)): ?>
+                <?php foreach ($result as $counter => $track): ?>
+                    <div class="table-wrapper mb-5">
+                        <?php
+                            $shipmentBlockIdentifier = $shipId . '.' . $counter;
+                            $block->addChild('shipping.tracking.details.' . $shipmentBlockIdentifier, Template::class, [
+                                'track' => $track,
+                                'template' => 'Magento_Shipping::tracking/details.phtml',
+                                'storeSupportEmail' => $block->getStoreSupportEmail()
+                            ]);
+                        ?>
+                        <?= /* @noEscape */ $block->getChildHtml('shipping.tracking.details.' .
+                            $shipmentBlockIdentifier) ?>
+                    </div>
+                    <?php if (is_object($track) && !empty($track->getProgressdetail())): ?>
+                        <?php
+                            $block->addChild(
+                                'shipping.tracking.progress.' . $shipmentBlockIdentifier,
+                                Template::class,
+                                ['track' => $track, 'template' => 'Magento_Shipping::tracking/progress.phtml']
+                            );
+                        ?>
+                        <?= /* @noEscape */ $block->getChildHtml('shipping.tracking.progress.' .
+                            $shipmentBlockIdentifier) ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="message info empty">
+                    <div><?= $escaper->escapeHtml(__('There is no tracking available for this shipment.')) ?></div>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="message info empty">
+            <div><?= $escaper->escapeHtml(__('There is no tracking available.')) ?></div>
+        </div>
+    <?php endif; ?>
+    <div class="actions mt-5">
+        <button type="button"
+                title="<?= $escaper->escapeHtml(__('Close Window')) ?>"
+                class="action close primary-btn">
+            <span><?= $escaper->escapeHtml(__('Close Window')) ?></span>
+        </button>
+        <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+            'onclick',
+            "window.close(); window.opener.focus();",
+            'button.action.close'
+        ) ?>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.opener === null || typeof window.opener === "undefined") {
+            document.querySelectorAll('.actions button.close').forEach(function(button) {
+                button.style.display = 'none';
+            });
+        }
+    });
+</script>

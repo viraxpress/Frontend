@@ -1,0 +1,149 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+/**
+ * Grouped product data template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\BaseImage
+ * @var $block \Magento\GroupedProduct\Block\Product\View\Type\Grouped
+ */
+?>
+<?php $block->setPreconfiguredValue(); ?>
+<?php $_product = $block->getProduct(); ?>
+<?php $_associatedProducts = $block->getAssociatedProducts(); ?>
+<?php $_hasAssociatedProducts = count($_associatedProducts) > 0; ?>
+<?php
+$wishlistFormId = base64_encode($_product->getId() . "-product_view_wishlist_form");
+$wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
+?>
+
+<div class="grouped block w-full">
+    <ul class="divide-y divide-gray-200 mb-5">
+        <li class="flex justify-between gap-3 py-4">
+            <div>
+                <p class="text-black font-semibold"><?= $escaper->escapeHtml(__('Product Name')) ?></p>
+            </div>
+            <?php if ($_product->isSaleable()): ?>
+                <div class="basis-[132px]">
+                    <p class="text-black font-semibold text-center"><?= $escaper->escapeHtml(__('Qty')) ?></p>
+                </div>
+            <?php endif; ?>
+        </li>
+
+        <?php if ($_hasAssociatedProducts): ?>
+            <?php foreach ($_associatedProducts as $_item): ?>
+                <li class="flex justify-between items-center gap-3 py-4">
+                    <div class="">
+                        <p class="product-item-name text-gray-700 font-medium"><?= $escaper->escapeHtml($_item->getName()) ?></p>
+                        <?php if ($block->getCanShowProductPrice($_product)): ?>
+                            <?php if ($block->getCanShowProductPrice($_item)): ?>
+                                <?= /* @noEscape */ $block->getProductPrice($_item) ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php if ($_product->isSaleable()): ?>
+                        <div class="flex items-center">
+                            <?php if ($_item->isSaleable()): ?>
+                                <div class="quantity-wrapper control qty flex justify-start items-center ring-1 ring-inset ring-gray-300 rounded-md bg-white" x-data="updateGroupedProductQty(<?= $_item->getQty() * 1 ?>)">
+                                    <button type="button" aria-label="Quantity Decrement" class="text-gray-800 w-11 h-11 flex justify-center items-center" x-on:click="handleDecrement">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"></path>
+                                        </svg>
+                                    </button>
+                                    <input type="number" id="qty" onchange="addGroupedProductToWishlist('super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]', event)" name="super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]" data-selector="super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]" :value="productQty" title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>" class="inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none focus:ring-gray-300" min="0" />
+
+                                    <button type="button" aria-label="Quantity Increment" class="text-gray-800 w-11 h-11 flex justify-center items-center" x-on:click="handleIncrement">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <script>
+                                    function updateGroupedProductQty(qty) {
+                                        return {
+                                            productQty: qty,
+                                            
+                                            init() {
+                                            },
+                                            handleDecrement() {
+                                                this.productQty = Math.max(0, this.productQty - 1);
+                                            },
+                                            handleIncrement() {
+                                                this.productQty = this.productQty + 1
+                                            }
+                                        }
+                                    }
+                                </script>
+                            <?php else: ?>
+                                <div class="stock unavailable" title="<?= $escaper->escapeHtmlAttr(__('Availability')) ?>">
+                                    <span><?= $escaper->escapeHtml(__('Out of stock')) ?></span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                </li>
+                <?php if ($block->getCanShowProductPrice($_product) && $block->getCanShowProductPrice($_item) && trim($block->getProductPriceHtml($_item, \Magento\Catalog\Pricing\Price\TierPrice::PRICE_CODE))): ?>
+                    <li class="row-tier-price">
+                        <div colspan="2">
+                            <?= $block->getProductPriceHtml(
+                                $_item,
+                                \Magento\Catalog\Pricing\Price\TierPrice::PRICE_CODE
+                            ) ?>
+                        </div>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <li>
+                <p>
+                    <?= $escaper->escapeHtml(__('No options of this product are available.')) ?>
+                </p>
+            </li>
+        <?php endif; ?>
+    </ul>
+</div>
+<div id="validation-message-box"></div>
+<script>
+    function addGroupedProductToWishlist(name, event) {
+        let quantity = parseFloat(event.target.value);
+        if (isNaN(quantity) || quantity < 0) {
+            quantity = 0;
+        }
+        quantity = Math.round(quantity);
+        event.target.value = quantity;
+        var form = document.getElementById("<?= $escaper->escapeHtml($wishlistFormId) ?>");
+        let elements = form.querySelector("input[name='" + name + "']");
+        if (quantity === 0) {
+            if (element) {
+                element.remove();
+            }
+        } else {
+            if (element) {
+                element.value = quantity;
+            } else {
+                var inputElement = document.createElement("input");
+                inputElement.type = "hidden";
+                inputElement.name = name;
+                inputElement.value = quantity;
+                form.appendChild(inputElement);
+            }
+        }
+    }
+</script>

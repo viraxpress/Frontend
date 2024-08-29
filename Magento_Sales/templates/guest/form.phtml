@@ -1,0 +1,105 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<form class="form form-orders-search mt-5 mb-10" id="oar-widget-orders-and-returns-form" x-data="Object.assign(initQuickSearch(), formValidateData.formDataValidation($root,'<?= $escaper->escapeUrl($block->getActionUrl()) ?>'))" @submit="onSubmit">
+    <fieldset class="fieldset space-y-5 w-full lg:w-1/2">
+        <legend class="legend pb-2 border-b border-gray-200 w-full"><span class="text-base text-gray-800"><?= $escaper->escapeHtml(__('Order Information')) ?></span></legend>
+        <div class="field id required">
+            <label class="label block text-sm font-medium leading-6 text-gray-900" for="oar-order-id"><?= $escaper->escapeHtml(__('Order ID')) ?>
+                <span class="text-required ml-1">*</span>
+            </label>
+            <div class="control mt-2">
+                <input type="text" autofocus class="input-text required-entry block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="oar-order-id" name="oar_order_id" x-on:input.debounce="onChange" required />
+            </div>
+        </div>
+        <div class="field lastname required">
+            <label class="label block text-sm font-medium leading-6 text-gray-900" for="oar-billing-lastname">
+                <?= $escaper->escapeHtml(__('Billing Last Name')) ?>
+                <span class="text-required ml-1">*</span>
+            </label>
+            <div class="control mt-2">
+                <input type="text" class="input-text required-entry block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="oar-billing-lastname" name="oar_billing_lastname" x-on:input.debounce="onChange" required />
+            </div>
+        </div>
+        <div class="field find required">
+            <label class="label block text-sm font-medium leading-6 text-gray-900" for="quick-search-type-id">
+                <?= $escaper->escapeHtml(__('Find Order By')) ?>
+                <span class="text-required ml-1">*</span>
+            </label>
+            <div class="control mt-2">
+                <select name="oar_type" id="quick-search-type-id" class="select required-entry" x-on:change="selectQuickSearch">
+                    <option value="email"><?= $escaper->escapeHtml(__('Email')) ?></option>
+                    <option value="zip"><?= $escaper->escapeHtml(__('ZIP Code')) ?></option>
+                </select>
+            </div>
+        </div>
+        <template x-if="isShowEmail">
+            <div id="oar-email" class="field email required">
+                <label class="label block text-sm font-medium leading-6 text-gray-900" for="oar_email"><?= $escaper->escapeHtml(__('Email')) ?>
+                    <span class="text-required ml-1">*</span>
+                </label>
+                <div class="control mt-2">
+                    <input type="email" class="input-text required-entry block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="oar_email" name="oar_email" x-on:input.debounce="onChange" required />
+                    <input type="text" class="input-text hidden" id="oar_zip" name="oar_zip" />
+                </div>
+            </div>
+        </template>
+        <template x-if="isShowZipCode">
+            <div id="oar-zip" class="field zip required">
+                <label class="label block text-sm font-medium leading-6 text-gray-900" for="oar_zip"><?= $escaper->escapeHtml(__('Billing ZIP Code')) ?>
+                    <span class="text-required ml-1">*</span>
+                </label>
+                <div class="control mt-2">
+                    <input type="text" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="oar_zip" name="oar_zip" x-on:input.debounce="onChange" required/>
+                    <input type="email" class="input-text hidden" id="oar_email" name="oar_email" />
+                </div>
+            </div>
+        </template>
+        <input name="form_key" type="hidden" x-bind:value="getFormKeyCookie()">
+        <?= /* @noEscape */ $secureRenderer->renderStyleAsTag('display: none;', 'div#oar-zip') ?>
+    </fieldset>
+    <div class="mt-8">
+        <button type="submit" title="<?= $escaper->escapeHtml(__('Continue')) ?>" class="action submit primary primary-btn">
+            <?= $escaper->escapeHtml(__('Continue')) ?>
+        </button>
+    </div>
+</form>
+<script>
+    function initQuickSearch() {
+        return {
+            isShowEmail: true,
+            isShowZipCode: false,
+            selectQuickSearch(e) {
+                var zipInput = document.getElementById("oar_zip");
+                const selectedValue = e.target.value;
+                if (selectedValue === 'email') {
+                    this.isShowEmail = true;
+                    this.isShowZipCode = false;
+                } else if (selectedValue === 'zip') {
+                    this.isShowEmail = false;
+                    this.isShowZipCode = true;
+                }
+            }
+        }
+    }
+</script>

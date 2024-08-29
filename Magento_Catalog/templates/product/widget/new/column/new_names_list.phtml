@@ -1,0 +1,49 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+?>
+<?php if (($_products = $block->getProductCollection()) && $_products->getSize()): ?>
+    <div class="block widget block-new-products-names">
+        <div class="block-title">
+            <strong><?= $escaper->escapeHtml(__('New Products')) ?></strong>
+        </div>
+        <div class="block-content">
+            <?php $suffix = $block->getNameInLayout(); ?>
+            <ol id="widget-new-products-<?= $escaper->escapeHtmlAttr($suffix) ?>"
+                class="product-items product-items-names">
+                <?php foreach ($_products->getItems() as $_product): ?>
+                    <li class="product-item">
+                        <strong class="product-item-name">
+                            <a href="<?= $escaper->escapeUrl($_product->getProductUrl()) ?>"
+                               title="<?= /* @noEscape */ $block->stripTags($_product->getName(), null, true) ?>)"
+                               class="product-item-link">
+                                <?= /* @noEscape */ $this->helper(
+                                    Magento\Catalog\Helper\Output::class
+                                )->productAttribute($_product, $_product->getName(), 'name') ?>
+                            </a>
+                        </strong>
+                    </li>
+                <?php endforeach; ?>
+            </ol>
+            <?= $block->getPagerHtml() ?>
+        </div>
+    </div>
+<?php endif; ?>

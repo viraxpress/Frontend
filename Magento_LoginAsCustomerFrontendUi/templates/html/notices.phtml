@@ -1,0 +1,89 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+/**
+ * @var \Magento\Framework\View\Element\Template $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$viewFileUrl = $block->getViewFileUrl('Magento_LoginAsCustomerFrontendUi::images/magento-icon.svg');
+?>
+<?php if ($block->getConfig()->isEnabled()): ?>
+    <div class="lac-notification-sticky transition-all duration-200 ease-in-out top-0 left-0 w-full z-999 bg-[#373330] p-3 lg:p-2 text-white" id="lac-notification">
+        <div class="lac-notification clearfix container mx-auto lg:px-8" data-asset="lac-notify-bar">
+            <div class="top-container flex justify-start items-center gap-4 lg:gap-8">
+                <div class="lac-notification-icon wrapper shrink-0">
+                    <img class="logo-img" src="<?= $escaper->escapeUrl($viewFileUrl) ?>" alt="Magento" />
+                </div>
+                <div class="lac-notification-text wrapper">
+                    <?= $escaper->escapeHtml(__('You are connected as')) ?>
+                    <span data-asset="lac-notify-bar-text" class="font-semibold"></span>
+                </div>
+                <div class="lac-notification-links wrapper flex-1 text-right text-sm">
+                    <?= $block->getChildHtml('login-as-customer-notice-links') ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const customer = customerData.get('customer');
+            const loggedAsCustomer = customerData.get('loggedAsCustomer');
+            const notifyBar = document.querySelector('[data-asset="lac-notify-bar"]');
+            const notifyBarText = document.querySelector('[data-asset="lac-notify-bar-text"]');
+            const loginAsCustomerAdmin = document.querySelector('#lac-notification');
+            let oldScrollY = window.scrollY;
+
+            const toggleNotifyBar = (isVisible) => {
+                notifyBar.style.display = isVisible ? "block" : "none";
+            };
+
+            const updateNotifyBarText = (fullname, websiteName) => {
+                notifyBarText.innerText = ` ${fullname} on ${websiteName}`;
+            };
+
+            const handleScroll = () => {
+                if (oldScrollY < window.scrollY) {
+                    if (window.scrollY > loginAsCustomerAdmin.offsetHeight) {
+                        loginAsCustomerAdmin.style.position = 'fixed';
+                        loginAsCustomerAdmin.style.top = `-${loginAsCustomerAdmin.offsetHeight}px`;
+                    } else {
+                        loginAsCustomerAdmin.removeAttribute('style');
+                    }
+                } else {
+                    loginAsCustomerAdmin.removeAttribute('style');
+                    loginAsCustomerAdmin.style.top = `0px`;
+                }
+                oldScrollY = window.scrollY;
+            };
+
+            if (loggedAsCustomer.adminUserId !== undefined) {
+                toggleNotifyBar(true);
+            } else {
+                toggleNotifyBar(false);
+            }
+
+            if (customer.fullname !== undefined && loggedAsCustomer.websiteName !== undefined) {
+                updateNotifyBarText(customer.fullname, loggedAsCustomer.websiteName);
+            }
+
+            window.addEventListener('scroll', handleScroll);
+        });
+    </script>
+<?php endif; ?>

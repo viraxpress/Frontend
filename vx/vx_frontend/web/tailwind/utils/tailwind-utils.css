@@ -1,0 +1,161 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "inter-regular";
+    src: url("../fonts/inter/woff/Inter-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "inter-medium";
+    src: url("../fonts/inter/woff/Inter-Medium.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "inter-semibold";
+    src: url("../fonts/inter/woff/Inter-SemiBold.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "inter-bold";
+    src: url("../fonts/inter/woff/Inter-Bold.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "inter-extrabold";
+    src: url("../fonts/inter/woff/Inter-ExtraBold.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "inter-black";
+    src: url("../fonts/inter/woff/Inter-Black.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
+
+  .quantity-wrapper input[type="number"]::-webkit-outer-spin-button,
+  .quantity-wrapper input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  .quantity-wrapper input[type="number"] {
+    appearance: textfield;
+  }
+
+  [itemprop="description"] h1 *,
+  [itemprop="description"] h2 *,
+  [itemprop="description"] h3 *,
+  [itemprop="description"] h4 *,
+  [itemprop="description"] h5 *,
+  [itemprop="description"] h6 *,
+  .product-item-description h1 *,
+  .product-item-description h2 *,
+  .product-item-description h3 *,
+  .product-item-description h4 *,
+  .product-item-description h5 *,
+  .product-item-description h6 *,
+  b,
+  strong {
+    @apply !font-semibold font-normal;
+  }
+
+  [x-cloak] {
+    @apply !hidden;
+  }
+
+  select,
+  select[multiple] {
+    @apply block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6;
+  }
+
+  select[multiple] {
+    @apply w-full sm:w-max;
+  }
+
+  .cms-page-view .page-main table tr th,
+  #description table tr th {
+    @apply font-semibold;
+  }
+
+  .cms-page-view .page-main table tr th,
+  .cms-page-view .page-main table tr td,
+  #description table tr th,
+  #description table tr td {
+    @apply border border-gray-500 p-3 leading-[1];
+  }
+
+  .catalog-product-view .attribute.overview ol,
+  .catalog-product-view .attribute.overview ul,
+  .catalog-product-view .attribute.description ol,
+  .catalog-product-view .attribute.description ul,
+  .product-item-description ol,
+  .product-item-description ul {
+    @apply ml-5;
+  }
+
+  .catalog-product-view .attribute.overview ol,
+  .catalog-product-view .attribute.description ol,
+  .product-item-description ol {
+    @apply list-decimal;
+  }
+
+  .catalog-product-view .attribute.overview ul,
+  .catalog-product-view .attribute.description ul,
+  .product-item-description ul {
+    @apply list-disc;
+  }
+}
+
+
+@layer components {
+  .active-radio:checked,
+  .active-radio:checked:active {
+    @apply ring-2 ring-offset-1;
+  }
+
+  .primary-btn {
+    @apply py-2.5 inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 text-sm font-medium leading-6 text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary;
+  }
+
+  .secondary-btn {
+    @apply py-2.5 inline-flex justify-center items-center gap-3 transition-all rounded-md border-0 text-primary bg-transparent px-3 text-sm font-medium leading-6 shadow-sm hover:text-white outline-none ring-1 ring-primary hover:bg-primary/90 focus:outline-2 focus:outline-offset-2 focus:outline-primary;
+  }
+
+  .error-message {
+    @apply text-error mt-1 text-xs;
+  }
+
+  .delete-btn {
+    @apply py-2.5 inline-flex justify-center items-center gap-3 transition-all rounded-md border-0 text-red-600 bg-transparent px-3 text-sm font-medium leading-6 shadow-sm hover:bg-red-600/90 hover:text-white outline-none ring-1 ring-red-600 focus:outline-2 focus:outline-offset-2 focus:outline-red-600;
+  }
+
+  .in-stock {
+    @apply inline-block text-xs rounded-md px-3 py-1 text-green-700 bg-green-50 border border-green-100 uppercase;
+  }
+
+  .out-of-stock {
+    @apply inline-block text-xs rounded-md px-3 py-1 text-red-700 bg-red-50 border border-red-100 uppercase;
+  }
+}
+

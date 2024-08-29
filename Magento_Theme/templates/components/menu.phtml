@@ -1,0 +1,74 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+$categories = $block->getData('children'); ?>
+
+<?php foreach ($categories as $index => $parentCategory): ?>
+    <?php
+    $childCategories = $parentCategory->getChildren();
+    if (!$parentCategory->getData('is_parent_active')) {
+        continue;
+    }
+    ?>
+    <li class="flex flex-col group lg:relative lg:flex-row px-3 lg:px-0 border-b border-gray-200 lg:border-0" x-data="{isSubmenu:false}">
+        <div class="relative flex justify-between items-center gap-2">
+            <a class="inline-flex items-center px-2 py-3 lg:p-0 text-black" href="<?= $escaper->escapeUrl($parentCategory->getUrl()); ?>" role="link">
+                <span class="inline-block lg:py-1 lg:px-3 rounded transition duration-300 lg:group-hover:bg-ruby-200 lg:group-hover:text-primary">
+                    <?= $escaper->escapeHtml($parentCategory->getName()); ?>
+                </span>
+            </a>
+            <?php if (count($childCategories)): ?>
+                <button type="button" class="lg:hidden" @click.prevent="isSubmenu = !isSubmenu">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" class="transition-transform transform duration-300 ease-in-out" :class="isSubmenu ? 'rotate-180' : 'rotate-0'" width="20" height="20" aria-hidden="true" focusable="false">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"></path>
+                    </svg>
+                </button>
+            <?php endif; ?>
+        </div>
+        <?php if (count($childCategories)): ?>
+            <div class="pl-5 block lg:absolute lg:min-w-max lg:left-1/2 lg:-translate-x-1/2 lg:inset-x-0 lg:top-full bg-white lg:rounded transition-all lg:border-t lg:border-b lg:border-gray-100 lg:shadow-md duration-300 z-50 text-gray-500 lg:hidden lg:pl-0 lg:group-hover:block" :class="isSubmenu ? 'h-max' : 'h-0 overflow-hidden lg:h-max'">
+                <div class="block space-y-5 pb-5 lg:p-8 lg:space-y-0 lg:flex lg:justify-start lg:items-start lg:gap-8 ">
+                    <?php foreach ($childCategories as $childCategory): ?>
+                        <div class="block">
+                            <a href="<?= $escaper->escapeUrl($childCategory->getUrl()); ?>" role="link" id="<?= $escaper->escapeHtml($childCategory->getName()); ?>-heading" class="text-black font-medium">
+                                <?= $escaper->escapeHtml($childCategory->getName()); ?>
+                            </a>
+                            <?php
+                            $subChildCategories = $childCategory->getChildren();
+                            $subCategoryHtml = '';
+                            foreach ($subChildCategories as $subCategory) {
+                                if (!$subCategory->getData('is_parent_active')) {
+                                    continue;
+                                }
+                                $subCategoryHtml .= '<li class="flex"><a href="' . $escaper->escapeUrl($subCategory->getUrl()) . '" class="hover:text-gray-800">' . $escaper->escapeHtml($subCategory->getName()) . '</a></li>';
+                            }
+                            if ($subCategoryHtml) {
+                                $subCategoryHtml = '<ul role="list" class="mt-2 space-y-2 lg:space-y-4 lg:mt-4">' . $subCategoryHtml . '</ul>';
+                            }
+                            ?>
+                            <?= /* @noEscape */ $subCategoryHtml; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+    </li>
+<?php endforeach; ?>

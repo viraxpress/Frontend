@@ -1,0 +1,39 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php /** @var $block \Magento\Tax\Block\Checkout\Shipping\Price */ ?>
+
+<?php $_excl = $block->getShippingPriceExclTax(); ?>
+<?php $_incl = $block->getShippingPriceInclTax(); ?>
+<?php if ($block->displayShippingPriceExclTax()): ?>
+    <span class="price"><?= /* @noEscape */ $_excl ?></span>
+<?php else: ?>
+    <?php if ($block->displayShippingBothPrices() && $_incl != $_excl): ?>
+        <span class="price-including-tax" data-label="<?= $escaper->escapeHtmlAttr(__('Incl. Tax')) ?>">
+    <?php endif; ?>
+    <span class="price"><?= /* @noEscape */ $_incl ?></span>
+    <?php if ($block->displayShippingBothPrices() && $_incl != $_excl): ?>
+        </span>
+    <?php endif; ?>
+<?php endif; ?>
+<?php if ($block->displayShippingBothPrices() && $_incl != $_excl): ?>
+    <span class="price-excluding-tax" data-label="<?= $escaper->escapeHtmlAttr(__('Excl. Tax')) ?>"><span class="price"><?= /* @noEscape */ $_excl ?></span></span>
+<?php endif; ?>

@@ -1,0 +1,66 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+/**
+ * Category layered navigation state
+ *
+ * @var $block \Magento\LayeredNavigation\Block\Navigation\State
+ */
+?>
+<?php $_filters = $block->getActiveFilters() ?>
+<?php if (!empty($_filters)): ?>
+    <ol class="items flex justify-start items-start gap-4 flex-wrap my-4">
+        <?php foreach ($_filters as $_filter): ?>
+            <li class="item bg-gray-100 text-gray-800 inline-flex justify-start items-center gap-x-2 text-sm font-medium p-2 rounded">
+                <span class="inline-block">
+                    <?= $escaper->escapeHtml(__($_filter->getName())) ?>
+                    <span>:</span>
+                    <?= $escaper->escapeHtml($block->stripTags($_filter->getLabel())) ?>
+                </span>
+                <?php
+                $clearLinkUrl = $_filter->getClearLinkUrl();
+                $currentFilterName = $escaper->escapeHtmlAttr(__($_filter->getName()) . " " . $block->stripTags($_filter->getLabel()));
+                if ($clearLinkUrl): ?>
+                    <a class="action previous" href="<?= $escaper->escapeUrl($_filter->getRemoveUrl()) ?>"
+                       title="<?= $escaper->escapeHtmlAttr(__('Previous')) ?>">
+                        <span><?= $escaper->escapeHtml(__('Previous')) ?></span>
+                    </a>
+                    <a class="action remove"
+                       title="<?= $escaper->escapeHtmlAttr($_filter->getFilter()->getClearLinkText()) ?>"
+                       href="<?= $escaper->escapeUrl($clearLinkUrl) ?>">
+                        <span><?= $escaper->escapeHtml($_filter->getFilter()->getClearLinkText()) ?></span>
+                    </a>
+                <?php else: ?>
+                    <a class="action remove text-red-600 cursor-pointer" href="<?= $escaper->escapeUrl($_filter->getRemoveUrl()) ?>"
+                       title="<?= /* @noEscape */ $escaper->escapeHtmlAttr(__('Remove')) . " " . $currentFilterName ?>">
+                        <span class="sr-only"><?= $escaper->escapeHtml(__('Remove This Item')) ?></span>
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19 7-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"></path>
+                            </svg>
+                        </span>
+                    </a>
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ol>
+<?php endif; ?>

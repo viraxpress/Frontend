@@ -1,0 +1,61 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+/**
+ * Product list toolbar
+ *
+ * @var $block \Magento\Catalog\Block\Product\ProductList\Toolbar
+ */
+if ($block->getCurrentDirection() == 'desc') {
+    $direction = 'asc';
+} else {
+    $direction = 'desc';
+}
+?>
+<div class="toolbar-sorter sorter flex justify-end items-center gap-x-4 mb-5" x-data="CatalogList()">
+    <label for="sorter" class="block mb-2 text-sm font-medium text-gray-900 sr-only"><?= $escaper->escapeHtml(__('Select an option')) ?></label>
+    <select id="sorter" data-role="sorter" aria-labelledby="sorter" x-on:change="handleSort" name="product_list_order" autocomplete="product sort" class="bg-gray-50 cursor-pointer text-gray-900 ring-1 ring-inset ring-gray-300 text-sm rounded-md focus:ring-primary focus:border-primary block w-full p-2.5 py-2 pr-9 ">
+        <?php foreach ($block->getAvailableOrders() as $_key => $_order): ?>
+            <option value="<?= $escaper->escapeHtmlAttr($_key) ?>"
+                data-post="<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_order=' . $escaper->escapeHtmlAttr($_key) ?>"
+                <?php if ($block->isOrderCurrent($_key)): ?>
+                    selected="selected"
+                <?php endif; ?>
+                >
+                <?= $escaper->escapeHtml(__($_order)) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <?php if ($direction == 'desc'): ?>
+        <button type="button" role="button" data-label="desc" title="<?= $escaper->escapeHtmlAttr(__('Set Descending Direction')) ?>" class="action sorter-action sort-desc" x-data="{ dataDir: '<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_dir=desc' ?>' }" x-on:click="handleListDir">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
+            </svg>
+        </button>
+    <?php else: ?>
+        <button type="button" role="button" data-label="asc" title="<?= $escaper->escapeHtmlAttr(__('Set Ascending Direction')) ?>" class="action sorter-action sort-asc" value="asc" x-data="{ dataDir: '<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_dir=asc' ?>' }" x-on:click="handleListDir">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
+            </svg>
+        </button>
+    <?php endif; ?>
+</div>

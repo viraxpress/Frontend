@@ -1,0 +1,55 @@
+[data-content-type="buttons"] [class*="pagebuilder-button"]:not(.pagebuilder-button-primary) {
+  @apply inline-flex justify-center items-center transition duration-700 ease-in-out ring-2 rounded ring-primary px-6 py-3 font-medium leading-4 text-primary 
+}
+
+[data-content-type="buttons"] [class*="pagebuilder-button"]:not(.pagebuilder-button-link):hover {
+  animation: wobble-vertical 1s ease-in-out 1;
+}
+
+[data-content-type="buttons"] .pagebuilder-button-primary {
+  @apply inline-flex justify-center items-center transition duration-700 ease-in-out rounded bg-primary px-6 py-3 font-medium leading-4 text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary;
+}
+
+[data-content-type="buttons"] .pagebuilder-button-primary:hover {
+  animation: wobble-vertical 1s ease-in-out 1;
+}
+
+#html-body .top-categories .pagebuilder-column-line .pagebuilder-column [data-content-type="button-item"] {
+  @apply flex;
+}
+#html-body .top-categories .pagebuilder-column-line .pagebuilder-column .pagebuilder-button-link {
+  @apply bg-primary ring-primary text-white;
+}
+
+#html-body .top-categories .pagebuilder-column-line .pagebuilder-column:hover [data-content-type="button-item"]{
+  @apply bottom-0 opacity-100;
+}
+
+@media(max-width:1024px) {
+  #html-body .top-categories .pagebuilder-column-line .pagebuilder-column [data-content-type="button-item"] {
+    @apply left-1/2 -translate-x-1/2 w-auto h-auto bottom-5 opacity-100;
+  }
+}
+
+
+/* Wobble Vertical */
+@keyframes wobble-vertical {
+  16.65% {
+    transform: translateY(4px);
+  }
+  33.3% {
+    transform: translateY(-4px);
+  }
+  49.95% {
+    transform: translateY(4px);
+  }
+  66.6% {
+    transform: translateY(-2px);
+  }
+  83.25% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

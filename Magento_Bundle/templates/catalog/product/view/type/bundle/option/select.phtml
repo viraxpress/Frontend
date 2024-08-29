@@ -1,0 +1,104 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Bundle\ViewModel\ValidateQuantity;
+?>
+<?php /* @var $block \Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option\Select */ ?>
+<?php $_option      = $block->getOption(); ?>
+<?php $_selections  = $_option->getSelections(); ?>
+<?php $_default     = $_option->getDefaultSelection(); ?>
+<?php list($_defaultQty, $_canChangeQty) = $block->getDefaultValues(); ?>
+<?php
+/** @var ValidateQuantity $viewModel */
+$viewModel = $block->getData('validateQuantityViewModel');
+?>
+<div class="field option <?= ($_option->getRequired()) ? ' required': '' ?>">
+    <label class="label font-medium text-base">
+        <span><?= $escaper->escapeHtml($_option->getTitle()) ?></span>
+        <?php if ($_option->getRequired()): ?>
+            <span class="text-required ml-1">*</span>
+        <?php endif; ?>
+    </label>
+    <div class="control mt-2">
+        <?php if ($block->showSingle()): ?>
+            <?= /* @noEscape */ $block->getSelectionTitlePrice($_selections[0]) ?>
+            <?= /* @noEscape */ $block->getTierPriceRenderer()->renderTierPrice($_selections[0]) ?>
+            <input type="hidden"
+                   class="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>  product bundle option"
+                   name="bundle_option[<?= $escaper->escapeHtmlAttr($_option->getId()) ?>]"
+                   value="<?= $escaper->escapeHtmlAttr($_selections[0]->getSelectionId()) ?>"/>
+        <?php else:?>
+            <select id="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>"
+                    name="bundle_option[<?= $escaper->escapeHtmlAttr($_option->getId()) ?>]"
+                    data-selector="bundle_option[<?= $escaper->escapeHtmlAttr($_option->getId()) ?>]"
+                    class="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?> product bundle option bundle-option-select change-container-classname rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-primary focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 product-bundle-option"
+                    @change="changeBundleOption($event)"
+                <?php if ($_option->getRequired()) { echo 'data-validate = {required:true}'; } ?>>
+                <option value=""><?= $escaper->escapeHtml(__('Choose a selection...')) ?></option>
+                <?php foreach ($_selections as $_selection): ?>
+                    <option value="<?= $escaper->escapeHtmlAttr($_selection->getSelectionId()) ?>"
+                        <?php if ($block->isSelected($_selection)) { echo ' selected="selected"'; } ?>
+                        <?php if (!$_selection->isSaleable()) { echo ' disabled="disabled"'; } ?>>
+                        <?= /* @noEscape */ $block->getSelectionTitlePrice($_selection, false) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <div id="option-tier-prices-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>" class="option-tier-prices">
+                <?php foreach ($_selections as $_selection): ?>
+                    <div data-role="selection-tier-prices"
+                         data-selection-id="<?= $escaper->escapeHtmlAttr($_selection->getSelectionId()) ?>"
+                         class="selection-tier-prices">
+                        <?= /* @noEscape */ $block->getTierPriceRenderer()->renderTierPrice($_selection) ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+        <div class="nested mt-2">
+            <div class="field qty qty-holder flex justify-start items-center gap-x-2">
+                <label class="label" for="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>-qty-input">
+                    <span><?= $escaper->escapeHtml(__('Quantity')) ?></span>
+                </label>
+                <div class="quantity-wrapper control flex justify-start items-center ring-1 ring-inset ring-gray-300 rounded-md bg-white">
+                    <button  <?php if (!$_canChangeQty) { echo ' disabled="disabled"'; } ?> type="button" aria-label="Quantity Decrement" class="text-gray-800 w-11 h-11 flex justify-center items-center" @click="handleBundleOptionQtyDecrement('bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>-qty-input')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"></path>
+                        </svg>
+                    </button>
+                    <input <?php if (!$_canChangeQty) { echo ' disabled="disabled"'; } ?>
+                           id="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>-qty-input"
+                           class="input-text qty<?php if (!$_canChangeQty) { echo ' qty-disabled'; } ?> inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none focus:ring-gray-300"
+                           type="number"
+                           min="1"
+                           data-validate="<?= $escaper->escapeHtmlAttr($viewModel->getQuantityValidators()) ?>"
+                           name="bundle_option_qty[<?= $escaper->escapeHtmlAttr($_option->getId()) ?>]"
+                           data-selector="bundle_option_qty[<?= $escaper->escapeHtmlAttr($_option->getId()) ?>]"
+                           value="<?= $escaper->escapeHtmlAttr($_defaultQty) ?>"
+                           @change="changeBundleOptionQty($event)"/>
+                    <button <?php if (!$_canChangeQty) { echo ' disabled="disabled"'; } ?> type="button" aria-label="Quantity Increment" class="text-gray-800 w-11 h-11 flex justify-center items-center" @click="handleBundleOptionQtyIncrement('bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>-qty-input')">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

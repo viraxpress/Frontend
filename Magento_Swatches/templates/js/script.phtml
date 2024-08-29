@@ -1,0 +1,210 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+
+<script>
+    const initiateSwatches = () => {
+        const state = {
+            selectedSwatch: {},
+            imageData: {},
+        };
+
+        const debounce = (func, delay) => {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), delay);
+            };
+        };
+
+        const updateSwatchStyles = () => {
+            const radioButtons = document.querySelectorAll('.spr-attribute');
+            const updates = [];
+            radioButtons.forEach(radioButton => {
+                if (radioButton.checked) {
+                    updates.push(() => {
+                        radioButton.parentNode.classList.add('ring-2', 'ring-offset-2', 'ring-primary');
+                        radioButton.parentNode.classList.remove('ring-0');
+                    });
+                } else {
+                    updates.push(() => {
+                        radioButton.parentNode.classList.remove('ring-2', 'ring-offset-2', 'ring-primary');
+                        radioButton.parentNode.classList.add('ring-0');
+                    });
+                }
+            });
+            updates.forEach(update => update());
+        };
+
+        const updatePriceDisplay = (jsonConfig, productId, finalPrice, baseOldPrice) => {
+            const regularPrice = document.getElementById(`old-price-${productId}`);
+            const asLowAsPrice = document.getElementById(`product-price-${productId}`);
+            let priceLabel = '';
+
+            if (asLowAsPrice) {
+                priceLabel = asLowAsPrice.previousElementSibling;
+            } else {
+                const widgetCarousel = document.getElementById(`old-price-${productId}-widget-product-carousel`);
+                priceLabel = widgetCarousel ? widgetCarousel.querySelector("span").previousElementSibling :
+                    document.getElementById(`old-price-${productId}-widget-product-grid`).querySelector("span").previousElementSibling;
+            }
+
+            if (regularPrice) {
+                const isVisible = finalPrice < baseOldPrice;
+                regularPrice.parentElement.parentElement.classList.toggle('invisible', !isVisible);
+                if (priceLabel.classList.contains('price-label')) {
+                    priceLabel.classList.toggle('invisible', isVisible);
+                }
+            }
+        };
+
+        const handleSwatch = debounce((jsonConfigs, jsonSwatchConfig, productId, event, locale, currencyCode, action) => {
+            const jsonConfig = { ...jsonConfigs, ...jsonSwatchConfig };
+            updateSwatchStyles();
+
+            const attrId = event.target.attributes.attr_id.value;
+            const attrValue = event.target.value;
+            state.selectedSwatch[attrId] = attrValue;
+
+            let childIds = Object.keys(jsonConfig.index);
+            Object.keys(jsonConfig.attributes).forEach(attribute => {
+                const productsAttr = state.selectedSwatch[attribute] ?
+                    childIds.filter(productIndex => jsonConfig.index[productIndex][attribute] === state.selectedSwatch[attribute]) :
+                    [];
+                childIds = productsAttr.length ? productsAttr : childIds;
+            });
+
+            const productOptions = childIds[0];
+            const priceValue = productOptions ? jsonConfig.optionPrices[productOptions] : jsonConfig.prices;
+            const finalPrice = priceValue.finalPrice.amount;
+            const baseOldPrice = priceValue.baseOldPrice.amount;
+            updatePriceDisplay(jsonConfig, productId, finalPrice, baseOldPrice);
+
+            const configurableSwatches = document.querySelectorAll(`.configurable-swatches-${productId}`);
+            const prElements = document.querySelectorAll(`.pr-${productId}`);
+            const selectedPrCount = Array.from(prElements).filter(pr => pr.checked).length;
+
+            if (configurableSwatches.length === selectedPrCount) {
+                const priceBox = document.querySelector(`[data-price-box="product-id-${productId}"]`);
+                if (priceBox) {
+                    const priceLabel = priceBox.querySelector('.price-label');
+                    if (priceLabel) {
+                        priceLabel.classList.add('invisible');
+                    }
+                }
+            }
+
+            const sprElement = document.getElementById(`product-price-${productId}`) || 
+                document.getElementById(`old-price-${productId}-widget-product-carousel`)?.querySelector("span") || 
+                document.getElementById(`old-price-${productId}-widget-product-grid`).querySelector("span");
+
+            if (sprElement) {
+                sprElement.innerHTML = finalPrice.toLocaleString(locale.replace("_", "-"), {
+                    style: 'currency',
+                    currency: currencyCode,
+                });
+            }
+
+            const attrOptionVal = jsonConfig.attributes[attrId].options.find(option => option.id === attrValue);
+            let childProductIds = Object.keys(jsonConfig.index);
+            fetch(`${BASE_URL}viraxpressswatches/product/options?id=${productId}&child=${childProductIds}&code=${event.target.attributes.attr_code.value}&opid=${attrOptionVal.id}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to load options');
+                    return response.json();
+                })
+                .then(data => {
+                    Object.entries(data).forEach(([x, val]) => {
+                        const updateElement = (selector, disabled) => {
+                            const element = document.querySelector(selector);
+                            if (element) {
+                                element.disabled = disabled;
+                                element.parentNode.classList.toggle('opacity-25', disabled);
+                                element.parentNode.classList.toggle('cursor-not-allowed', disabled);
+                            }
+                        };
+                        updateElement(`[value="${val}"].pr-${productId}`, attrValue == x || attrValue == val);
+                        updateElement(`[value="${x}"].pr-${productId}`, attrValue == x || attrValue == val);
+
+                        const checkedElements = document.querySelectorAll('.spr-attribute:checked');
+                        checkedElements.forEach(checkedElement => {
+                            const { value } = checkedElement;
+                            if (value == data[value] || value == attrValue) {
+                                updateElement(`[value="${data[value]}"].pr-${productId}`, true);
+                                updateElement(`[value="${x}"].pr-${productId}`, true);
+                            }
+                        });
+                    });
+                })
+                .catch(console.error);
+
+            const form = document.getElementById(event.target.attributes.wishlist.value);
+            let element = form.querySelector(`input[name='super_attribute[${attrId}]']`);
+
+            if (element) {
+                element.value = attrValue;
+            } else {
+                element = document.createElement("input");
+                element.type = "hidden";
+                element.name = `super_attribute[${attrId}]`;
+                element.value = attrValue;
+                form.appendChild(element);
+            }
+
+            const optionsImages = localStorage.getItem("vira-product-option-image");
+            if (optionsImages) {
+                const getOptionImage = JSON.parse(optionsImages)[productOptions];
+                if (getOptionImage) {
+                    const imageContainer = document.getElementById(`product-image-container-list-${productId}`) || 
+                                           document.getElementById(`recommened-product-image-container-${productId}`);
+                    if (imageContainer) {
+                        imageContainer.src = getOptionImage;
+                    }
+                } else {
+                    getCacheImage(productOptions, productId, action);
+                }
+            } else {
+                getCacheImage(productOptions, productId, action);
+            }
+        }, 300);
+
+        const getCacheImage = (productOptions, productId, action) => {
+            fetch(`${BASE_URL}swatches/ajax/media?product_id=${productOptions}&isAjax=true&layout=${action}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to load image');
+                    return response.json();
+                })
+                .then(data => {
+                    state.imageData[productOptions] = data.medium;
+                    const imageContainer = document.getElementById(`product-image-container-list-${productId}`) || 
+                                           document.getElementById(`recommened-product-image-container-${productId}`);
+                    if (imageContainer) {
+                        imageContainer.src = data.medium;
+                    }
+                    localStorage.setItem("vira-product-option-image", JSON.stringify(state.imageData));
+                })
+                .catch(console.error);
+        };
+
+        return {
+            handleSwatch,
+        };
+    };
+</script>

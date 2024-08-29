@@ -1,0 +1,236 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable PHPCompatibility.Miscellaneous.RemovedAlternativePHPTags.MaybeASPOpenTagFound
+/** @var \Magento\Wishlist\Block\Customer\Wishlist $block */
+?>
+
+<?php if ($this->helper(\Magento\Wishlist\Helper\Data::class)->isAllow()): ?>
+    <?= ($block->getChildHtml('wishlist.rss.link')) ?>
+    <div class="w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6" x-data="wishListView()">
+        <form class="form-wishlist-items" id="wishlist-view-form">
+            <?= $block->getChildHtml('top') ?>
+            <?php if ($block->hasWishlistItems()): ?>
+                <?php $block->getChildBlock('items')->setItems($block->getWishlistItems()); ?>
+                <?= $block->getChildHtml('items') ?>
+            <?php else: ?>
+                <div class="message info empty"><span class="text-md"><?= $escaper->escapeHtml(__('You have no items in your wish list.')) ?></span></div>
+            <?php endif ?>
+            <?= $block->getChildHtml('bottom') ?>
+            <div class="actions-toolbar flex flex-col sm:flex-row-reverse justify-between  items-center mt-10 gap-5 sm:gap-0">
+                <div class="primary flex flex-col sm:flex-row justify-start items-center gap-5">
+                    <?= $block->getChildHtml('control_buttons') ?>
+                </div>
+                <div class="secondary">
+                    <a href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>" class="action back inline-flex items-center gap-2 hover:underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                        </svg>
+                        <span><?= $escaper->escapeHtml(__('Back')) ?></span>
+                    </a>
+                </div>
+            </div>
+        </form>
+        <?php if ($block->hasWishlistItems()): ?>
+            <div class="toolbar wishlist-toolbar bottom-toolbar flex flex-col sm:flex-row flex-wrap justify-end items-center md:items-start gap-5 mt-5 pt-5 border-t border-gray-200">
+                <?= $block->getChildHtml('wishlist_item_pager'); ?>
+            </div>
+        <?php endif ?>
+
+    </div>
+
+    <script>
+        function wishListView() {
+            return {
+                customerDetails: [],
+                addToCartLoader: false,
+
+                init() {
+                    this.$watch('customerDetails', (value) => this.$dispatch('set-cart', value));
+                    this.$watch('addToCartLoader', (value) => this.$dispatch('set-cartloader', value));
+                },
+
+                /* Single item quantity validation */
+                itemQtyValidate(event) {
+                    let quantity = event.target.value;
+                    if (isNaN(quantity) || quantity < 1) {
+                        event.target.value = 1;
+                    } else {
+                        let decimalPattern = /^\d*\.?\d*$/;
+                        if (decimalPattern.test(quantity)) {
+                            event.target.value = Math.round(parseFloat(quantity));
+                        }
+                    }
+                },
+
+                // /* Single item add to cart action */
+                itemAddToCart(params) {
+                    let formData = new FormData();
+                    if (params.data.item) {
+                        formData.append('item', params.data.item);
+                        if (document.querySelector(`#qty\\[${params.data.item}\\]`)) {
+                            formData.append('qty', document.querySelector(`#qty\\[${params.data.item}\\]`).value);
+                        }
+                        formData.append('uenc', params.data.uenc);
+                    }
+                    let wishlistForm = document.querySelector('#wishlist-view-form');
+                    if (wishlistForm) {
+                        formData.append('form_key', getFormKeyCookie());
+                    }
+
+                    this.addToCartLoader = params.data.item;
+                    console.log(this.addToCartLoader);
+                    if (params.action) {
+                        fetch(params.action, {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include'
+                        })
+                        .then(response => {
+                            if (response.ok && response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                console.error('Error:', response.status);
+                            }
+                        })
+                        .catch(error => console.error('Fetch error:', error));
+                    }
+                },
+
+                /* Single item remove action */
+                itemRemove(params) {
+                    let formData = new FormData();
+                    if (params.data.item) {
+                        formData.append('item', params.data.item);
+                        formData.append('uenc', params.data.uenc);
+                    }
+                    let wishlistForm = document.querySelector('#wishlist-view-form');
+                    if (wishlistForm) {
+                        formData.append('form_key', getFormKeyCookie());
+                    }
+                    if (params.action) {
+                        fetch(params.action, {method: 'POST', body: formData, credentials: 'include'})
+                        .then(response => {
+                            if (response.ok && response.redirected) {
+                                window.location.href = response.url;
+                            }
+                        })
+                        .catch(error => console.error('Fetch error:', error));
+                    }
+                },
+
+                /* Add all items to the cart */
+                allItemsAddToCart(event) {
+                    let paramsObject = JSON.parse('<?= /* @noEscape */ $block->getAddAllToCartParams() ?>');
+                    let formData = new FormData();
+                    if (paramsObject.data.item) {
+                        formData.append('wishlist_id', paramsObject.data.wishlist_id);
+                        formData.append('uenc', paramsObject.data.uenc);
+                    }
+                    let wishlistForm = document.querySelector('#wishlist-view-form');
+                    if (wishlistForm) {
+                        formData.append('form_key', getFormKeyCookie());
+                    }
+                    if (paramsObject.action) {
+                        fetch(paramsObject.action, {method: 'POST', body: formData, credentials: 'include'})
+                        .then(response => {
+                            if (response.ok && response.redirected) {
+                                window.location.href = response.url;
+                            }
+                        })
+                        .catch(error => console.error('Fetch error:', error));
+                    }
+                },
+
+                /* Share wishlist action*/
+                shareWishList(event) {
+                    var form = document.getElementById("wishlist-view-form");
+                    const formData = new FormData(form);
+                    formData.append('form_key', getFormKeyCookie());
+                    formData.append('save_and_share', '');
+
+                    let url = '<?= $escaper->escapeUrl($block->getUrl('wishlist/index/update', ['wishlist_id' => $block->getWishlistInstance()->getId()])) ?>';
+                    if (url) {
+                        fetch(url, {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include'
+                        })
+                        .then(response => {
+                            if (response.ok && response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                console.error('Error:', response.status);
+                            }
+                        })
+                        .catch(error => console.error('Fetch error:', error));
+                    }
+                },
+
+                /* Update wishlist action */
+                updateWishlist(l) {
+                    var form = document.getElementById("wishlist-view-form");
+                    const formData = new FormData(form);
+                    formData.append('form_key', getFormKeyCookie());
+
+                    let url = '<?= $escaper->escapeUrl($block->getUrl('wishlist/index/update', ['wishlist_id' => $block->getWishlistInstance()->getId()])) ?>';
+                    if (url) {
+                        fetch(url, {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include'
+                        }).then(response => {
+                            console.log(response);
+                            if (response.ok) {
+                                if (response.redirected) {
+                                    window.location.href = response.url;
+                                } else {
+                                    getCookie('mage-messages');
+                                }
+                            } else {
+                                getCookie('mage-messages');
+                                console.error('Error:', response.status);
+                            }
+                        }).catch(error => console.error('Fetch error:', error));
+                    }
+                },
+
+                /* Update the quantity of a particular wishlist product */
+                handleWishlistQtyIncrement(id) {
+                    let qtyElement = document.getElementById(id);
+                    if (qtyElement) {
+                        qtyElement.value = parseInt(qtyElement.value) + 1;
+                        qtyElement.dispatchEvent(new Event('change'));
+                    }
+                },
+
+                /* Update the quantity of a particular wishlist product */
+                handleWishlistQtyDecrement(id) {
+                    let qtyElement = document.getElementById(id);
+                    if (qtyElement) {
+                        qtyElement.value = Math.max(1, parseInt(qtyElement.value) - 1);
+                        qtyElement.dispatchEvent(new Event('change'));
+                    }
+                },
+            }
+        }
+    </script>
+<?php endif ?>

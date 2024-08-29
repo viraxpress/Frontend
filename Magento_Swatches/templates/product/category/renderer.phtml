@@ -1,0 +1,75 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+/** @var $block \Magento\Swatches\Block\Product\Renderer\Configurable */
+/** @var \Magento\Swatches\ViewModel\Product\Renderer\Configurable $configurableViewModel */
+$configurableViewModel = $block->getConfigurableViewModel();
+
+$product = $block->getProduct();
+$productUrl = $product->getProductUrl();
+$productId = $product->getId();
+$attributes = $block->decorateArray($block->getAllowAttributes());
+$swatchBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\Swatch::class);
+$swatchLimit = 3;
+?>
+<?php if ($product->isSaleable()): ?>
+    <div class="swatch-options space-y-3 w-full" x-data="initiateSwatches()" x-init="init()">
+        <?php $jsonConfig = json_decode($block->getJsonConfig(), true); ?>
+        <?php $jsonSwatchConfig = json_decode($block->getJsonSwatchConfig(), true); ?>
+        <?php foreach ($attributes as $attribute): ?>
+            <?php $moreSwatchCount = 0;
+            $attributeId = $attribute->getAttributeId();
+            $productAttribute = $attribute->getProductAttribute();
+            if (!$productAttribute->getUsedInProductListing() || !$swatchBlock->isSwatchAttr($productAttribute->getAttributeCode())) {
+                continue;
+            } ?>
+            <fieldset class="block" id="group-<?= /* @noEscape */ $jsonConfig['attributes'][(int) $attributeId]['code'] ?>-<?= (int) $productId ?>">
+                <legend class="sr-only"><?= /* @noEscape */ $jsonConfig['attributes'][(int) $attributeId]['code'] ?></legend>
+                <div class="gap-2 lg:gap-3 flex items-center justify-start configurable-swatches-<?= /* @noEscape */ $productId ?>">
+                    <?php foreach ($jsonConfig['attributes'][(int) $attributeId]['options'] as $key => $item): ?>
+                        <?php if ($key < $swatchLimit): ?>
+                            <label aria-label="<?= /* @noEscape */ $jsonSwatchConfig[(int) $attributeId][$item['id']]['label'] ?>" for="attribute-option-<?= /* @noEscape */ (int) $productId ?>-<?= /* @noEscape */ $jsonConfig['attributes'][(int) $attributeId]['code'] ?>-<?= $escaper->escapeHtmlAttr($item['id']) ?>" title="<?= /* @noEscape */ $jsonSwatchConfig[(int) $attributeId][$item['id']]['label'] ?>" class="relative flex cursor-pointer items-center justify-center p-1 text-xs focus:outline-none focus:ring-1 focus:ring-offset-2 ring-gray-400 rounded <?= /* @noEscape */ ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'color') ? 'w-6 h-6 ' : 'w-9 h-6 border border-gray-300' ?>  <?= /* @noEscape */ ($jsonSwatchConfig[(int) $attributeId][$item['id']]['value'] == '#ffffff') ? 'border-2 border-gray-200' : '' ?>" style="<?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'color') ? 'background-color:' . /* @noEscape */ $jsonSwatchConfig[(int) $attributeId][$item['id']]['value'] : '' ?> <?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'image') ? "background: #ffffff url('" . /* @noEscape */ $jsonSwatchConfig[(int) $attributeId][$item['id']]['value'] . "') no-repeat center" : '' ?>">
+                                <?php $formId = base64_encode($productId . "-product_list_addtocart_form");
+                                $formId = preg_replace("/[^a-zA-Z0-9]/", "", $formId); ?>
+                                <?php $wishlistFormId = base64_encode($productId . "-product_list_wishlist_form");
+                                $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId); ?>
+                                <span class="rounded-md <?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'color') ? 'pointer-events-none absolute -inset-px' : '' ?>"><?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'color') ? '' : $escaper->escapeHtmlAttr($item['label']) ?></span>
+                                <input type="radio" name="super_attribute[<?= /* @noEscape */ (int) $attributeId ?>]" aria-label="<?= /* @noEscape */ $jsonSwatchConfig[(int) $attributeId][$item['id']]['label'] ?>" aria-describedby="group-<?= /* @noEscape */ $jsonConfig['attributes'][(int) $attributeId]['code'] ?>-<?= /* @noEscape */ (int) $productId ?>" x-on:change="handleSwatch(<?= $escaper->escapeHtml(json_encode($jsonConfig, true)) ?>, <?= $escaper->escapeHtml(json_encode($jsonSwatchConfig, true)) ?>, <?= (int) $productId ?>, event, '<?= /* @noEscape */ $swatchBlock->getStoreLocale() ?>', '<?= /* @noEscape */ $swatchBlock->getCurrentCurrencyCode() ?>', '<?= /* @noEscape */ $swatchBlock->getFullActionName() ?>')" form="<?= $escaper->escapeHtml($formId) ?>" wishlist="<?= $escaper->escapeHtml($wishlistFormId) ?>" value="<?= $escaper->escapeHtmlAttr($item['id']) ?>" attr_id="<?= $escaper->escapeHtmlAttr((int) $attributeId) ?>" attr_code="<?= /* @noEscape */ $jsonConfig['attributes'][(int) $attributeId]['code'] ?>" class="absolute opacity-0 invisible inset spr-attribute pr-<?= (int) $productId ?>" id="attribute-option-<?= /* @noEscape */ (int) $productId ?>-<?= /* @noEscape */ $jsonConfig['attributes'][(int) $attributeId]['code'] ?>-<?= $escaper->escapeHtmlAttr($item['id']) ?>">
+                            </label>
+                        <?php else: ?>
+                            <?php
+                            $moreSwatchCount = count($jsonConfig['attributes'][(int) $attributeId]['options']) - $swatchLimit;
+                            ?>
+                            <a class="text-xs px-2 inline-flex justify-center capitalize items-center rounded h-6 bg-primary/5 text-primary font-medium" href="<?= $escaper->escapeUrl($productUrl) ?>">+ <?= $escaper->escapeHtmlAttr($moreSwatchCount) ?> <?= $escaper->escapeHtml(__('more')) ?></a>
+                            <?php break; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </fieldset>
+        <?php endforeach; ?>
+    </div>
+
+<?php endif; ?>

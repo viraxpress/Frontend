@@ -1,0 +1,167 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Sales\Block\Order\History $block */
+?>
+<?php 
+    $_orders = $block->getOrders(); 
+?>
+<?= $block->getChildHtml('info') ?>
+<div class="w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6" x-data="myOrderView()">
+    <?php if ($_orders && count($_orders)): ?>
+        <div class="block overflow-x-auto">
+            <table class="min-w-full table border-collapse">
+                <tbody>
+                    <tr class="border-b border-gray-200 hidden md:table-row">
+                        <td class="col id w-[115px]">
+                            <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                <?= $block->escapeHtml(__('Order #')) ?>
+                            </div>
+                        </td>
+                        <td class="col date w-[115px]">
+                            <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                            <?= $block->escapeHtml(__('Date')) ?>
+                            </div>
+                        </td>
+                        <?= $block->getChildHtml('extra.column.header') ?>
+                        <td class="col total w-[115px]">
+                            <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                <?= $block->escapeHtml(__('Order Total')) ?>
+                            </div>
+                        </td>
+                        <td class="col status w-[115px]">
+                            <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                <?= $block->escapeHtml(__('Status')) ?>
+                            </div>
+                        </td>
+                        <td class="col actions w-[115px]">
+                            <div class="p-2 text-center text-sm font-semibold text-gray-800">
+                                <?= $block->escapeHtml(__('Action')) ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php foreach ($_orders as $_order): ?>
+                        <tr class="border-b border-gray-200 pb-4 mb-4 block md:table-row last:border-b-0">
+                            <td data-th="<?= $block->escapeHtml(__('Order #')) ?>" class="col id p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $block->escapeHtml($_order->getRealOrderId()) ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Date')) ?>" class="col date p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= /* @noEscape */ $block->formatDate($_order->getCreatedAt()) ?>
+                            </td>
+                            <?php $extra = $block->getChildBlock('extra.container'); ?>
+                            <?php if ($extra) : ?>
+                                <?php $extra->setOrder($_order); ?>
+                                <?= $extra->getChildHtml() ?>
+                            <?php endif; ?>
+                            <td data-th="<?= $block->escapeHtml(__('Order Total')) ?>" class="col total p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $_order->formatPrice($_order->getGrandTotal()) ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col status p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $block->escapeHtml($_order->getStatusLabel()) ?>
+                            </td>
+                            <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col actions p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                               <div class="flex justify-start md:justify-center items-center gap-5">
+                                    <a href="<?= $block->escapeUrl($block->getViewUrl($_order)) ?>" role="link" title="<?= $block->escapeHtml(__('View Order')) ?>" class="inline-block text-primary">
+                                        <span class="sr-only"><?= $block->escapeHtml(__('View Order')) ?></span>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                        </span>
+                                    </a>
+                                    
+                                    <?php if ($this->helper(\Magento\Sales\Helper\Reorder::class)->canReorder($_order->getEntityId())) : 
+                                        $postParams = json_decode($this->helper(\Magento\Framework\Data\Helper\PostHelper::class)
+                                            ->getPostData($block->getReorderUrl($_order)), true);
+                                        $formId = base64_encode($_order->getId() . "-myorder_view_reorder");
+                                        $formId = preg_replace("/[^a-zA-Z0-9]/", "", $formId);
+                                    ?>
+                                    <span>|</span>
+                                    <form id="<?= $block->escapeHtmlAttr($formId) ?>" class="m-0">
+                                        <input type="hidden" name="uenc" value="<?= $block->escapeHtmlAttr($postParams['data']['uenc']) ?>">
+                                        <button type="button" x-on:click="reorderMyOrder('<?= $block->escapeHtmlAttr($formId) ?>', '<?= $block->escapeHtmlAttr($postParams['action'])?>')" class="inline-block">
+                                            <span class="hover:underline"><?= $block->escapeHtml(__('Reorder')) ?></span>
+                                        </button>
+                                    </form>
+                                <?php endif ?>
+                               </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <?php if ($block->getPagerHtml()): ?>
+            <div class="flex flex-col sm:flex-row flex-wrap justify-end items-center md:items-start gap-5 mt-5 pt-5 border-t border-gray-200">
+                <?= $block->getPagerHtml() ?>
+            </div>
+        <?php endif ?>
+    <?php else: ?>
+        <div class="w-full block text-center py-5">
+            <div class="inline-block">
+                <svg class="flex-shrink-0 text-gray-400" width="50" height="50" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+                </svg>
+            </div>
+            <p class="mt-2 text-gray-400">
+                <?= $block->escapeHtml($block->getEmptyOrdersMessage()) ?>
+            </p>
+        </div>
+    <?php endif ?>
+</div>
+<script>
+    function myOrderView() {
+        return {
+            reorderMyOrder(formId, url) {
+                var form = document.getElementById(formId);
+                form.addEventListener("submit", function (event) { event.preventDefault(); });
+                const formData = new FormData(form);
+                formData.append('form_key', getFormKeyCookie());
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        if (window.location.href != response.url) {
+                            window.location.href = response.url;
+                        } else {
+                            getCookie('mage-messages');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                });
+            }
+        }
+    }
+</script>
+
+
+
+

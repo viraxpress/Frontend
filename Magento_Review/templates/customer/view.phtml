@@ -1,0 +1,146 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * @var \Magento\Review\Block\Customer\View $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+
+$product = $block->getProductData();
+?>
+<?php if ($product->getId()): ?>
+<div class="w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white">
+    <div class="customer-review view">
+        <div class="product-details block sm:flex gap-8 pb-6">
+            <div class="product-media mb-3 sm:mb-0">
+                <a class="product-photo" href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>">
+                    <?php /* customer_account_product_review_page */ ?>
+                    <?= $block->getImage($block->getProductData(), 'customer_account_product_review_page')->toHtml() ?>
+                </a>
+            </div>
+            <div class="product-info">
+                <h2 class="product-name font-semibold text-lg pb-2"><?= $escaper->escapeHtml($product->getName()) ?></h2>
+                <?php if ($block->getRating() && $block->getRating()->getSize()): ?>
+                    <span class="rating-average-label hidden"><?= $escaper->escapeHtml(__('Average Customer Rating:')) ?></span>
+                    <?= $block->getReviewsSummaryHtml($product, \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW) ?>
+                <?php endif; ?>
+                <?php if ($block->getRating() && $block->getRating()->getSize()): ?>
+                    <div class="title pb-2 text-lg border-b border-gray-300 my-2">
+                        <strong><?= $escaper->escapeHtml(__('Your Ratings')) ?></strong>
+                    </div>
+                    <div class="customer-review-rating">
+                        <?php foreach ($block->getRating() as $_rating): ?>
+                            <?php if ($_rating->getPercent()): ?>
+                                <?php $rating = ceil($_rating->getPercent()) ?>
+                                <?php $ratingId = $_rating->getRatingId() ?>
+                                <div class="rating-summary item flex gap-6 py-2">
+                                    <span class="rating-label">
+                                        <span><?= $escaper->escapeHtml($_rating->getRatingCode()) ?></span>
+                                    </span>
+                                    <div class="rating-result py-1 <?= $escaper->escapeHtml($_rating->getRatingCode()) ?>"
+                                         id="rating-div-<?= $escaper->escapeHtml($ratingId) ?>"
+                                         title="<?= /* @noEscape */ $rating ?>%">
+                                        
+                                        <!-- Rating % change to stars -->
+                                        <svg class="hidden">
+                                            <symbol id="star" width="32" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                                            </symbol>
+                                        </svg>
+                                        <div class="relative inline-block leading-[normal]">
+                                            <div class="text-gray-200 inline-flex space-x-1">
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                            </div>
+                                            <div class="overflow-hidden absolute left-0 top-0 text-primary flex space-x-1" style="width:<?= $escaper->escapeHtml($rating) ?>%">
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                                    <use xlink:href="#star"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <?= /* @noEscape */
+                                    $secureRenderer->renderStyleAsTag(
+                                        "width:" . /* @noEscape */ $rating . "%",
+                                        'div#rating-div-'.$_rating->getRatingId().
+                                        '>span:first-child'
+                                    ) ?>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="review-details">
+            <?php if ($block->getRating() && $block->getRating()->getSize()): ?>
+                <div class="title pb-2 text-lg border-b border-gray-300 mb-3">
+                    <strong><?= $escaper->escapeHtml(__('Your Review')) ?></strong>
+                </div>
+            <?php endif; ?>
+
+            <div class="review-title font-semibold text-md py-1"><?= $escaper->escapeHtml($block->getReviewData()->getTitle()) ?></div>
+            <div class="review-content py-2">
+                <?= /* @noEscape */ nl2br($escaper->escapeHtml($block->getReviewData()->getDetail())) ?>
+            </div>
+            <div class="review-date block text-gray-500 mt-4">
+                <?= $escaper->escapeHtml(__('Submitted on %1', '<time class="date">' .
+                    $block->dateFormat($block->getReviewData()->getCreatedAt()) . '</time>'), ['time']) ?>
+            </div>
+        </div>
+    </div>
+    <div class="actions-toolbar mt-8">
+        <div class="secondary">
+            <a class="action back primary-btn" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>">
+                <span><?= $escaper->escapeHtml(__('Back to My Reviews')) ?></span>
+            </a>
+        </div>
+    </div>
+</div>
+<?php endif; ?>

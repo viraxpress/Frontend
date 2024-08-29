@@ -1,0 +1,290 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * Send to friend form
+ */
+/**
+ * @var \Magento\SendFriend\Block\Send $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+// phpcs:disable PHPCompatibility.Miscellaneous.RemovedAlternativePHPTags.MaybeASPOpenTagFound
+
+?>
+<div x-data="sendFriend()">
+    <form id="product-sendtofriend-form" class="form mb-10 grid grid-cols-1 lg:grid-cols-2 gap-10 send friend" >
+        <fieldset class="fieldset sender space-y-5 col-span-2 lg:col-span-1" id="sender_options">
+            <legend class="legend pb-3 border-b border-gray-200 w-full text-lg text-gray-800 font-semibold"><?= $escaper->escapeHtml(__('Sender')) ?></legend>
+            <div class="block field sender required">
+                <label for="sender-name" class="block text-sm leading-6 text-gray-900">
+                    <?= $escaper->escapeHtml(__('Name')) ?>
+                    <span class="ml-[2px] inline-block text-required">*</span>
+                </label>
+                <div class="mt-1">
+                    <input name="sender[name]" value="<?= $escaper->escapeHtmlAttr($block->getUserName()) ?>" title="<?= $escaper->escapeHtmlAttr(__('Name')) ?>" id="sender-name" type="text" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                </div>
+            </div>
+            <div class="block field email required">
+                <label for="sender-email" class="block text-sm leading-6 text-gray-900">
+                    <?= $escaper->escapeHtml(__('Email')) ?>
+                    <span class="ml-[2px] inline-block text-required">*</span>
+                </label>
+                <div class="mt-1">
+                    <input name="sender[email]" value="<?= $escaper->escapeHtmlAttr($block->getEmail()) ?>" title="<?= $escaper->escapeHtmlAttr(__('Email')) ?>" id="sender-email" type="email" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                </div>
+            </div>
+
+            <div class="block field text required">
+                <label for="sender-message" class="block text-sm leading-6 text-gray-900">
+                    <?= $escaper->escapeHtml(__('Message')) ?>
+                    <span class="ml-[2px] inline-block text-required">*</span>
+                </label>
+                <div class="mt-1">
+                    <textarea name="sender[message]" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="sender-message"><?= $escaper->escapeHtml($block->getMessage()) ?></textarea>
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="fieldset recipients space-y-5 col-span-2 lg:col-span-1">
+            <legend class="legend pb-3 border-b border-gray-200 w-full text-lg text-gray-800 font-semibold"><?= $escaper->escapeHtml(__('Invitee')) ?></legend>
+            <div id="invite-friends" class="space-y-6">
+                <div class="actions-toolbar invite-friend-fields space-y-5" id="friends-invitation-0">
+                    <div class="block field name required">
+                        <label for="recipients-name-0" class="block text-sm leading-6 text-gray-900">
+                            <?= $escaper->escapeHtml(__('Name')) ?>
+                            <span class="ml-[2px] inline-block text-required">*</span>
+                        </label>
+                        <div class="mt-1">
+                            <input name="recipients[name][0]" id="recipients-name-0" type="text" title="<?= $escaper->escapeHtmlAttr(__('Name')) ?>" type="text" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+                    <div class="block field email required">
+                        <label for="recipients-email-0" class="block text-sm leading-6 text-gray-900">
+                            <?= $escaper->escapeHtml(__('Email')) ?>
+                            <span class="ml-[2px] inline-block text-required">*</span>
+                        </label>
+                        <div class="mt-1">
+                            <input name="recipients[email][0]" id="recipients-email-0" title="<?= $escaper->escapeHtmlAttr(__('Email')) ?>" type="email" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="recipients-options"></div>
+            <div class="actions-toolbar" x-show="showInvitee">
+                <div class="secondary">
+                    <?php if (1 < $block->getMaxRecipients()): ?>
+                        <button type="button" id="add-recipient-button" x-on:click="addInvite()" class="action add secondary-btn flex-auto sm:flex-none">
+                            <span><?= $escaper->escapeHtml(__('Add Invitee')) ?></span>
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <!-- alert message -->
+            <?php if ($block->getMaxRecipients()): ?>
+                <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4 invisible" role="alert" id="max-recipient-message">
+                    <p><?= $escaper->escapeHtml(__('Maximum %1 email addresses allowed.', $block->getMaxRecipients())) ?></p>
+                </div>
+            <?php endif; ?>
+            <!-- alert message -->
+            <?= $block->getChildHtml('form_additional_info') ?>
+        </fieldset>
+        <div class="actions-toolbar col-span-2">
+            <?= $block->getChildHtml('captcha'); ?>
+            <div class="primary flex justify-center items-center gap-5">
+                <button type="button" class="action back hover:underline" @click="sendFriendFormBack()">
+                    <?= $escaper->escapeHtml(__('Back')) ?>
+                </button>
+                <button type="button" x-on:click="onSubmit" class="action submit primary-btn" <?php if (!$block->canSend()): ?> disabled="disabled" <?php endif ?>>
+                    <?= $escaper->escapeHtml(__('Send Email')) ?>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    function sendFriend() {
+        return {
+            getMaxRecipients: "<?= $escaper->escapeHtmlAttr($block->getMaxRecipients()) ?>",
+            indexer: 1,
+            showInvitee: true,
+
+            init() {
+            },
+
+            addInvite() {
+                const length = document.querySelectorAll('.invite-friend-fields').length;
+                this.showInvitee = true;
+
+                const removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.id = `btn-remove-${this.indexer}`;
+                removeButton.textContent = 'Remove';
+                removeButton.classList.add('action', 'remove', 'text-error', 'mt-1', 'text-sm');
+                removeButton.title = 'Remove Recipient';
+                removeButton.addEventListener('click', () => this.removeInvite());
+
+                const template = document.getElementById('friends-invitation-0').cloneNode(true);
+                template.id = `friends-invitation-${this.indexer}`;
+
+                const validationElements = template.querySelectorAll('.vira-form-validation');
+                validationElements.forEach(element => element.remove());
+
+                template.querySelectorAll('[id]').forEach(element => {
+                    const id = element.getAttribute('id');
+                    element.setAttribute('id', id.replace('-0', `-${this.indexer}`));
+                });
+
+                template.querySelectorAll('[name]').forEach(element => {
+                    const name = element.getAttribute('name');
+                    element.setAttribute('name', name.replace('[0]', `[${this.indexer}]`));
+                });
+
+                template.querySelectorAll('.label').forEach(label => {
+                    label.setAttribute('for', `recipients-name-${this.indexer}`);
+                });
+
+                template.querySelectorAll('input[type="text"], input[type="email"]').forEach(input => {
+                    input.value = '';
+                });
+
+                const container = document.getElementById('invite-friends');
+                container.appendChild(template);
+                template.appendChild(removeButton);
+
+                this.indexer++;
+
+                if (length === (this.getMaxRecipients - 1)) {
+                    this.showInvitee = false;
+                    const maxRecipientMessage = document.getElementById('max-recipient-message');
+                    maxRecipientMessage.classList.remove('invisible');
+                }
+            },
+
+            removeInvite() {
+                var buttonId = event.target.id;
+                var numericPart = buttonId.replace('btn-remove-', '');
+                const fieldId = 'friends-invitation-' + numericPart;
+                const fieldToRemove = document.getElementById(fieldId);
+                if (fieldToRemove) {
+                    fieldToRemove.remove();
+                }
+                const removeButtonId = 'btn-remove-' + numericPart;
+                const removeButtonToRemove = document.getElementById(removeButtonId);
+                if (removeButtonToRemove) {
+                    removeButtonToRemove.remove();
+                }
+                this.showInvitee = true;
+                const maxRecipientMessage = document.getElementById('max-recipient-message');
+                maxRecipientMessage.classList.add('invisible');
+            },
+
+            onSubmit(event) {
+                var formId = "product-sendtofriend-form",
+                    form = document.getElementById(formId),
+                    url = "<?= $escaper->escapeUrl($block->getSendUrl()) ?>";
+                const inputFields = form.querySelectorAll('input[type="text"], input[type="email"], textarea');
+
+                let isValid = true;
+                inputFields.forEach(inputElement => {
+                    if (inputElement.type === 'email') {
+                        const emailValue = inputElement.value.trim();
+                        const isValidEmail = this.validateEmail(emailValue);
+                        if (!isValidEmail) {
+                            const fieldContainer = inputElement.closest('.field');
+                            this.displayValidationError(fieldContainer, 'email');
+                            isValid = false;
+                        } else {
+                            const fieldContainer = inputElement.closest('.field');
+                            this.removeValidationError(fieldContainer);
+                        }
+                    } else {
+                        if (!inputElement.value.trim()) {
+                            const fieldContainer = inputElement.closest('.field');
+                            this.displayValidationError(fieldContainer, 'text');
+                            isValid = false;
+                        } else {
+                            const fieldContainer = inputElement.closest('.field');
+                            this.removeValidationError(fieldContainer);
+                        }
+                    }
+                });
+                
+                form.addEventListener("submit", function (event) { event.preventDefault(); });
+                const formData = new FormData(form);
+                formData.append('form_key', getFormKeyCookie());
+
+                if (isValid) {
+                    fetch(url, {
+                        method: "POST",
+                        body: formData,
+                        credentials: "include"
+                    })
+                    .then((response) => {
+                        if (response.ok) {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                getCookie("mage-messages");
+                            }
+                        } else {
+                            console.error("Error:", response.status);
+                        }
+                    }).catch((error) => {
+                        console.error("Fetch error:", error);
+                    });
+                }
+            },
+
+            displayValidationError(fieldContainer, type) {
+                let errorMessageElement = fieldContainer.querySelector('.error-message');
+                if (!errorMessageElement) {
+                    const parentElement = document.createElement('div');
+                    parentElement.setAttribute('class', 'vira-form-validation');
+                    errorMessageElement = document.createElement('div');
+                    errorMessageElement.classList.add('error-message', 'text-error', 'mt-1', 'text-xs');
+                    if (type == 'email') {
+                        errorMessageElement.textContent = 'Please enter a valid email address (Ex: johndoe@domain.com).';
+                    } else {
+                        errorMessageElement.textContent = 'Required field';
+                    }
+                    parentElement.appendChild(errorMessageElement);
+                    fieldContainer.appendChild(parentElement);
+                }
+            },
+
+            removeValidationError(fieldContainer) {
+                const errorMessageElement = fieldContainer.querySelector('.vira-form-validation');
+                if (errorMessageElement) {
+                    errorMessageElement.remove();
+                }
+            },
+
+            sendFriendFormBack() {
+                history.back();
+            },
+
+            validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+        }
+    }
+</script>

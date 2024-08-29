@@ -1,0 +1,69 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php /* @var $block \Magento\Downloadable\Block\Catalog\Product\Links */ ?>
+<?php $_linksPurchasedSeparately = $block->getLinksPurchasedSeparately(); ?>
+<?php if ($block->getProduct()->isSaleable() && $block->hasLinks()): ?>
+    <?php $_links = $block->getLinks(); ?>
+    <?php $_linksLength = 0; ?>
+    <?php $_isRequired = $block->getLinkSelectionRequired(); ?>
+    <div class="field downloads
+            <?php if ($_isRequired) {
+                echo ' required';
+            } ?>
+            <?php if (!$_linksPurchasedSeparately) {
+                echo ' downloads-no-separately';
+            } ?>">
+        <label class="label font-medium leading-6 text-gray-900">
+            <span><?= $escaper->escapeHtml($block->getLinksTitle()) ?></span>
+        </label>
+        <div class="control mt-1 divide-y divide-gray-200" id="downloadable-links-list">
+            <?php foreach ($_links as $_link): ?>
+                <?php $_linksLength++; ?>
+                <div class="field choice p-2 px-0 flex items-center gap-2" data-role="link">
+                    <?php if ($_linksPurchasedSeparately): ?>
+                        <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" <?php if ($_isRequired): ?> data-validate="{'validate-one-checkbox-required-by-name':'downloadable-links-list'}" <?php endif; ?> name="links[]" id="links_<?= $escaper->escapeHtmlAttr($_link->getId()) ?>" value="<?= $escaper->escapeHtmlAttr($_link->getId()) ?>" <?= $escaper->escapeHtml($block->getLinkCheckedValue($_link)) ?> />
+                    <?php endif; ?>
+                    <label class="label group" for="links_<?= $escaper->escapeHtmlAttr($_link->getId()) ?>">
+                        <span><?= $escaper->escapeHtml($_link->getTitle()) ?></span>
+                        <?php if ($_link->getSampleFile() || $_link->getSampleUrl()): ?>
+                            <a class="sample link font-medium group-hover:text-primary group-hover:underline" href="<?= $escaper->escapeUrl($block->getLinkSampleUrl($_link)) ?>" <?= $block->getIsOpenInNewWindow() ? 'target="_blank"' : '' ?>>
+                                <?= $escaper->escapeHtml(__('sample')) ?>
+                            </a>
+                        <?php endif; ?>
+                        <?php if ($_linksPurchasedSeparately): ?>
+                            <?= /* @noEscape */ $block->getLinkPrice($_link) ?>
+                        <?php endif; ?>
+                    </label>
+                </div>
+            <?php endforeach; ?>
+            <?php if ($_linksPurchasedSeparately && $_linksLength > 1): ?>
+                <div class="field choice downloads-all">
+                    <input type="checkbox" data-notchecked="<?= $escaper->escapeHtmlAttr(__('Select all')) ?>" data-checked="<?= $escaper->escapeHtmlAttr(__('Unselect all')) ?>" id="links_all" />
+                    <label class="label" for="links_all"><span><?= $escaper->escapeHtml(__('Select all')) ?></span></label>
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php if ($_isRequired): ?>
+            <span id="links-advice-container"></span>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,116 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * @var \Magento\Sales\Block\Order\PrintOrder\Shipment $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+?>
+<?php $order = $block->getOrder(); ?>
+<?php if (!$block->getObjectData($order, 'is_virtual')): ?>
+    <?php foreach ($block->getShipmentsCollection() as $shipment): ?>
+        <div class="order-details-items shipments w-full">
+            <div class="order-title border-b border-gray-200 py-2 px-4 text-base mb-4 flex gap-4 justify-between print:border-0 print:p-0">
+                <strong>
+                    <?= $escaper->escapeHtml(
+                        __(
+                            'Shipment #%1',
+                            $block->getObjectData($shipment, 'increment_id')
+                        )
+                    ) ?>
+                </strong>
+            </div>
+            <div class="table-wrapper order-items-shipment w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
+                <table class="data table table-order-items shipment w-full"
+                        id="my-shipment-table-<?= (int)$block->getObjectData($shipment, 'id') ?>">
+                    <caption class="table-caption hidden"><?= $escaper->escapeHtml(__('Items Invoiced')) ?></caption>
+                    <thead class="border-b border-gray-200 hidden md:table-header-group">
+                        <tr>
+                            <th class="col name p-2 text-left text-sm font-semibold text-gray-800"><?= $escaper->escapeHtml(__('Product Name')) ?></th>
+                            <th class="col sku p-2 text-sm font-semibold text-gray-800"><?= $escaper->escapeHtml(__('SKU')) ?></th>
+                            <th class="col price p-2 text-sm font-semibold text-gray-800"><?= $escaper->escapeHtml(__('Qty Shipped')) ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($block->getShipmentItems($shipment) as $item): ?>
+                            <?= $block->getItemHtml($item) ?>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="block block-order-details-view w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
+                <div class="block-title border-b border-gray-200 py-2 text-base mb-4 flex gap-4 justify-between">
+                    <strong><?= $escaper->escapeHtml(__('Order Information')) ?></strong>
+                </div>
+                <div class="block-content grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="box box-order-shipping-address">
+                        <div class="box-title">
+                            <strong><?= $escaper->escapeHtml(__('Shipping Address')) ?></strong>
+                        </div>
+                        <div class="box-content">
+                            <address><?= $block->getShipmentAddressFormattedHtml($shipment) ?></address>
+                        </div>
+                    </div>
+
+                    <div class="box box-order-shipping-method">
+                        <div class="box-title">
+                            <strong><?= $escaper->escapeHtml(__('Shipping Method')) ?></strong>
+                        </div>
+                        <div class="box-content">
+                        <?= $escaper->escapeHtml($block->getObjectData($order, 'shipping_description')) ?>
+                        <?php $tracks = $block->getShipmentTracks($shipment);
+                        if ($tracks): ?>
+                            <dl class="order-tracking">
+                            <?php foreach ($tracks as $track): ?>
+                                <dt class="tracking-title">
+                                    <?= $escaper->escapeHtml($block->getObjectData($track, 'title')) ?>
+                                </dt>
+                                <dd class="tracking-content">
+                                    <?= $escaper->escapeHtml($block->getObjectData($track, 'number')) ?>
+                                </dd>
+                            <?php endforeach; ?>
+                            </dl>
+                        <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div class="box box-order-billing-address">
+                        <div class="box-title">
+                            <strong><?= $escaper->escapeHtml(__('Billing Address')) ?></strong>
+                        </div>
+                        <div class="box-content">
+                            <address><?= $block->getBillingAddressFormattedHtml($order) ?></address>
+                        </div>
+                    </div>
+
+                    <div class="box box-order-billing-method">
+                        <div class="box-title">
+                            <strong><?= $escaper->escapeHtml(__('Payment Method')) ?></strong>
+                        </div>
+                        <div class="box-content">
+                            <?= $block->getPaymentInfoHtml() ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>

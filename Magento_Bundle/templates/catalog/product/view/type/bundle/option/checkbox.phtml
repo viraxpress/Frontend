@@ -1,0 +1,82 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+
+<?php /* @var $block \Magento\Bundle\Block\Catalog\Product\View\Type\Bundle\Option\Checkbox */ ?>
+<?php $_option = $block->getOption() ?>
+<?php $_selections = $_option->getSelections() ?>
+<?php $inputClass = 'bundle-radio-checkbox checkbox product bundle option bundle-option-' . $escaper->escapeHtmlAttr($_option->getId()) ?>
+<?php $inputId = 'bundle-option-' . $escaper->escapeHtmlAttr($_option->getId()) ?>
+<?php $inputName = 'bundle_option[' . $escaper->escapeHtmlAttr($_option->getId()) . ']' ?>
+<?php $dataValidation = 'data-validate="{\'validate-one-required-by-name\':\'input[name^=&quot;bundle_option[' .
+    $escaper->escapeHtmlAttr($_option->getId()) . ']&quot;]:checked\'}"' ?>
+
+<div class="field option <?= ($_option->getRequired()) ? ' required': '' ?>">
+    <label class="label font-medium text-base">
+        <span><?= $escaper->escapeHtml($_option->getTitle()) ?></span>
+        <?php if ($_option->getRequired()): ?>
+            <span class="text-required ml-1">*</span>
+        <?php endif; ?>
+    </label>
+    <div class="control mt-2">
+        <div class="nested options-list space-y-2">
+            <?php if ($block->showSingle()): ?>
+                <?= /* @noEscape */ $block->getSelectionQtyTitlePrice($_selections[0]) ?>
+                <?= /* @noEscape */ $block->getTierPriceRenderer()->renderTierPrice($_selections[0]) ?>
+                <input type="hidden"
+                       class="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>  product bundle option"
+                       name="bundle_option[<?= $escaper->escapeHtml($_option->getId()) ?>]"
+                       value="<?= $escaper->escapeHtmlAttr($_selections[0]->getSelectionId()) ?>"/>
+            <?php else: ?>
+                <?php foreach ($_selections as $selection): ?>
+                    <?php $sectionId = $selection->getSelectionId() ?>
+                    <div class="field choice ">
+                        <input class="<?=/* @noEscape */ $inputClass ?> change-container-classname cursor-pointer h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary mr-2 product-bundle-option"
+                               id="<?=/* @noEscape */ $inputId . '-' . $escaper->escapeHtmlAttr($sectionId)?>"
+                               type="checkbox"
+                               @change="changeBundleOption($event)"
+                               <?php if ($_option->getRequired()): ?>
+                                    <?= /* @noEscape */ $dataValidation ?>
+                               <?php endif;?>
+                               name="<?=/* @noEscape */ $inputName .'['. $escaper->escapeHtmlAttr($sectionId)?>]"
+                               data-selector="<?= /* @noEscape */ $inputName.'['.$escaper->escapeHtmlAttr($sectionId)?>]"
+                                <?php if ($block->isSelected($selection)): ?>
+                                    <?= ' checked="checked"' ?>
+                                <?php endif; ?>
+                                <?php if (!$selection->isSaleable()): ?>
+                                    <?= ' disabled="disabled"' ?>
+                                <?php endif; ?>
+                               value="<?= $escaper->escapeHtmlAttr($sectionId) ?>"
+                               data-errors-message-box="#validation-message-box"/>
+                        <label class="label cursor-pointer"
+                               for="<?= /* @noEscape */ $inputId . '-' . $escaper->escapeHtmlAttr($sectionId) ?>">
+                            <span><?= /* @noEscape */ $block->getSelectionQtyTitlePrice($selection) ?></span>
+                            <br/>
+                            <?= /* @noEscape */ $block->getTierPriceRenderer()->renderTierPrice($selection) ?>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+                <div id="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>-container"></div>
+                <div id="validation-message-box"></div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>

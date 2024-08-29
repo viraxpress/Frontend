@@ -1,0 +1,33 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var $block \Magento\Checkout\Block\Cart\Item\Renderer\Actions\Remove */
+$deleteDetails = json_decode($block->getDeletePostJson(), true);
+$url = $deleteDetails['action'];
+$productId = $deleteDetails['data']['id'];
+$uenc = isset($deleteDetails['data']['uenc']) ? $deleteDetails['data']['uenc'] : null;
+?>
+<button type="button" onclick="removeItemAtCart(this)" title="<?= $escaper->escapeHtml(__('Remove item')) ?>" data-item="<?= $escaper->escapeHtmlAttr($productId) ?>" data-uenc="<?= $escaper->escapeHtmlAttr($uenc) ?>" class="action-remove text-red-600 inline-block cursor-pointer p-2 rounded-full hover:bg-red-50">
+    <span class="sr-only"><?= $escaper->escapeHtml(__('Remove item')) ?></span>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19 7-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"></path>
+    </svg>
+</button>

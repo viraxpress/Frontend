@@ -1,0 +1,551 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+?>
+<?php /** @var $block \Magento\Checkout\Block\Cart\Shipping */ ?>
+<?php /** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */ ?>
+<?php if ($block->getShippingInfo()) {
+    $shippingInfo = json_encode($block->getShippingInfo(), true);
+} else {
+    $shippingInfo = null;
+}
+$postCodePatterns = $block->getPostCodeConfig()->getSerializedPostCodes();
+?>
+<div id="block-shipping" class="block shipping" x-data='{showCartDetails:false}'>
+    <div class="title mb-5 flex justify-between items-center gap-2" data-role="title">
+        <h4 id="block-shipping-heading" role="heading" aria-level="2">
+            <?= $block->getQuote()->isVirtual()
+                ? $escaper->escapeHtml(__('Estimate Tax'))
+                : $escaper->escapeHtml(__('Estimate Shipping and Tax'))
+            ?>
+        </h4>
+        <button type="button" class="inline-block" @click="showCartDetails=!showCartDetails" aria-label="Show Cart Details">
+            <span class="transition-all inline-block rotate-0" :class="showCartDetails == true ? 'rotate-180' :'rotate-0'">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"></path>
+                </svg>
+            </span>
+        </button>
+    </div>
+    <div x-cloak x-show="showCartDetails">
+        <div class="space-y-4">
+            <div name="shippingAddress.country_id">
+                <label for="country" class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Country')) ?> <span class="text-required ml-1">*</span></label>
+                <div class="mt-2">
+                    <select id="country" required name="country_id" title="Country" class="text-sm block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" @change="updateFieldsOnCountryChange" x-on:input.debounce="validatePostCode()">
+                        <template x-for="country in getCountriesSortedList()" :key="country.id">
+                            <option :value="country.id" x-text="country.name" :selected="country.id == cartData.address.countryId"></option>
+                        </template>
+                    </select>
+                </div>
+            </div>
+            <div name="shippingAddress.region_id">
+                <div x-show="checkRegionAvailablity()">
+                    <label class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('State/Province')) ?><span class="text-required ml-1">*</span></label>
+                    <div class="mt-2">
+                        <select id="region" required name="region_id" title="Region" class="text-sm block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" @change="updateFieldsOnCountryChange">
+                            <option value="">
+                                <?= $escaper->escapeHtml(__('Please select a region, state or province.')) ?>
+                            </option>
+                            <template x-for="region in getCountryRegions()" :key="region.id">
+                                <option :value="region.name" x-bind:data-region-id="region.id" x-bind:data-code="region.code" x-text="region.name" :selected="region.id == cartData.address.regionId"></option>
+                            </template>
+                        </select>
+                    </div>
+                </div>
+                <div x-show="!checkRegionAvailablity()">
+                    <label class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('State/Province')) ?><span class="text-required ml-1">*</span></label>
+                    <div class="mt-2">
+                        <input class="form-input block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" id="region-text" type="text" name="region" data-region-id="" :value="cartData.address.region" x-data="{ debounceTimeout: null }" @keyup="handleKeyUpEvent" />
+                    </div>
+                </div>
+            </div>
+            <div class="field" name="shippingAddress.postcode">
+                <label class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Zip/Postal Code')) ?><span class="text-required ml-1">*</span></label>
+                <div class="mt-2">
+                    <input class="form-input block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" type="text" x-model="cartData.address.postcode" x-on:input.debounce="validatePostCode()" name="postcode" :value="cartData.address.postcode" x-data="{ debounceTimeout: null }" @keyup="handleKeyUpEvent" />
+                    <template x-if="errorMessage">
+                        <div class="vira-form-validation-rule">
+                            <div x-text="errorMessage" class="warning-message w-full p-4 bg-orange-100 my-2 font-medium text-gray-900"></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 space-y-4" id="order-shipping-methods-available">
+            <template x-for="method in cartData.rates">
+                <template x-if="method.available">
+                    <div>
+                        <h5 class="block text-sm font-medium leading-6 text-gray-900" x-text="method.carrier_title"></h5>
+                        <div class="mt-2">
+                            <template x-if="method.carrier_code === cartData.shippingCarrierCode">
+                                <input :id="method.carrier_code" 
+                                class="radio-button shipping-methods-field absolute -z-50 opacity-0" 
+                                :class="{ 'checked': rate === cartData.shippingCarrierCode + '_' + cartData.shippingMethodCode, 'other-class': true }"
+                                name="shipping-methods-available" 
+                                type="radio" 
+                                :value="cartData.shippingCarrierCode + '_' + cartData.shippingMethodCode" 
+                                @change="handleShippingMethodChange(method)" 
+                                :checked="rate === cartData.shippingCarrierCode + '_' + cartData.shippingMethodCode" />
+                            </template>
+                            <template x-if="method.carrier_code != cartData.shippingCarrierCode">
+                                <input :id="method.carrier_code" 
+                                class="radio-button shipping-methods-field absolute -z-50 opacity-0" 
+                                :class="{ 'checked': rate === method.carrier_code + '_' + method.method_code}"
+                                name="shipping-methods-available" 
+                                type="radio" 
+                                :value="method.carrier_code + '_' + method.method_code" 
+                                @change="handleShippingMethodChange(method)" 
+                                :checked="rate === method.carrier_code + '_' + method.method_code" />
+                            </template>
+                            <label class="text-sm shipping-method-label pl-8 cursor-pointer" :for="method.carrier_code" x-text="method.method_title"></label>
+                            <span class="price" x-text="method.price_excl_tax !== undefined ? '<?= $escaper->escapeHtmlAttr($block->getCurrentCurrencyCode()) ?>' + method.price_excl_tax.toFixed(2) : '<?= $escaper->escapeHtmlAttr($block->getCurrentCurrencyCode()) ?>' + method.price_incl_tax.toFixed(2)"></span>
+                        </div>
+                    </div>
+                </template>
+                <template x-if="!method.available">
+                    <div>
+                        <p class="text-sm" x-text="method.error_message"></p>
+                    </div>
+                </template>
+            </template>
+        </div>
+    </div>
+    <div class="mt-4 space-y-2">
+        <template x-for="segment in cartData.totals">
+            <template x-if="segment.value !== 0">
+                <div class="flex justify-between items-start gap-x-5">
+                    <span class="inline-block" x-text="segment.title"></span>
+                    <p class="inline-block font-semibold" x-text="'<?= $escaper->escapeHtmlAttr($block->getCurrentCurrencyCode()) ?>' + parseFloat(segment.value).toFixed(2)"></p>
+                </div>
+            </template>
+        </template>
+    </div>
+</div>
+
+<script>
+    window.checkoutConfig = <?= /* @noEscape */ $block->getSerializedCheckoutConfig() ?>;
+    window.customerData = window.checkoutConfig.customerData;
+    quoteData = window.checkoutConfig.quoteData;
+
+    function ShoppingCart() {
+        return {
+            cartData: {
+                address: {
+                    countryId: window.checkoutConfig.defaultCountryId,
+                    regionId: window.checkoutConfig.defaultRegionId,
+                    postcode: window.checkoutConfig.defaultPostcode,
+                    region: '',
+                    regionCode: '',
+                },
+                cartVersion: '',
+                rates: [],
+                shippingCarrierCode: null,
+                shippingMethodCode: null,
+                totals: [],
+            },
+            storeCode: '<?= $escaper->escapeHtmlAttr($block->getCurrentStoreCode()) ?>',
+            shippingInfo: '<?= $escaper->escapeHtmlAttr($shippingInfo) ?>',
+            rate: '',
+            postCode : '',
+            errorMessage: '',
+            checkoutData: {
+                country_id: window.checkoutConfig.defaultCountryId,
+                region_id: window.checkoutConfig.defaultRegionId,
+                postcode: window.checkoutConfig.defaultPostcode,
+                region: '',
+                region_code: '',
+            },
+            initialCheckoutData: {
+                selectedShippingAddress: null,
+                shippingAddressFromData: null,
+                newCustomerShippingAddress: null,
+                selectedShippingRate: null,
+                selectedPaymentMethod: null,
+                selectedBillingAddress: null,
+                billingAddressFromData: null,
+                newCustomerBillingAddress: null
+            },
+            displayLoading: false,
+
+            init() {
+                var self = this;
+                this.loadCustomerData();
+                this.calculateEstimateShippingRate();
+                this.$watch('rate', value => {
+                    self.displayLoading = true;
+                });
+            },
+
+            loadCustomerData() {
+                window.customerData = JSON.parse(localStorage.getItem("vira-mage-cache-storage"));
+                window.directory = window.customerData['directory-data'];
+                window.cartData = window.customerData['cart'];
+                this.cartData.cartVersion = window.customerData['customer']['data_id'];
+
+                if (window.checkoutConfig.customerData && window.checkoutConfig.customerData.addresses) {
+                    for (const addressKey in window.checkoutConfig.customerData.addresses) {
+                        const address = window.checkoutConfig.customerData.addresses[addressKey];
+                        if (address['default_shipping'] == true) {
+                            this.updateAddressFromCustomerData(address);
+                        }
+                    }
+                }
+
+                if (this.shippingInfo) {
+                    try {
+                        const parsedShippingInfo = JSON.parse(this.decodeEntities(this.shippingInfo));
+                        Object.assign(this.cartData.address, parsedShippingInfo.address);
+                        Object.assign(this.checkoutData, parsedShippingInfo.address);
+                        this.cartData.shippingCarrierCode = parsedShippingInfo.shippingCarrierCode;
+                        this.cartData.shippingMethodCode = parsedShippingInfo.shippingMethodCode;
+                    } catch (error) {
+                        console.error('Error parsing shippingInfo:', error);
+                    }
+                }
+
+                this.initializeLocalStorage();
+            },
+
+            updateAddressFromCustomerData(address) {
+                this.cartData.address.countryId = address['country_id'];
+                this.cartData.address.regionId = address['region']['region_id'];
+                this.cartData.address.postcode = address['postcode'];
+                this.cartData.address.region = address['region']['region'];
+                this.checkoutData.country_id = address['country_id'];
+                this.checkoutData.region_id = address['region']['region_id'];
+                this.checkoutData.postcode = address['postcode'];
+                this.checkoutData.region = address['region']['region'];
+                this.checkoutData.region_code = address['region']['region_code'];
+            },
+
+            initializeLocalStorage() {
+                if (!localStorage.getItem('shipping-checkout-storage')) {
+                    const jsonString = JSON.stringify({ 'checkout-data': this.initialCheckoutData });
+                    localStorage.setItem('shipping-checkout-storage', jsonString);
+                }
+            },
+
+            decodeEntities(encodedString) {
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = encodedString;
+                return textarea.value;
+            },
+
+            validatePostCode() {
+                const postCode = this.cartData.address.postcode;
+                const configPattern = <?= /* @noEscape */ $postCodePatterns ?>;
+                const countryId = document.getElementById('country')?.value;
+                const countryPostCode = countryId && configPattern ? configPattern[countryId] : false;
+                
+                if (!postCode || !countryPostCode) {
+                    this.errorMessage = '';
+                    return true;
+                }
+
+                const isValid = Object.values(countryPostCode).some(config => new RegExp(config.pattern).test(postCode));
+                
+                if (!isValid) {
+                    this.errorMessage = 'Provided Zip/Postal Code seems to be invalid.';
+                    this.errorMessage += '\nExample: ' + Object.values(countryPostCode).map(config => config.example).join('; ');
+                    this.errorMessage += '\nIf you believe it is the right one you can ignore this notice.';
+                } else {
+                    this.errorMessage = '';
+                }
+            },
+
+            getEstimateShippingUrl() {
+                const path = this.isCustomerLoggedIn() == 'guest' ?
+                    '/V1/guest-carts/' + quoteData['entity_id'] + '/estimate-shipping-methods' :
+                    '/V1/carts/mine/estimate-shipping-methods';
+                return path;
+            },
+
+            getTotalsInformationUrl() {
+                const path = this.isCustomerLoggedIn() == 'guest' ?
+                    '/V1/guest-carts/' + quoteData['entity_id'] + '/totals-information' :
+                    '/V1/carts/mine/totals-information';
+                return path;
+            },
+
+            async calculateEstimateShippingRate() {
+                try {
+                    const phpSessionId = this.getSessionId('PHPSESSID');
+                    const customerToken = '<?= $escaper->escapeHtmlAttr($block->getCustomerToken()) ?>';
+                    const headers = new Headers({
+                        "Content-Type": "application/json",
+                        "Cookie": phpSessionId
+                    });
+
+                    if (customerToken) {
+                        headers.append("Authorization", `Bearer ${customerToken}`);
+                    }
+
+                    const requestOptions = {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({ address: this.cartData.address }),
+                        redirect: 'follow'
+                    };
+
+                    const estimateShippingUrl = '<?= $escaper->escapeUrl($block->getUrl('rest')) ?>' + this.storeCode + this.getEstimateShippingUrl();
+                    const response = await fetch(estimateShippingUrl, requestOptions);
+                    this.displayLoading = false;
+                    if (!response.ok) {
+                        throw new Error('Failed to freeze basket');
+                    }
+
+                    const data = await response.json();
+                    this.cartData.rates = data;
+
+                    if (this.cartData.rates.length === 1) {
+                        this.cartData.shippingCarrierCode = this.cartData.rates[0].carrier_code;
+                        this.cartData.shippingMethodCode = this.cartData.rates[0].method_code;
+                        this.rate = `${this.cartData.rates[0].carrier_code}_${this.cartData.rates[0].method_code}`;
+                    }
+
+                    if (this.cartData.shippingCarrierCode && this.cartData.shippingMethodCode) {
+                        this.rate = `${this.cartData.shippingCarrierCode}_${this.cartData.shippingMethodCode}`;
+                    }
+
+                    this.calculateTotalsInformation();
+                    this.getCheckoutData();
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            },
+
+            async calculateTotalsInformation() {
+                const phpSessionId = this.getSessionId('PHPSESSID');
+                const customerToken = '<?= $escaper->escapeHtmlAttr($block->getCustomerToken()) ?>';
+                const headers = new Headers({
+                    "Content-Type": "application/json",
+                    "Cookie": phpSessionId
+                });
+
+                if (customerToken) {
+                    headers.append("Authorization", `Bearer ${customerToken}`);
+                }
+
+                const requestOptions = {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        addressInformation: {
+                            shipping_carrier_code: this.cartData.shippingCarrierCode,
+                            shipping_method_code: this.cartData.shippingMethodCode,
+                            address: this.cartData.address
+                        }
+                    }),
+                    redirect: 'follow'
+                };
+
+                try {
+                    const totalsUrl = '<?= $escaper->escapeUrl($block->getUrl('rest')) ?>' + this.storeCode + this.getTotalsInformationUrl();
+                    const response = await fetch(totalsUrl, requestOptions);
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to freeze basket');
+                    }
+
+                    const data = await response.json();
+
+                    window.checkoutConfig.totalsData.total_segments.forEach(segment => {
+                        const existingIndex = data.total_segments.findIndex(elem => elem.code === segment.code);
+                        if (existingIndex === -1) {
+                            data.total_segments.push(segment);
+                        }
+                    });
+
+                    window.checkoutConfig.totalsData.total_segments = data.total_segments;
+                    data.total_segments = data.total_segments.filter(segment => segment.value !== 0);
+                    this.cartData.totals = data.total_segments;
+                    this.rate = `${this.cartData.shippingCarrierCode}_${this.cartData.shippingMethodCode}`;
+
+                    this.getCheckoutData();
+                    this.storeDataInCheckoutSession(this.cartData);
+
+                    const updatedCustomerData = JSON.stringify(window.customerData);
+                    localStorage.setItem("vira-mage-cache-storage", updatedCustomerData);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            },
+
+            storeDataInCheckoutSession(data) {
+                fetch('<?= $escaper->escapeUrl($block->getUrl('viraxpresscheckout/cart/summaryInfo'))?>?form_key=' + getFormKeyCookie(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response;
+                })
+                .then(responseData => {
+                    // Handle successful response data
+                    this.displayLoading = false;
+                })
+                .catch(error => {
+                    console.error('Error storing data:', error);
+                });
+            },
+
+            updateFieldsOnCountryChange() {
+                const countrySelect = document.getElementById('country');
+                var regionCode = document.getElementById('region');
+                var selectedOption = regionCode.options[regionCode.selectedIndex];
+                var regionId = selectedOption.getAttribute('data-region-id');
+                if (!regionId) {
+                    regionId = 0;
+                    regionCode = document.getElementById('region-text');
+                }
+                const postcodeInput = document.querySelector('[name="postcode"]');
+
+                this.cartData.address.countryId = countrySelect.value;
+                this.cartData.address.regionId = regionId;
+                this.cartData.address.region = regionCode.value;
+                this.cartData.address.postcode = postcodeInput.value;
+                this.cartData.address.regionCode = selectedOption.getAttribute('data-code');
+
+                this.checkoutData.country_id = this.cartData.address.countryId;
+                this.checkoutData.region_id = this.cartData.address.regionId;
+                this.checkoutData.postcode = this.cartData.address.postcode;
+                this.checkoutData.region = this.cartData.address.region;
+                this.checkoutData.region_code = this.cartData.address.regionCode;
+
+                this.calculateEstimateShippingRate();
+
+                if (this.cartData.shippingCarrierCode) {
+                    this.calculateTotalsInformation();
+                }
+            },
+
+            handleKeyUpEvent() {
+                clearTimeout(this.debounceTimeout);
+
+                this.debounceTimeout = setTimeout(() => {
+                    const countrySelect = document.getElementById('country');
+                    var regionCode = document.getElementById('region');
+                    const selectedOption = regionCode.options[regionCode.selectedIndex];
+                    var regionId = selectedOption.getAttribute('data-region-id');
+                    if (!regionId) {
+                        regionId = 0;
+                        regionCode = document.getElementById('region-text');
+                    }
+                    const postcodeInput = document.querySelector('[name="postcode"]');
+
+                    this.cartData.address.countryId = countrySelect.value;
+                    this.cartData.address.regionId = regionId;
+                    this.cartData.address.region = regionCode.value;
+                    this.cartData.address.postcode = postcodeInput.value;
+                    this.cartData.address.regionCode = selectedOption.getAttribute('data-code');
+
+                    this.checkoutData.country_id = this.cartData.address.countryId;
+                    this.checkoutData.region_id = this.cartData.address.regionId;
+                    this.checkoutData.postcode = this.cartData.address.postcode;
+                    this.checkoutData.region = this.cartData.address.region;
+                    this.checkoutData.region_code = this.cartData.address.regionCode;
+
+                    this.calculateEstimateShippingRate();
+
+                    if (this.cartData.shippingCarrierCode) {
+                        this.calculateTotalsInformation();
+                    }
+                }, 500);
+            },
+
+            handleShippingMethodChange(selectedMethod) {
+                this.cartData.shippingCarrierCode = selectedMethod.carrier_code;
+                this.cartData.shippingMethodCode = selectedMethod.method_code;
+                this.calculateTotalsInformation();
+            },
+
+            getSessionId(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+
+                if (parts.length === 2) {
+                    return parts.pop().split(';').shift();
+                }
+            },
+
+            isCustomerLoggedIn() {
+                return window.checkoutConfig.isCustomerLoggedIn ? 'customer' : 'guest';
+            },
+
+            getCountriesSortedList() {
+                const filteredKeys = Object.keys(window.directory)
+                    .filter(countryKey => countryKey !== 'data_id' && countryKey !== 'AN')
+                    .sort((a, b) => {
+                        const nameA = (window.directory[a].name || '').toUpperCase();
+                        const nameB = (window.directory[b].name || '').toUpperCase();
+                        return nameA.localeCompare(nameB);
+                    });
+
+                return filteredKeys.map(countryId => ({
+                    id: countryId,
+                    name: window.directory[countryId].name || countryId
+                }));
+            },
+
+            checkRegionAvailablity() {
+                return this.cartData.address && this.cartData.address.countryId && this.getCountryRegions().length;
+            },
+
+            getCountryRegions() {
+                const countryId = this.cartData.address.countryId;
+
+                if (countryId && window.directory[countryId] && window.directory[countryId].regions) {
+                    return Object.keys(window.directory[countryId].regions).map(regionId => ({
+                        id: regionId,
+                        code: window.directory[countryId].regions[regionId].code,
+                        name: window.directory[countryId].regions[regionId].name
+                    }));
+                }
+                return [];
+            },
+
+            getCheckoutData() {
+                const storageKeys = ['mage-cache-storage', 'shipping-checkout-storage'];
+
+                storageKeys.forEach(storageKey => {
+                    let checkoutData = {};
+                    const storageData = localStorage.getItem(storageKey);
+
+                    if (storageData) {
+                        checkoutData = JSON.parse(storageData);
+                    }
+
+                    checkoutData['checkout-data'] = checkoutData['checkout-data'] || {};
+                    checkoutData['checkout-data']['selectedShippingRate'] = this.cartData.shippingCarrierCode + '_' + this.cartData.shippingMethodCode;
+                    checkoutData['checkout-data']['shippingAddressFromData'] = this.checkoutData;
+
+                    localStorage.setItem(storageKey, JSON.stringify(checkoutData));
+                });
+            },
+        }
+    }
+</script>

@@ -1,0 +1,267 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Customer\Block\Widget\Name;
+
+/** @var \Magento\Customer\Block\Form\Edit $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+$currentCustomerViewModel = $block->getData("current_customer");
+$customerEmail = !empty($currentCustomerViewModel->getCurrentCustomer()) ? $currentCustomerViewModel->getCurrentCustomer()->getEmail() : '';
+$blockObj = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Dob::class);
+?>
+<form class="form form-edit-account" id="account-information-details"
+x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->escapeUrl($block->getUrl('customer/account/editPost')) ?>'))" @submit="onSubmit">
+   <div class="block w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white"
+   x-data="customerInformation()">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+         <div class="block w-full space-y-5">
+            <div class="mb-5 pb-2 border-b border-gray-200 flex justify-between items-center">
+               <div class="block-title text-lg text-gray-800 font-semibold">
+                  <?= $escaper->escapeHtml(__('Account Information')) ?>
+               </div>
+            </div>
+            <?= $block->getLayout()->createBlock(Name::class)->setObject($block->getCustomer())->toHtml() ?>
+            <?php $_dob = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Dob::class); ?>
+            <?php $_taxvat = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Taxvat::class); ?>
+            <?php $_gender = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Gender::class); ?>
+            <?php if ($_dob->isEnabled()): ?>
+                  <?= $_dob->setDate($block->getCustomer()->getDob())->setView($currentCustomerViewModel)->toHtml() ?>
+            <?php endif ?>
+            <?php if ($_taxvat->isEnabled()): ?>
+                  <?= $_taxvat->setTaxvat($block->getCustomer()->getTaxvat())->toHtml() ?>
+            <?php endif ?>
+            <?php if ($_gender->isEnabled()): ?>
+                  <?= $_gender->setGender($block->getCustomer()->getGender())->toHtml() ?>
+            <?php endif ?>
+            <div class="space-y-2">
+               <div class="relative flex gap-x-3">
+                  <div class="flex h-6 items-center">
+                     <input id="change_email" name="change_email" value="1" type="checkbox"
+                     class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" x-model="isEmailChange">
+                  </div>
+                  <div class="text-sm leading-6">
+                     <label for="change_email" class="text-gray-900 cursor-pointer">
+                        <?= $escaper->escapeHtml(__('Change Email')) ?>
+                     </label>
+                  </div>
+               </div>
+               <div class="relative flex gap-x-3">
+                  <div class="flex h-6 items-center">
+                     <input id="change-password" name="change_password" value="1" type="checkbox"
+                     class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                     x-model="isPasswordChange">
+                  </div>
+                  <div class="text-sm leading-6">
+                     <label for="change-password" class="text-gray-900 cursor-pointer">
+                        <?= $escaper->escapeHtml(__('Change Password')) ?>
+                     </label>
+                  </div>
+               </div>
+               <?= $block->getChildHtml('fieldset_edit_info_additional') ?>
+            </div>
+         </div>
+         <template x-if="isEmailChange || isPasswordChange">
+            <div class="block w-full space-y-5">
+               <div class="mb-5 !mt-0 pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
+               x-show="isEmailChange && !isPasswordChange && !showChangeEmailAndPassword">
+                  <div class="block-title text-lg text-gray-800 font-semibold">
+                     <?= $escaper->escapeHtml(__('Change Email')) ?>
+                  </div>
+               </div>
+               <div class="mb-5 !mt-0 pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
+               x-show="isPasswordChange && !isEmailChange && !showChangeEmailAndPassword">
+                  <div class="block-title text-lg text-gray-800 font-semibold">
+                     <?= $escaper->escapeHtml(__('Change Password')) ?>
+                  </div>
+               </div>
+               <div class="mb-5 !mt-0 pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
+               x-show="showChangeEmailAndPassword">
+                  <div class="block-title text-lg text-gray-800 font-semibold">
+                     <?= $escaper->escapeHtml(__('Change Email and Password')) ?>
+                  </div>
+               </div>
+               <!-- Email -->
+               <template x-if="isEmailChange && !isPasswordChange || showChangeEmailAndPassword">
+                  <div class="field">
+                     <label for="email" class="block text-sm leading-6 text-gray-900">
+                        <?= $escaper->escapeHtml(__('Email ')) ?><span class="text-required ml-1">*</span>
+                     </label>
+                     <div class="mt-1">
+                        <input id="email" name="email" type="email" autocomplete="email" value="<?= $customerEmail ?>"
+                        x-on:input.debounce="onChange" required
+                        class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                     </div>
+                  </div>
+               </template>
+
+               <!-- Current Password -->
+               <div class="field" x-data="{ showCurrentPassword: false }" x-cloak
+               x-show="isEmailChange || isPasswordChange">
+                  <label for="current-password" class="block text-sm leading-6 text-gray-900">
+                     <?= $escaper->escapeHtml(__('Current Password ')) ?><span class="text-required ml-1">*</span>
+                  </label>
+                  <div class="mt-1 relative">
+                     <input id="current-password" name="current_password"
+                     :type="showCurrentPassword ? 'text' : 'password'" autocomplete="current password" required x-on:input.debounce="onChange"
+                     class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 pr-8">
+
+                     <div class="absolute top-1/2 right-4 z-10 cursor-pointer -translate-y-1/2">
+                        <svg x-cloak x-show="showCurrentPassword" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"
+                        @click="showCurrentPassword = !showCurrentPassword">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+
+                        <svg x-cloak x-show="!showCurrentPassword" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" class="h-4 text-gray-700 hidden" fill="none" @click="showCurrentPassword = !showCurrentPassword">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                        </svg>
+                     </div>
+                  </div>
+               </div>
+               <template x-if="isPasswordChange && !isEmailChange || showChangeEmailAndPassword">
+                  <!-- Password and Confirm password -->
+                  <div class="space-y-5" x-cloak x-show="isPasswordChange && !isEmailChange || showChangeEmailAndPassword">
+                     <div class="field" x-data="{ showPassword: false }">
+                        <label for="password" class="block text-sm leading-6 text-gray-900">
+                           <?= $escaper->escapeHtml(__('Password ')) ?><span class="inline-block ml-[2px] text-required">*</span>
+                        </label>
+                        <div class="mt-1 relative">
+                           <input id="password" name="password" :type="showPassword ? 'text' : 'password'" autocomplete="password" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 pr-8" x-on:input.debounce="onChange">
+
+                           <div class="absolute top-1/2 right-4 z-10 cursor-pointer -translate-y-1/2">
+                              <svg x-cloak x-show="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" @click="showPassword = !showPassword">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+
+                              <svg x-cloak x-show="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" class="h-4 text-gray-700 hidden" fill="none" @click="showPassword = !showPassword">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                              </svg>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="field" x-data="{ showConfirmPassword: false }">
+                        <label for="password_confirmation" class="block text-sm leading-6 text-gray-900">
+                           <?= $escaper->escapeHtml(__('Confirm password ')) ?><span class="inline-block ml-[2px] text-required">*</span>
+                        </label>
+                        <div class="mt-1 relative">
+                           <input id="password_confirmation" name="password_confirmation" :type="showConfirmPassword ? 'text' : 'password'" autocomplete="password_confirmation" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 pr-8" x-on:input.debounce="onChange">
+                           <div class="absolute top-1/2 right-4 z-10 cursor-pointer -translate-y-1/2">
+                              <svg x-cloak x-show="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" @click="showConfirmPassword = !showConfirmPassword">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+
+                              <svg x-cloak x-show="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" class="h-4 text-gray-700 hidden" fill="none" @click="showConfirmPassword = !showConfirmPassword">
+                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                              </svg>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </template>
+            </div>
+         </template>
+      </div>
+
+      <div class="actions-toolbar mt-5 flex flex-row-reverse justify-between gap-5 items-center">
+         <div class="primary">
+            <button type="submit" class="action save primary primary-btn font-regular text-md" title="<?= $escaper->escapeHtmlAttr(__('Save')) ?>">
+                <template x-if="displayLoading">
+                    <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
+                </template>
+               <?= $escaper->escapeHtml(__('Save')) ?>
+            </button>
+         </div>
+         <div class="secondary">
+            <a class="action back text-md inline-flex items-center gap-2 hover:underline" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>">
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"></path>
+               </svg>
+               <?= $escaper->escapeHtml(__('Back')) ?>
+            </a>
+         </div>
+      </div>
+   </div>
+
+
+   <?php if (!empty($block->getChildHtml('form_additional_info'))): ?>
+      <div class="block w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white">
+         <?= $block->getChildHtml('form_additional_info') ?>
+      </div>
+   <?php endif; ?>
+</form>
+
+
+<script>
+   function customerInformation() {
+      return {
+         isEmailChange: false,
+         <?php if ($block->getChangePassword()): ?>
+            isPasswordChange: true,
+         <?php else: ?>
+            isPasswordChange: false,
+         <?php endif; ?>
+         showChangeEmailAndPassword: false,
+
+         init() {
+            this.$watch('isEmailChange', value => {
+               this.checkToShowChangeEmailAndPassword();
+            });
+            this.$watch('isPasswordChange', value => {
+               this.checkToShowChangeEmailAndPassword();
+            });
+         },
+
+         checkToShowChangeEmailAndPassword() {
+            this.showChangeEmailAndPassword = this.isEmailChange && this.isPasswordChange;
+         }
+      };
+   }
+
+   document.addEventListener('DOMContentLoaded', function() {
+      var datepickerInputs = document.querySelectorAll('.datePicker');
+
+      var today = new Date();
+      var yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      if (datepickerInputs.length) {
+         datepickerInputs.forEach(function(elem) {
+            var config = JSON.parse(elem.dataset.post);
+            new Datepicker(elem, {
+               closeText: config.closeText,
+               prevText: config.prevText,
+               nextText: config.nextText,
+               currentText: config.currentText,
+               monthNames: config.monthNames,
+               monthNamesShort: config.monthNamesShort,
+               dayNames: config.dayNames,
+               dayNamesShort: config.dayNamesShort,
+               dayNamesMin: config.dayNamesMin,
+               maxDate: yesterday,
+               autohide: true
+            });
+         });
+      }
+   });
+</script>

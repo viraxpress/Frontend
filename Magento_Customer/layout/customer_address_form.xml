@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="customer_account"/>
+    <head>
+        <link src="core-js/form-validations.min.js" />
+    </head>
+    <body>
+        <referenceBlock name="head.components" remove="true" />
+        <referenceBlock name="customer-account-navigation-address-link">
+            <arguments>
+                <argument name="is_highlighted" xsi:type="boolean">true</argument>
+            </arguments>
+        </referenceBlock>
+        <referenceContainer name="main">
+            <block class="Magento\Theme\Block\Html\Title" name="page.main.title" template="Magento_Customer::html/title.phtml" before="-">
+                <action method="setPageTitle">
+                    <argument translate="true" name="title" xsi:type="string">Edit Address</argument>
+                </action>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Magento\Customer\Block\Address\Edit" name="customer_address_edit" template="Magento_Customer::address/edit.phtml" cacheable="false">
+                <arguments>
+                    <argument name="attribute_data" xsi:type="object">Magento\Customer\Block\DataProviders\AddressAttributeData</argument>
+                    <argument name="post_code_config" xsi:type="object">Magento\Customer\Block\DataProviders\PostCodesPatternsAttributeData</argument>
+                    <argument name="view_model" xsi:type="object">Magento\Customer\ViewModel\Address</argument>
+                    <argument name="region_provider" xsi:type="object">Magento\Customer\ViewModel\Address\RegionProvider</argument>
+                    <argument name="country_provider" xsi:type="object">ViraXpress\Customer\ViewModel\Directory</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

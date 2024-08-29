@@ -1,0 +1,86 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Store\Block\Switcher $block */
+?>
+
+
+<?php if (count($block->getGroups()) > 1): ?>
+    <!-- Store Switcher -->
+    <?php $currentStoreCode = $block->getCurrentStoreCode();
+    $currentGroup = '';
+    $store_value = $currentStoreCode; ?>
+
+    <div class="relative mt-6 w-max" x-data="storeSwitcher()">
+        <button type="button" @click="isStoreSwitcher = !isStoreSwitcher" class="w-full relative cursor-pointer rounded bg-white py-2.5 pl-3 pr-10 text-left text-gray-900 ring-1 ring-inset ring-gray-200 focus:outline-none focus:ring-2 focus:ring-primary sm:leading-6" :aria-haspopup="isStoreSwitcher" :aria-expanded="isStoreSwitcher" aria-labelledby="listbox-label">
+            <span x-text="selectedStore"></span>
+            <span class="pointer-events-none absolute z-10 inset-y-0 right-0 ml-3 flex items-center pr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-gray-700">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+            </span>
+        </button>
+        <ul x-cloak x-show="isStoreSwitcher" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click.away="isStoreSwitcher = false" class="absolute z-50 right-0 top-12 w-full rounded p-2 bg-white origin-top-right rounded-md bg-white shadow-lg focus:outline-none ring-1 ring-black ring-opacity-5 focus:outline-none" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
+            <?php if (count($block->getGroups())): ?>
+                <?php foreach ($block->getGroups() as $_group): ?>
+                    <?php $targetStore = /* @noEscape */ $block->getTargetStorePostData($_group->getDefaultStore());
+                    $dataPost = json_decode($targetStore);
+                    $store_value = $dataPost->data->___store; ?>
+                    <?php if ($_group->getId() == $block->getCurrentGroupId()): ?>
+                        <?php $currentGroup = $_group->getName(); ?>
+                    <?php endif; ?>
+                    <li class="text-gray-700 font-medium block p-2 rounded text-sm capitalize cursor-pointer hover:bg-gray-100 focus:bg-primary focus:text-white" role="option" @click="handleStores('<?= $escaper->escapeHtml($_group->getName()) ?>', '<?= $escaper->escapeUrl($block->getTargetStorePostData($_group->getDefaultStore())) ?>')">
+                        <?= $escaper->escapeHtml($_group->getName()) ?>
+                    </li>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </ul>
+    </div>
+
+    <script>
+        function storeSwitcher() {
+            return {
+                isStoreSwitcher: false,
+                selectedStore: "<?= $escaper->escapeHtml($currentGroup) ?>",
+
+                handleStores(store, url) {
+                    var storeData = JSON.parse(url)
+                    const formData = new FormData();
+                    formValues = storeData.data;
+                    formValues["form_key"] = getFormKeyCookie();
+                    for (var key in formValues) {
+                        if (formValues.hasOwnProperty(key)) formData.append(key, formValues[key]);
+                    }
+                    fetch(storeData.action, {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then((response) => {
+                        location.reload();
+                        this.selectedStore = store;
+                    }).catch((error) => {
+                        console.error("Fetch error:", error);
+                    });
+                }
+            }
+        }
+    </script>
+<?php endif; ?>

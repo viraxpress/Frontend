@@ -1,0 +1,228 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Customer\Block\Address\Grid $block */
+$customerAddressView = $block->getData('customer_address');
+?>
+<?php ?>
+<div class="block block-addresses-list w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white">
+    <div class="block-title mb-5 pb-2 border-b border-gray-100 relative flex md:items-center justify-between gap-4 flex-col md:flex-row">
+        <div class="font-medium text-base text-gray-800 leading-9"><?= $escaper->escapeHtml(__('Additional Address Entries')) ?></div>
+    
+        <div class="actions-toolbar relative">
+            <div class="primary">
+                <a href="<?= $escaper->escapeUrl($block->getBaseUrl()) ?>customer/address/new" role="add-address" title="<?= $escaper->escapeHtmlAttr(__('Add New Address')) ?>" class="action primary add primary-btn flex">
+                    <span><?= $escaper->escapeHtml(__('Add New Address')) ?></span>
+                </a>
+            </div>
+            <div class="secondary hidden">
+                <a class="action back" href="<?= $escaper->escapeUrl($block->getUrl('customer/account')) ?>"><span><?= $escaper->escapeHtml(__('Back')) ?></span></a>
+            </div>
+        </div>
+    </div>
+    <div class="block-content" x-data="manageAddress()">
+        <?php if ($_pAddsses = $block->getAdditionalAddresses()): ?>
+
+            <div class="table-wrapper additional-addresses overflow-x-auto overflow-hidden">
+                <table class="data table table-additional-addresses-items history min-w-full border-collapse" id="additional-addresses-table">
+                    <caption class="table-caption hidden"><?= $escaper->escapeHtml(__('Additional addresses')) ?></caption>
+                    <thead class="border-b border-gray-200 hidden md:table-header-group">
+                        <tr>
+                            <td scope="col" class="col firstname w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('First Name')) ?>
+                                </div>
+                            </td>
+                            <td scope="col" class="col lastname w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('Last Name')) ?>
+                                </div>
+                            </td>
+                            <td scope="col" class="col streetaddress w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('Street Address')) ?>
+                                </div>
+                            </td>
+                            <td scope="col" class="col city w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('City')) ?>
+                                </div>
+                            </td>
+                            <td scope="col" class="col country w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('Country')) ?>
+                                </div>
+                            </td>
+                            <td scope="col" class="col state w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('State')) ?>
+                                </div>
+                            </td>
+                            <td scope="col" class="col zip w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('Zip/Postal Code')) ?>
+                                </div>
+                            </td>
+                            <td scope="col" class="col phone w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('Phone')) ?>
+                                </div>
+                            </td>
+                            <td scope="col" class="col actions w-[115px]">
+                                <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                                    <?= $escaper->escapeHtml(__('Actions')) ?>
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody">
+                    <?php foreach ($_pAddsses as $address): ?>
+                        <tr class="border-b border-gray-200 pb-4 mb-4 block md:table-row last:border-b-0">
+                            <td data-th="<?= $escaper->escapeHtml(__('First Name')) ?>" class="col firstname p-2 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $escaper->escapeHtml($address->getFirstname()) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Last Name')) ?>" class="col lastname p-2 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $escaper->escapeHtml($address->getLastname()) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Street Address')) ?>" class="col streetaddress p-2 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $escaper->escapeHtml($block->getStreetAddress($address)) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('City')) ?>" class="col city p-2 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $escaper->escapeHtml($address->getCity()) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Country')) ?>" class="col country p-2 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $escaper->escapeHtml($block->getCountryByCode($address->getCountryId())) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('State')) ?>" class="col state p-2 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $escaper->escapeHtml($address->getRegion()->getRegion()) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Zip/Postal Code')) ?>" class="col zip p-2 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <?= $escaper->escapeHtml($address->getPostcode()) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Phone')) ?>" class="col phone p-2 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2 whitespace-nowrap">
+                                <?= $escaper->escapeHtml($address->getTelephone()) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtml(__('Actions')) ?>" class="p-2 text-sm text-gray-900 align-middle space-x-3 before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <div class="flex justify-start md:justify-center items-center space-x-5">
+                                    <a class="inline-block text-primary" title="Edit" href="<?= $escaper->escapeUrl($block->getUrl('customer/address/edit', ['id' => $address->getId()])) ?>">
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                                            </svg>
+                                        </span>
+                                    </a>
+                                    <button
+                                       x-on:click.prevent="deleteAddress(<?= $escaper->escapeJs($address->getId()) ?>)"
+                                       class="action delete inline-block text-red-600"
+                                       title="Delete" role="delete-address"
+                                       data-address="<?= $escaper->escapeHtmlAttr($address->getId()) ?>">
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                            </svg>
+                                        </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php if ($block->getChildHtml('pager')): ?>
+                <div class="customer-addresses-toolbar toolbar bottom flex flex-col sm:flex-row flex-wrap justify-end items-center md:items-start gap-5 mt-5 pt-5 border-t border-gray-200">
+                    <?= $block->getChildHtml('pager') ?>
+                </div>
+            <?php endif ?>
+        <?php else: ?>
+            <p class="empty"><?= $escaper->escapeHtml(__('You have no other address entries in your address book.')) ?></p>
+        <?php endif ?>
+        <template x-if="addressRemove">
+            <div class="relative z-50" role="dialog" aria-modal="true" x-cloak :id="$id('delete-confirmation')" id="delete-confirmation-1">
+                <div class="fixed inset-0 bg-black/50 bg-opacity-25 transition-opacity" x-cloak x-show="addressRemove" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+                <div class="fixed inset-0 z-10 w-screen overflow-y-auto p-4 sm:p-6 md:p-20" x-cloak x-show="addressRemove">
+                    <div class="mx-auto max-w-md transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all" x-cloak x-show="addressRemove" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
+                        <div class="relative">
+                            <div class="p-5 space-y-5" x-bind:id="'customer-address-remove-' + deleteItemInfo.id">
+                                <div>
+                                    <p class="text-sm leading-6 m-0 mt-1 text-gray-800">
+                                        <?= $escaper->escapeHtml(__('Are you sure you want to delete this address?')) ?>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end items-center gap-5 p-4">
+                                <button type="button" @click="addressRemove = false; " class="inline-block text-sm leading-6 font-medium">
+                                    <?= $escaper->escapeHtml(__('Cancel')) ?>
+                                </button>
+                                <button type="button" @click="addressDelete(deleteItemInfo)" class="inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 py-1.5 text-sm font-medium leading-6 text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                                    <template x-if="deleteItemConfirm">
+                                        <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
+                                    </template>
+                                    <span><?= $escaper->escapeHtml(__('Remove')) ?></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</div>
+<script>
+    function manageAddress() {
+        return {
+            addressRemove: false,
+            deleteItemInfo: { id: '', url: '' },
+
+            deleteAddress(addressId) {
+                this.addressRemove = true;
+                this.deleteItemInfo.url = '<?= $escaper->escapeUrl($block->getUrl('customer/address/delete')) ?>';
+                this.deleteItemInfo.id = addressId;
+            },
+
+            async addressDelete(addressinfo) {
+                let formData = new FormData();
+                formData.append('id', addressinfo.id);
+                formData.append('form_key', getFormKeyCookie());
+
+                this.deleteItemConfirm = true;
+
+                try {
+                    let response = await fetch(addressinfo.url, {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'include'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to remove item from the address book');
+                    }
+
+                    window.location.reload();
+                } catch (error) {
+                    console.error(error);
+                    this.deleteItemConfirm = false;
+                }
+            },
+        }
+    }
+</script>

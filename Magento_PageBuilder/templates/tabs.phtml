@@ -1,0 +1,63 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Function to show the active tab content
+        const showTabContent = (tabId) => {
+            document.querySelectorAll('[data-content-type="tab-item"]').forEach(tabItem => {
+                tabItem.style.display = tabItem.id === tabId ? 'block' : 'none';
+            });
+        };
+
+        // Function to set the active tab header
+        const setActiveTabHeader = (tabHeaders, activeIndex) => {
+            tabHeaders.forEach((tabHeader, index) => {
+                tabHeader.classList.toggle('active', index === activeIndex);
+            });
+        };
+
+        document.querySelectorAll('[data-content-type="tabs"]').forEach(tab => {
+            const defaultActiveTab = parseInt(tab.dataset.activeTab) || 0;
+            const tabHeaders = tab.querySelectorAll('.tab-header');
+            let activeTabId = tabHeaders[defaultActiveTab].querySelector('a').getAttribute('href').replace('#', '');
+
+            // Show default active tab content
+            showTabContent(activeTabId);
+            setActiveTabHeader(tabHeaders, defaultActiveTab);
+
+            tabHeaders.forEach((tabHeader, index) => {
+                const tabLink = tabHeader.querySelector('a');
+                const tabId = tabLink.getAttribute('href').replace('#', '');
+
+                tabLink.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    activeTabId = tabId;
+
+                    // Show the selected tab content and set the active header
+                    showTabContent(activeTabId);
+                    setActiveTabHeader(tabHeaders, index);
+                });
+            });
+        });
+    });
+</script>

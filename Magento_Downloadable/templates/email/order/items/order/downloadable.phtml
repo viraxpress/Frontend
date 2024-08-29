@@ -1,0 +1,68 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+?>
+<?php /** @var $block \Magento\Downloadable\Block\Sales\Order\Email\Items\Order\Downloadable */ ?>
+<?php $_item = $block->getItem() ?>
+<?php $_order = $block->getItem()->getOrder() ?>
+<tr>
+    <td class="item-info has-extra">
+        <p class="product-name"><?= $escaper->escapeHtml($_item->getName()) ?></p>
+        <p class="sku"><?= $escaper->escapeHtml(__('SKU')) ?>: <?= $escaper->escapeHtml($block->getSku($_item)) ?></p>
+        <?php if ($block->getItemOptions()): ?>
+        <dl>
+            <?php foreach ($block->getItemOptions() as $option): ?>
+            <dt><strong><em><?= $escaper->escapeHtml($option['label']) ?></em></strong></dt>
+            <dd><?= $escaper->escapeHtml($option['value']) ?></dd>
+            <?php endforeach; ?>
+        </dl>
+        <?php endif; ?>
+        <?php if ($links = $block->getLinks()->getPurchasedItems()): ?>
+        <dl>
+            <dt><strong><em><?= $escaper->escapeHtml($block->getLinksTitle()) ?></em></strong></dt>
+            <?php foreach ($links as $link): ?>
+                <dd>
+                    <?= $escaper->escapeHtml($link->getLinkTitle()) ?>&nbsp;
+                    (<a href="<?= $escaper->escapeUrl($block->getPurchasedLinkUrl($link)) ?>"><?= $escaper->escapeHtml(__('download')) ?></a>)
+                </dd>
+            <?php endforeach; ?>
+        </dl>
+        <?php endif; ?>
+        <?= $escaper->escapeHtml($_item->getDescription()) ?>
+        <?php if ($_item->getGiftMessageId() && $_giftMessage = $this->helper(Magento\GiftMessage\Helper\Message::class)->getGiftMessage($_item->getGiftMessageId())): ?>
+            <table class="message-gift">
+                <tr>
+                    <td>
+                        <h3><?= $escaper->escapeHtml(__('Gift Message')) ?></h3>
+                        <strong><?= $escaper->escapeHtml(__('From:')) ?></strong> <?= $escaper->escapeHtml($_giftMessage->getSender()) ?>
+                        <br /><strong><?= $escaper->escapeHtml(__('To:')) ?></strong> <?= $escaper->escapeHtml($_giftMessage->getRecipient()) ?>
+                        <br /><strong><?= $escaper->escapeHtml(__('Message:')) ?></strong>
+                        <br /><?= $escaper->escapeHtml($_giftMessage->getMessage()) ?>
+                    </td>
+                </tr>
+            </table>
+        <?php endif; ?>
+    </td>
+    <td class="item-qty"><?= (float)$_item->getQtyOrdered() * 1 ?></td>
+    <td class="item-price">
+        <?= /* @noEscape */ $block->getItemPrice($_item) ?>
+    </td>
+</tr>

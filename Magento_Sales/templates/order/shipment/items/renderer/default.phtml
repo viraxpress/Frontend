@@ -1,0 +1,73 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+/** @var \Magento\Framework\Locale\LocaleFormatter $localeFormatter */
+?>
+<?php $_item = $block->getItem() ?>
+<?php $_order = $block->getItem()->getOrderItem()->getOrder() ?>
+<tr id="order-item-row-<?= /* @noEscape */ (int) $_item->getId() ?>" class="border-b border-gray-200 pb-4 mb-4 block md:table-row last:border-b-0">
+    <td class="col name p-2 py-3 font-semiboldbefore:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('Product Name')) ?>">
+        <div class="col-name-wrapper">
+            <span class="product name product-item-name"><?= $escaper->escapeHtml($_item->getName()) ?></span>
+            <?php if ($_options = $block->getItemOptions()): ?>
+                <div class="item-options block mt-2 space-y-2">
+                    <?php foreach ($_options as $_option): ?>
+                        <div class="">
+                            <span class=""><?= $escaper->escapeHtml($_option['label']) ?></span>
+                            <span class="inline-block mx-2">-</span>
+                            <?php if (!$block->getPrintStatus()): ?>
+                                <?php $_formatedOptionValue = $block->getFormatedOptionValue($_option) ?>
+                                <span class="font-medium <?= (isset($_formatedOptionValue['full_view']) ? 'tooltip wrapper' : '') ?>">
+                                    <?= $escaper->escapeHtml($_formatedOptionValue['value'], ['a']) ?>
+                                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                    <div class="tooltip content">
+                                        <dl class="item options">
+                                            <dt><?= $escaper->escapeHtml($_option['label']) ?></dt>
+                                            <dd><?= $escaper->escapeHtml($_formatedOptionValue['full_view']) ?></dd>
+                                        </dl>
+                                    </div>
+                                    <?php endif; ?>
+                                </span>
+                            <?php else: ?>
+                                <?php $optionValue = isset($_option['print_value']) ? $_option['print_value'] : $_option['value'] ?>
+                                <span><?= $escaper->escapeHtml($optionValue) ?></span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+            <?php $addInfoBlock = $block->getProductAdditionalInformationBlock(); ?>
+            <?php if ($addInfoBlock): ?>
+                <?= $addInfoBlock->setItem($_item->getOrderItem())->toHtml() ?>
+            <?php endif; ?>
+            <?= $escaper->escapeHtml($_item->getDescription()) ?>
+        </div>
+    </td>
+    <td class="col sku text-left md:text-center text-sm p-2 py-3 before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('SKU')) ?>">
+        <div class="col-sku-wrapper">
+            <?= /* @noEscape */ $block->prepareSku($block->getSku()) ?>
+        </div>
+    </td>
+    <td class="col qty text-left md:text-center text-sm p-2 py-3 before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('Qty Shipped')) ?>">
+        <div class="col-qty-wrapper">
+            <?= /* @noEscape */ $localeFormatter->formatNumber((float) $_item->getQty()) ?>
+        </div>
+    </td>
+</tr>

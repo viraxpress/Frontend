@@ -1,0 +1,230 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+$blockObj= $block->getLayout()->createBlock(\Magento\Checkout\Block\Cart\Sidebar::class);
+?>
+<script>
+    window.checkout = <?= /* @noEscape */ $blockObj->getSerializedConfig() ?>;
+</script>
+<script>
+// Enable strict mode for better error handling
+"use strict";
+
+function miniCart() {
+    return {
+        isMiniCartOpen: false,
+        quoteItemCount: "",
+        subtotal: "$0.00",
+        quoteItemCountString: "",
+        cartProducts: [],
+        cartData: [],
+        isLoadingCart: false,
+        totalNumberProductDisplay: window.checkout.maxItemsToDisplay,
+        showConfirmation: false,
+        deleteItemInfo: { id: "", url: "" },
+        deleteItemConfirm: false,
+        isQuantityError: "",
+        quantityChangeProduct: "",
+
+        
+        async init() {
+            try {
+                const cacheKey = 'vira-mage-cache-storage';
+                const cachedData = localStorage.getItem(cacheKey);
+                if (cachedData) {
+                    const parsedData = JSON.parse(cachedData);
+                    if (parsedData.cart.summary_count >= 1) {
+                        let cartSections = await getCustomerDataSections("cart");
+                        this.cartData = cartSections.cart;
+                    }
+                }
+
+                this.$watch("cartData", (newData) => {
+                    this.$dispatch("set-cart", newData);
+                });
+
+                this.$watch("isLoadingCart", (loadingStatus) => {
+                    this.$dispatch("set-cartloader", loadingStatus);
+                });
+
+            } catch (error) {
+                console.error("Error fetching cart data:", error);
+            }
+        },
+
+        handleCancelItem() {
+            this.showConfirmation = false;
+            event.stopPropagation(); // Prevents click event from propagating to the minicart drawer
+        },
+        
+        handleIncrement(item) {
+            let itemId = item.item_id;
+            let newQty = item.qty + 1;
+            this.updateItemQuantity(itemId, newQty);
+        },
+        
+        handleDecrement(item) {
+            let itemId = item.item_id;
+            let newQty = item.qty - 1;
+            this.updateItemQuantity(itemId, newQty);
+        },
+        
+        handleProductRemove(event) {
+            this.showConfirmation = true;
+            this.deleteItemInfo.id = event.currentTarget.getAttribute("data-item-id");
+            this.deleteItemInfo.url = `${BASE_URL}checkout/sidebar/removeItem`;
+        },
+        
+        async itemDelete(deleteItemInfo) {
+            let formData = new FormData();
+            formData.append("item_id", deleteItemInfo.id);
+            formData.append("form_key", getFormKeyCookie());
+
+            this.isLoadingCart = true;
+            this.deleteItemConfirm = true;
+
+            try {
+                let response = await fetch(deleteItemInfo.url, {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include",
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to remove item from the cart");
+                }
+
+                await this.refreshCartData();
+                this.deleteItemConfirm = false;
+                this.isLoadingCart = false;
+                this.showConfirmation = false;
+            } catch (error) {
+                window.location.href = `${BASE_URL}checkout/cart`;
+                console.error("Error:", error);
+            }
+        },
+        
+        handleQtyChange(item) {
+            let itemId = item.item_id;
+            let qty = item.qty;
+            
+            if (/^\d*\.?\d*$/.test(qty)) {
+                qty = Math.round(parseFloat(qty));
+                this.updateItemQuantity(itemId, qty);
+            }
+        },
+        
+        async updateItemQuantity(itemId, qty) {
+            let formData = new FormData();
+            formData.append("item_id", itemId);
+            formData.append("item_qty", qty);
+            formData.append("form_key", getFormKeyCookie());
+
+            try {
+                this.isQuantityError = "";
+
+                let response = await fetch(`${BASE_URL}checkout/sidebar/updateItemQty`, {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include",
+                });
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok.");
+                }
+
+                let result = await response.json();
+
+                if (!result.success) {
+                    this.quantityChangeProduct = itemId;
+                    this.isQuantityError = result.error_message;
+                }
+
+                await this.refreshCartData();
+
+                setTimeout(() => {
+                    this.isQuantityError = "";
+                }, 3000);
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+        },
+        
+        async refreshCartData() {
+            try {
+                let response = await fetch(`${BASE_URL}customer/section/load`);
+                if (!response.ok) {
+                    console.error("Network response was not ok");
+                    return;
+                }
+
+                let data = await response.json();
+                localStorage.setItem("vira-mage-cache-storage", JSON.stringify(data));
+                this.cartData = data.cart;
+            } catch (error) {
+                console.error("Error while initializing the customer data:", error.message);
+            }
+        },
+        
+        toggleSlideOver() {
+            if (this.isMiniCartOpen) {
+                return this.close();
+            }
+
+            this.$refs.slideTrigger.focus();
+            this.isMiniCartOpen = true;
+            document.querySelector("html").classList.add("overflow-hidden");
+        },
+        
+        close(focusElement) {
+            if(this.showConfirmation){
+                    return;
+            }
+
+            if (this.isMiniCartOpen) {
+                this.isMiniCartOpen = false;
+                document.querySelector("html").classList.remove("overflow-hidden");
+                if (focusElement) {
+                    focusElement.focus();
+                }
+            }
+        },
+        
+        debounce(func, delay = 100) {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    requestAnimationFrame(() => func.apply(this, args));
+                }, delay);
+            };
+        },
+    };
+}
+
+const cart = miniCart();
+cart.handleIncrement = cart.debounce(cart.handleIncrement.bind(cart));
+cart.handleDecrement = cart.debounce(cart.handleDecrement.bind(cart));
+cart.handleQtyChange = cart.debounce(cart.handleQtyChange.bind(cart));
+cart.toggleSlideOver = cart.debounce(cart.toggleSlideOver.bind(cart));
+cart.close = cart.debounce(cart.close.bind(cart));
+</script>

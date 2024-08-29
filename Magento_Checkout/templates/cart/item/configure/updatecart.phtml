@@ -1,0 +1,193 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var $block \Magento\Catalog\Block\Product\View */
+?>
+<div x-data="updateCartQty()">
+    <?php $_product = $block->getProduct(); ?>
+    <?php $productType = $_product->getTypeId(); ?>
+    <?php $request = $block->getRequest(); ?>
+    <?php $itemId = $request->getParam('id'); ?>
+    <?php $buttonTitle = __('Update Cart'); ?>
+    <?php if ($_product->isSaleable()): ?>
+        <div class="box-tocart update flex justify-start items-end gap-5 mb-5">
+            <?php if ($block->shouldRenderQuantity() && $productType != 'downloadable'): ?>
+                <div class="inline-block quantity-field">
+                    <label for="product_quantity" class="block text-base font-semibold leading-6 text-gray-900">
+                        <?= $escaper->escapeHtml(__('Qty')) ?>
+                    </label>
+                    <div class="quantity-wrapper mt-2 inline-flex justify-start items-center ring-1 ring-inset ring-gray-300">
+                        <button type="button" aria-label="Quantity Decrement" x-on:click="handleEditProductQtyDecrement" class="text-gray-800 w-11 h-11 flex justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"></path>
+                            </svg>
+                        </button>
+                        <input type="number" name="qty" class="inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none focus:ring-gray-300" x-on:change="itemQtyValidate(event)" x-model="productQty" id="qty" form="product_addtocart_form" min="1" value="" title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>" class="input-text qty" data-validate="<?= $escaper->escapeHtml(json_encode($block->getQuantityValidators())) ?>" onkeydown="preventFormSubmission(event)" />
+
+                        <button type="button" aria-label="Quantity Increment" x-on:click="handleEditProductQtyIncrement" class="text-gray-800 w-11 h-11 flex justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                            </svg>
+                        </button>
+
+                    </div>
+                </div>
+            <?php endif; ?>
+            <div class="block w-full">
+                <button type="button" form="product_addtocart_form" @click="updateItemQty" title="<?= $escaper->escapeHtmlAttr($buttonTitle) ?>" role="button" class="w-1/2 sm:w-full xl:w-1/2 primary-btn inline-flex justify-center items-center gap-x-2">
+                    <span class="inline-block relative">
+                        <template x-if="addToCartLoader == '<?= $escaper->escapeHtmlAttr($_product->getId()) ?>'">
+                            <span class="bg-primary absolute inline-flex justify-center items-center w-full left-0 top-0 z-10 h-full">
+                                <svg aria-hidden="true" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-500 animate-spin fill-white">
+                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"></path>
+                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"></path>
+                                </svg>
+                            </span>
+                        </template>
+                        <svg class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+                        </svg>
+                    </span>
+                    <span class="sr-only sm:not-sr-only"><?= $escaper->escapeHtml(__($buttonTitle)) ?></span>
+                </button>
+                <?= $block->getChildHtml('', true) ?>
+            </div>
+        </div>
+        <script>
+            function updateCartQty() {
+                return {
+                    productQty: '',
+                    cartData: '',
+                    addToCartLoader: false,
+                    init() {
+                        this.initializeCartData();
+                        this.setupCartLoaderWatcher();
+                    },
+                    initializeCartData() {
+                        setTimeout(() => {
+                            const itemId = <?= $escaper->escapeHtmlAttr($itemId) ?>;
+                            this.cartData = customerData.get('cart').items;
+                            this.productQty = this.cartData.find(item => item.item_id == itemId)?.qty || '';
+                        }, 1800);
+                    },
+                    setupCartLoaderWatcher() {
+                        this.$watch('addToCartLoader', (value) => this.$dispatch('set-cartloader', value));
+                    },
+                    itemQtyValidate(event) {
+                        const quantity = event.target.value || event.srcElement.value;
+                        event.target.value = this.getValidQuantity(quantity);
+                    },
+                    getValidQuantity(quantity) {
+                        if (isNaN(quantity) || quantity < 1) {
+                            return 1;
+                        }
+                        return Math.round(parseFloat(quantity));
+                    },
+                    updateItemQty() {
+                        if (!this.isFormValid()) return;
+
+                        this.addToCartLoader = true;
+                        this.sendUpdateRequest()
+                            .then(() => this.redirectToCart())
+                            .catch(error => console.error('Error:', error))
+                            .finally(() => this.addToCartLoader = false);
+                    },
+                    isFormValid() {
+                        const formElement = document.getElementById('product_addtocart_form');
+                        const requiredFields = formElement.querySelectorAll('input[required], select[required], textarea[required]');
+                        this.clearPreviousValidationMessages();
+
+                        for (const field of requiredFields) {
+                            if (!this.isFieldValid(field)) {
+                                this.showValidationMessage(field);
+                                field.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                return false;
+                            }
+                        }
+                        return true;
+                    },
+                    clearPreviousValidationMessages() {
+                        document.querySelectorAll('.vira-form-validation').forEach(el => el.remove());
+                    },
+                    isFieldValid(field) {
+                        if (field.type === 'checkbox') {
+                            const idArray = field.id.split('_');
+                            const optionsList = document.getElementById(`${idArray[0]}-${idArray[1]}-list`);
+                            if (optionsList) {
+                                const checkedInputs = optionsList.querySelectorAll('input[type="checkbox"]:checked');
+                                return checkedInputs.length > 0;
+                            }
+                        }
+                        return field.checkValidity();
+                    },
+                    showValidationMessage(field) {
+                        const parent = field.parentNode.parentNode;
+                        let validationDiv = parent.querySelector('.vira-form-validation');
+                        if (!validationDiv) {
+                            validationDiv = document.createElement('div');
+                            validationDiv.classList.add('vira-form-validation');
+                            parent.appendChild(validationDiv);
+                        }
+                        const errorMessage = document.createElement('div');
+                        errorMessage.classList.add('error-message');
+                        errorMessage.textContent = field.validationMessage;
+                        validationDiv.appendChild(errorMessage);
+                    },
+                    async sendUpdateRequest(formValues) {
+                        var form = document.getElementById("product_addtocart_form");
+                        form.addEventListener("submit", function (event) { event.preventDefault(); });
+                        const formData = new FormData(form);
+                        formData.append('form_key', getFormKeyCookie());
+
+                        const response = await fetch(BASE_URL + 'checkout/cart/updateItemOptions/id/<?= $escaper->escapeHtmlAttr($itemId) ?>', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (!response.ok) throw new Error('Failed to perform the POST request');
+                        return response.text();
+                    },
+                    redirectToCart() {
+                        window.location.href = "<?= $escaper->escapeUrl($block->getUrl('checkout/cart')) ?>";
+                    },
+                    handleEditProductQtyIncrement() {
+                        this.adjustProductQty(1);
+                    },
+                    handleEditProductQtyDecrement() {
+                        this.adjustProductQty(-1);
+                    },
+                    adjustProductQty(delta) {
+                        const qtyElement = document.getElementById('qty');
+                        if (qtyElement) {
+                            qtyElement.value = Math.max(1, parseInt(qtyElement.value) + delta);
+                            qtyElement.dispatchEvent(new Event('change'));
+                        }
+                    },
+                };
+            }
+
+            function preventFormSubmission(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                }
+            }
+        </script>
+    <?php endif; ?>
+</div>

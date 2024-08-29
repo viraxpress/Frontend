@@ -1,0 +1,28 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php /* @var $block \Magento\ProductAlert\Block\Product\View */?>
+<div class="product alert <?= $block->getHtmlClass() ?>">
+    <a href="<?= $escaper->escapeUrl($block->getSignupUrl()) ?>"
+       title="<?= $escaper->escapeHtml(__($block->getSignupLabel())) ?>" class="action alert py-2.5 inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary/10 px-3 text-sm font-medium leading-6 text-primary shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary">
+        <?= $escaper->escapeHtml(__($block->getSignupLabel())) ?>
+    </a>
+</div>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <attribute name="class" value="page-product-downloadable"/>
+        <referenceContainer name="product.info.main">
+            <block class="Magento\Downloadable\Block\Catalog\Product\Samples" name="product.info.downloadable.samples" as="samples" template="Magento_Downloadable::catalog/product/samples.phtml" after="product.price.tier" />
+        </referenceContainer>
+        <referenceContainer name="product.info.type">
+            <block class="Magento\Downloadable\Block\Catalog\Product\View\Type" name="product.info.downloadable" as="product_type_data" template="Magento_Downloadable::catalog/product/type.phtml">
+                <block class="Magento\CatalogInventory\Block\Stockqty\DefaultStockqty" name="product.info.downloadable.extra" as="product_type_data_extra" template="Magento_CatalogInventory::stockqty/default.phtml"/>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="product.info.options.wrapper">
+            <block class="Magento\Downloadable\Block\Catalog\Product\Links" name="product.info.downloadable.options" as="type_downloadable_options" before="-" template="Magento_Downloadable::catalog/product/links.phtml">
+                <block class="Magento\Catalog\Pricing\Render" name="product.price.link" after="product.info.downloadable.options">
+                    <arguments>
+                        <argument name="price_render" xsi:type="string">product.price.render.default</argument>
+                        <argument name="price_type_code" xsi:type="string">link_price</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceBlock>
+        <move element="product.info" destination="product.info.main" before="product.info.extrahint" />
+        <move element="product.info.social" destination="product.info.main" after="-" />
+    </body>
+</page>

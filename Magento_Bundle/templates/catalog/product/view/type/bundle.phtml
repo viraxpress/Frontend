@@ -1,0 +1,36 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/* @var $block \Magento\Bundle\Block\Catalog\Product\View\Type\Bundle */
+?>
+<?php $_product = $block->getProduct() ?>
+<?php if ($block->displayProductStockStatus()): ?>
+    <?php if ($_product->isAvailable()):?>
+        <div title="<?= $escaper->escapeHtmlAttr(__('Available')) ?>" class="stock available in-stock">
+            <?= $escaper->escapeHtml(__('In stock')) ?>
+        </div>
+    <?php else: ?>
+        <div title="<?= $escaper->escapeHtmlAttr(__('Not Available')) ?>" class="stock unavailable out-of-stock">
+            <?= $escaper->escapeHtml(__('Out of stock')) ?>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>
+<?= $block->getChildHtml('bundle_prices') ?>

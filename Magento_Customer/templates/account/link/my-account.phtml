@@ -1,0 +1,30 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var Magento\Customer\Block\Account\Link $block */
+?>
+<?php if ($block->isLoggedIn()): ?>
+    <li class="px-3 lg:p-0">
+        <a class="text-gray-900 lg:text-gray-700 font-medium block px-2 py-3 lg:p-2 rounded lg:text-sm capitalize lg:hover:bg-gray-100 lg:focus:bg-primary lg:focus:text-white" href="<?= /* @noEscape */ $block->getHref() ?>">
+        <?= /* @noEscape */ __('My Account')?>
+    </a>
+    </li>
+<?php endif; ?>

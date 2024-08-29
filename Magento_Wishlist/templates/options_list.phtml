@@ -1,0 +1,57 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/* @var \Magento\Wishlist\Block\Customer\Wishlist\Item\Options $block */
+?>
+
+<?php $options = $block->getOptionList(); ?>
+<?php if ($options): ?>
+    <div x-data="{ showOptions: false }" class="tooltip wrapper product-item-tooltip mt-3 w-full relative">
+        <button type="button" title="Show sptions" class="inline-flex cursor-help justify-start font-medium items-center gap-x-1 text-md text-primary" @click="showOptions= ! showOptions">
+            <?= $escaper->escapeHtml(__('See details')) ?>
+            <span class="transition-all rotate-0" :class="showOptions == true ? 'rotate-180' :'rotate-0'">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"></path>
+                </svg>
+            </span>
+        </button>
+        <div x-cloak x-show="showOptions" @click.outside="showOptions = false" class="bg-white absolute top-full z-10 left-0 w-full p-4 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
+            <span class="action details tooltip toggle pb-2 block mb-2 text-sm font-semibold border-b border-gray-200"><?= $escaper->escapeHtml(__('Option details')) ?></span>
+            <div class="tooltip content">
+                <div class="block space-y-2">
+                    <?php foreach ($options as $option): ?>
+                        <div class="item-options links text-sm">
+                            <span class="font-medium text-black"><?= $escaper->escapeHtml($option['label']) ?></span>
+                            <span class="inline-block mx-2">-</span>
+                            <span class="values">
+                                <?php if (is_array($option['value'])): ?>
+                                    <?= /* @noEscape */ nl2br(implode("\n", $option['value'])) ?>
+                                <?php else: ?>
+                                    <?= /* @noEscape */ $option['value'] ?>
+                                <?php endif; ?>
+                            </span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif ?>

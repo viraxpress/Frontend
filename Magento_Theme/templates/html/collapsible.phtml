@@ -1,0 +1,43 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<div x-data="{ isVisible: false, contentHeight: 0 }" x-init="contentHeight = $refs.collapsibleContent.scrollHeight">
+    <div class="<?= $escaper->escapeHtmlAttr($block->getBlockCss()) ?> 
+        block w-full shadow-sm border border-gray-100 rounded-lg py-2 lg:py-0 bg-white overflow-hidden lg:mb-6">
+        <div @click="isVisible = !isVisible" 
+            class="dropdown-title block-collapsible-nav-title text-lg flex justify-between items-center px-4 py-2 lg:hidden">
+            <strong><?= $escaper->escapeHtml(__('My Account')) ?></strong>
+            <span class="transition-all" :class="{ 'rotate-180': isVisible, 'rotate-0': !isVisible }">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+            </span>
+        </div>
+        <div class="dropdown-content <?= $escaper->escapeHtmlAttr($block->getBlockCss()) ?>-content flex grow flex-col gap-y-5 overflow-y-auto transition-all duration-500 ease-in-out max-h-0 bg-white border-t border-gray-200 lg:border-none lg:!max-h-[fit-content]" 
+            id="<?= $escaper->escapeHtmlAttr($block->getBlockCss()) ?>"
+            x-ref="collapsibleContent"
+            x-bind:style="isVisible ? `max-height: ${contentHeight}px` : 'max-height: 0'">
+            <nav class="flex flex-1 flex-col py-3 px-4 mt-2 lg:mt-0">
+                <?= $block->getChildHtml() ?>
+            </nav>
+        </div>
+    </div>
+</div>

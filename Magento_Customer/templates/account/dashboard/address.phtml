@@ -1,0 +1,80 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Customer\Block\Account\Dashboard\Address $block */
+?>
+<div class="block block-dashboard-addresses w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white">
+    <div class="mb-5 pb-2 border-b border-gray-200 flex justify-between items-center gap-5">
+        <div class="text-lg text-gray-800 font-semibold">
+            <?= $escaper->escapeHtml(__('Address Book')) ?>
+        </div>
+        <a class="action edit text-primary text-sm hover:underline"
+        href="<?= $escaper->escapeUrl($block->getAddressBookUrl()) ?>">
+            <span><?= $escaper->escapeHtml(__('Manage Addresses')) ?></span>
+        </a>
+    </div>
+    <div class="grid grid-cols-12 gap-5">
+        <div class="col-span-12 md:col-span-6 py-2 md:py-0">
+            <h4 class="font-medium mb-2">
+                <?= $escaper->escapeHtml(__('Default Billing Address')) ?>
+            </h4>
+            <div class="block space-y-1">
+                <address class="not-italic text-md">
+                    <?= $block->getPrimaryBillingAddressHtml() ?>
+                </address>
+            </div>
+            <div class="mt-2 flex justify-start items-center gap-x-5 ">
+                <a class="inline-block p-2 rounded-full transition-all duration-200 ease-in-out hover:bg-green-50 hover:text-green-600"
+                title="<?= $escaper->escapeHtmlAttr('Edit Address') ?>"
+                href="<?= $escaper->escapeUrl($block->getPrimaryBillingAddressEditUrl()) ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-edit">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="col-span-12 md:col-span-6 py-2 md:py-0">
+            <h4 class="font-medium mb-2">
+                <?= $escaper->escapeHtml(__('Default Shipping Address')) ?>
+            </h4>
+            <div class="block space-y-1">
+                <address class="not-italic text-md">
+                    <?= $block->getPrimaryShippingAddressHtml() ?>
+                </address>
+            </div>
+            <div class="mt-2">
+                <a class="inline-block p-2 rounded-full transition-all duration-200 ease-in-out hover:bg-green-50 hover:text-green-600"
+                title="<?= $escaper->escapeHtmlAttr('Edit Address') ?>"
+                href="<?= $escaper->escapeUrl($block->getPrimaryShippingAddressEditUrl()) ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-edit">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

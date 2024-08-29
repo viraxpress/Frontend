@@ -1,0 +1,67 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php /* @var $block \Magento\Catalog\Block\Product\View\Options\Type\Date */ ?>
+<?php $_option = $block->getOption() ?>
+<?php $_optionId = $escaper->escapeHtmlAttr($_option->getId()) ?>
+<?php $class = ($_option->getIsRequire()) ? ' required' : ''; ?>
+<?php $datePickerConfig = $block->getCalendarDateHtml() ?>
+<div class="field date<?= /* @noEscape */ $class ?> mt-5">
+    <fieldset class="fieldset fieldset-product-options-inner<?= /* @noEscape */ $class ?>">
+        <legend class="legend inline-block text-sm font-medium text-gray-900">
+            <span>
+                <?= $escaper->escapeHtml($_option->getTitle()) ?>
+                (<?= /* @noEscape */ $block->getFormattedPrice() ?>)
+            </span>
+            <?php if ($_option->getIsRequire()): ?>
+                <span class="text-required ml-1">*</span>
+            <?php endif; ?>
+        </legend>
+        <div class="control mt-2 flex items-center flex-wrap gap-y-2">
+            <?php if ($_option->getType() == \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_DATE_TIME
+                || $_option->getType() == \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_DATE): ?>
+                <?php if ($block->useCalendar()): ?>
+                    <input type="text"  <?= $escaper->escapeHtmlAttr($class) ?> class="datetime-<?= $escaper->escapeHtmlAttr($_optionId) ?> datePicker" data-post="<?= $escaper->escapeHtmlAttr(json_encode($datePickerConfig), ENT_QUOTES, 'UTF-8') ?>" name="options[<?= $escaper->escapeHtmlAttr($_optionId) ?>][date]" id="options_<?= $escaper->escapeHtmlAttr($_optionId) ?>_date" value="" hx-on:blur="changeCustomizableOption(event)"/>
+                <?php else: ?>
+                    <?= $block->getDateHtml() ?>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if ($_option->getType() == \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_DATE_TIME
+                || $_option->getType() == \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_TIME): ?>
+                <?= $block->getTimeHtml() ?>
+            <?php endif; ?>
+
+            <?php if ($_option->getIsRequire()): ?>
+                <input type="hidden"
+                       name="validate_datetime_<?= /* @noEscape */ $_optionId ?>"
+                       class="validate-datetime-<?= /* @noEscape */ $_optionId ?>"
+                       value="" />
+            <?php else: ?>
+                <input type="hidden"
+                       name="validate_datetime_<?= /* @noEscape */ $_optionId ?>"
+                       class="validate-datetime-<?= /* @noEscape */ $_optionId ?>"
+                       value=""/>
+            <?php endif; ?>
+            <input type="hidden" class="datetime-hidden" name="datetime_<?= /* @noEscape */ $_optionId ?>" id="datetime_<?= /* @noEscape */ $_optionId ?>"/>
+        </div>
+    </fieldset>
+</div>

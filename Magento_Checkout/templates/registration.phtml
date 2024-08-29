@@ -1,0 +1,37 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var $block \Magento\Checkout\Block\Registration */
+?>
+<div id="registration" >
+    <div class="space-y-2">
+        <p><?= $escaper->escapeHtml(__('You can track your order status by creating an account.')) ?></p>
+        <p>
+            <span><?= $escaper->escapeHtml(__('Email Address: ')) ?></span>
+            <span><?= $escaper->escapeHtml($block->getEmailAddress()) ?></span>
+        </p>
+    </div>
+    <div class="primary mt-5">
+        <a class="action primary primary-btn" href="<?= $escaper->escapeUrl($block->getCreateAccountUrl()) ?>" target="'_self'">
+            <span><?= $escaper->escapeHtml(__('Create an Account')) ?></span>
+        </a>
+    </div>
+</div>

@@ -1,0 +1,120 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Captcha\Block\Captcha\DefaultCaptcha $block */
+
+/** @var \Magento\Captcha\Model\DefaultModel $captcha */
+$captcha = $block->getCaptchaModel();
+/** @var bool $validationEnabled */
+$validationEnabled = $block->hasData('frontend_validation') ? $block->getData('frontend_validation') : true;
+$inputName = $escaper->escapeHtmlAttr(\Magento\Captcha\Helper\Data::INPUT_NAME_FIELD_VALUE);
+$loaderUrl = $escaper->escapeUrl($block->getViewFileUrl('images/loader-2.gif'));
+$note = $escaper->escapeHtml(__('<strong>Attention</strong>: Captcha is case sensitive.'), ['strong']);
+?>
+<div class="field captcha<?php if ($validationEnabled): ?> required<?php endif; ?>"
+     role="<?= $escaper->escapeHtmlAttr($block->getFormId()) ?>">
+    <label for="captcha_<?= $escaper->escapeHtmlAttr($block->getFormId()) ?>" class="label block text-sm leading-6 text-gray-900">
+        <span><?= $escaper->escapeHtml(__('Please type the letters and numbers below')) ?></span>
+    </label>
+    <div class="control captcha mt-2">
+        <input
+            name="<?= /* @noEscape */ $inputName ?>[<?= $escaper->escapeHtmlAttr($block->getFormId()) ?>]"
+            type="text"
+            class="input-text<?php if ($validationEnabled): ?> required-entry<?php endif; ?> block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+            <?php if ($validationEnabled): ?>required<?php endif; ?>
+            id="captcha_<?= $escaper->escapeHtmlAttr($block->getFormId()) ?>"
+            autocomplete="off"/>
+        <div class="nested mt-2">
+            <div class="field captcha no-label"
+                 data-captcha="<?= $escaper->escapeHtmlAttr($block->getFormId()) ?>"
+                 id="captcha-container-<?= $escaper->escapeHtmlAttr($block->getFormId()) ?>">
+                <div class="control captcha-image flex gap-5 items-center">
+                    <div style="min-height: <?= $escaper->escapeHtmlAttr((float) $block->getImgHeight()) ?>px; min-width: 200px">
+                        <img alt="<?= $escaper->escapeHtmlAttr(__('Please type the letters and numbers below')) ?>"
+                            class="captcha-img contrast-75 rounded-md" 
+                            data-asset="captcha-img"
+                            height="<?= /* @noEscape */ (float) $block->getImgHeight() ?>"
+                            src="<?= $escaper->escapeUrl($captcha->getImgSrc()) ?>"
+                        />
+                    </div>
+                    <button type="button"
+                            class="action reload captcha-reload bg-primary text-white p-2 rounded-full"
+                            data-action="captcha-reload"
+                            data-refresh-url="<?= $escaper->escapeUrl($block->getRefreshUrl()) ?>"
+                            data-type="<?= $escaper->escapeHtmlAttr($block->getFormId()) ?>"
+                            title="<?= $escaper->escapeHtmlAttr(__('Reload captcha')) ?>">
+                        <span class="sr-only"><?= $escaper->escapeHtml(__('Reload captcha')) ?></span>
+                        <svg class="w-5 h-5 text-white re-loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-rotate-cw">
+                            <polyline points="23 4 23 10 17 10"/>
+                            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <?php if ($captcha->isCaseSensitive()):?>
+                <div class="captcha-note note"><?= /* @noEscape */ $note ?></div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const reloadButton = document.querySelector('[data-action="captcha-reload"]');
+
+        reloadButton.addEventListener('click', async function() {
+            const reLoader = this.querySelector(".re-loader");
+            reLoader.classList.add("animate-spin");
+
+            const captchaImg = document.querySelector('[data-asset="captcha-img"]');
+            const refreshUrl = this.getAttribute('data-refresh-url');
+            const formId = this.getAttribute('data-type');
+            const formKey = getFormKeyCookie();
+
+            const formData = new URLSearchParams();
+            formData.append('formId', formId);
+            formData.append('form_key', formKey);
+
+            try {
+                const response = await fetch(refreshUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to refresh the captcha image');
+                }
+
+                const responsedata = await response.json();
+
+                if (responsedata.imgSrc) {
+                    captchaImg.src = responsedata.imgSrc;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                reLoader.classList.remove("animate-spin");
+            }
+        });
+    });
+</script>

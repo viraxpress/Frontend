@@ -1,0 +1,91 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+/**
+ * Product view template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\Description
+ */
+?>
+<?php
+$_helper = $this->helper(Magento\Catalog\Helper\Output::class);
+$_product = $block->getProduct();
+
+if (!$_product instanceof \Magento\Catalog\Model\Product) {
+    return;
+}
+
+$_call = $block->getAtCall();
+$_code = $block->getAtCode();
+$_className = $block->getCssClass();
+$_attributeLabel = $block->getAtLabel();
+$_attributeType = $block->getAtType();
+$_attributeAddAttribute = $block->getAddAttribute();
+$_title = $block->getTitle();
+
+if (!empty($_title)) {
+    $_title = preg_replace('/\s+/', '', $_title);
+}
+
+$renderLabel = true;
+// if defined as 'none' in layout, do not render
+if ($_attributeLabel == 'none') {
+    $renderLabel = false;
+}
+
+if ($_attributeLabel && $_attributeLabel == 'default') {
+    $_attributeLabel = $_product->getResource()->getAttribute($_code)->getStoreLabel();
+}
+if ($_attributeType && $_attributeType == 'text') {
+    $_attributeValue = ($_helper->productAttribute($_product, $_product->$_call(), $_code))
+        ? $_product->getAttributeText($_code)
+        : '';
+} else {
+    $_attributeValue = $_helper->productAttribute($_product, $_product->$_call(), $_code);
+}
+?>
+
+<?php if ($_attributeValue): ?>
+<div class="product attribute <?= $escaper->escapeHtmlAttr($_className) ?> <?= $renderLabel ? 'flex justify-start items-center gap-x-2 text-base' : '' ?>">
+    <?php if ($renderLabel): ?>
+        <div class="font-semibold"><?= $escaper->escapeHtml($_attributeLabel) ?>:</div>
+    <?php endif; ?>
+
+    <?php if (!$renderLabel): ?>
+        <button class="block w-full flex justify-between items-center gap-4 pb-2 border-b border-black text-base text-left font-semibold leading-6 text-gray-900" @click="isVisible !== '<?= $escaper->escapeHtmlAttr($_title) ?>' ? isVisible = '<?= $escaper->escapeHtmlAttr($_title) ?>' : isVisible = null">
+            <?= $escaper->escapeHtml($block->getData('title'))?>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 transition-all duration-500" :class="isVisible === '<?= $escaper->escapeHtmlAttr($_title) ?>' ? 'rotate-180' : 'rotate-0'">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        </button>
+    <?php endif; ?>
+    <div class="<?= $renderLabel ? 'value' : 'value overflow-hidden transition-all mt-[2px] max-h-0 duration-300' ?>"
+        <?= /* @noEscape */ $_attributeAddAttribute ?>
+        <?= !$renderLabel ? 'style="" x-ref="' . $escaper->escapeHtmlAttr($_title) . '" x-bind:style="isVisible == \'' . $escaper->escapeHtmlAttr($_title) . '\' ? \'max-height: \' + $refs.' . $escaper->escapeHtmlAttr($_title) . '.scrollHeight + \'px\' : \'\'"' : '' ?>
+        >
+        <div class="<?= $renderLabel ? '' : 'p-3 text-sm leading-7' ?>" >
+            <?= /* @noEscape */ $_attributeValue ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>

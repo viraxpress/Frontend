@@ -1,0 +1,99 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const productSliders = document.querySelectorAll(".products-slider");
+    const detailsPage = document.querySelector('.catalog-product-view');
+
+    if (productSliders.length > 0 && !detailsPage) {
+        let isMouseMoved = false;
+        let isComponentInjected = false;
+
+        const debounce = (func, wait) => {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        };
+
+        const injectComponent = () => {
+            if (!isComponentInjected) {
+                loadScript(window.SPLIDE_JS, initiateProductsSlider);
+                isComponentInjected = true;
+            }
+        };
+
+        const loadScript = (src, callback) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.type = 'text/javascript';
+            script.async = true;
+            script.onload = callback;
+            document.head.appendChild(script);
+        };
+
+        const handleUserInteraction = debounce(() => {
+            if (!isMouseMoved) {
+                injectComponent();
+                isMouseMoved = true;
+            }
+        }, 200);
+
+        document.addEventListener("mousemove", handleUserInteraction);
+        window.addEventListener('scroll', handleUserInteraction);
+    }
+
+    const initiateProductsSlider = () => {
+        productSliders.forEach(carousel => {
+            const splide = new Splide(carousel, {
+                role: 'slide',
+                gap: '20px',
+                arrowPath: 'm8.25 4.5 7.5 7.5-7.5 7.5',
+                perPage: carousel.classList.contains("blogs-slider") ? 3 : 4,
+                perMove: 1,
+                type: 'slide',
+                arrows: true,
+                pagination: false,
+                keyboard: false,
+                slideFocus: false,
+                breakpoints: {
+                    1199: { perPage: 3 },
+                    991: { perPage: 2 },
+                    640: { perPage: 1 }
+                }
+            }).mount();
+
+            splide.on('move', () => {
+                markSlidesAsVisible(carousel);
+            });
+        });
+    };
+
+    const markSlidesAsVisible = (carousel) => {
+        const slides = carousel.querySelectorAll('.splide .splide__slide');
+        slides.forEach(slide => slide.classList.add('is-visible'));
+    };
+
+    window.initiateProductsSlider = initiateProductsSlider;
+});
+</script>

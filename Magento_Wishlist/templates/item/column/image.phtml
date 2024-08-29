@@ -1,0 +1,35 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Wishlist\Block\Customer\Wishlist\Item\Column\Image $block */
+
+/** @var \Magento\Wishlist\Model\Item $item */
+$item = $block->getItem();
+$product = $item->getProduct();
+?>
+<a class="product-item-photo mb-3 block" tabindex="0" href="<?= $escaper->escapeUrl($block->getProductUrl($item)) ?>" title="<?= $escaper->escapeHtmlAttr($product->getName()) ?>">
+    <?php $productImage = $block->getImage($block->getProductForThumbnail($item), 'wishlist_thumbnail'); ?>
+    <img class="mx-auto <?= $escaper->escapeHtmlAttr($block->getClass()) ?>" id="product-image-container-list-<?= $escaper->escapeHtmlAttr($item->getId()) ?>" src="<?= $escaper->escapeUrl($productImage->getImageUrl()) ?>" loading="lazy"
+    width="<?= $escaper->escapeHtmlAttr($productImage->getWidth()) ?>"
+    height="<?= $escaper->escapeHtmlAttr($productImage->getHeight()) ?>"
+    alt="<?= $escaper->escapeHtmlAttr($productImage->getLabel()) ?>"
+    title="<?= $escaper->escapeHtmlAttr($productImage->getLabel()) ?>" />
+</a>

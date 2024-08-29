@@ -1,0 +1,44 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+/**
+ * Product list toolbar
+ *
+ * @var \Magento\Catalog\Block\Product\ProductList\Toolbar $block
+ * @var \Magento\Framework\Locale\LocaleFormatter $localeFormatter
+ */
+?>
+<div class="field limiter toolbar-limiter flex items-center">
+        <label for="limiter" class="limiter-label mr-1 cursor-pointer text-sm text-gray-700"><?= $escaper->escapeHtml(__('Show')) ?></label>
+        <select id="limiter" name="product_list_limit" class="limiter-options cursor-pointer text-sm rounded-md px-2 pr-8 py-2 text-gray-900 ring-1 ring-inset ring-gray-300" data-product-count="<?= $escaper->escapeHtmlAttr($block->getTotalNum()) ?>">
+            <?php foreach ($block->getAvailableLimit() as $_key => $_limit):?>
+                    <option value="<?= $escaper->escapeHtmlAttr($_key) ?>" data-post="<?= $escaper->escapeUrl($block->getBaseUrl()).'?product_list_limit='.$escaper->escapeHtmlAttr($_key) ?>"
+                        <?php if ($block->isLimitCurrent($_key)):?>
+                            selected="selected"
+                        <?php endif ?>>
+                        <?= $escaper->escapeHtml(
+                            is_numeric($_limit) ? $localeFormatter->formatNumber((int) $_limit) : $_limit
+                        ) ?>
+                   </option>
+            <?php endforeach; ?>
+    </select>
+</div>

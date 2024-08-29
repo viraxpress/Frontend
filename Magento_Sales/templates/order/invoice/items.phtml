@@ -1,0 +1,64 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php $_order = $block->getOrder() ?>
+
+<?php foreach ($_order->getInvoiceCollection() as $_invoice): ?>
+    <div class="invoices_list w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white">
+        <div class="order-title block-title border-b border-gray-200 py-2 text-base mb-4 flex gap-2 flex-wrap justify-between">
+            <strong><?= $escaper->escapeHtml(__('Invoice #')) ?><?= $escaper->escapeHtml($_invoice->getIncrementId()) ?></strong>
+            <div class="space-x-5">
+                <a href="<?= $escaper->escapeUrl($block->getPrintAllInvoicesUrl($_order)) ?>" class="action print text-primary hover:underline" target="_blank" onclick="var newWindow = window.open(this.href, '_blank'); setTimeout(function() { newWindow.print(); }, 500); return false;" rel="noopener">
+                    <span><?= $escaper->escapeHtml(__('Print All Invoices')) ?></span>
+                </a>
+                <a href="<?= $escaper->escapeUrl($block->getPrintInvoiceUrl($_invoice)) ?>" class="action print text-primary hover:underline" target="_blank" onclick="var newWindow = window.open(this.href, '_blank'); setTimeout(function() { newWindow.print(); }, 500); return false;" rel="noopener">
+                    <span><?= $escaper->escapeHtml(__('Print Invoice')) ?></span>
+                </a>
+            </div>
+        </div>
+        <div class="table-wrapper table-order-items invoice">
+            <table class="data table table-order-items invoice w-full" id="my-invoice-table-<?= /* @noEscape */ (int) $_invoice->getId() ?>">
+                <caption class="table-caption hidden"><?= $escaper->escapeHtml(__('Items Invoiced')) ?></caption>
+                <thead class="border-b border-gray-200 hidden md:table-header-group">
+                    <tr class="border-b border-gray-200 hidden md:table-row">
+                        <th class="col name p-2 text-left font-semibold"><?= $escaper->escapeHtml(__('Product Name')) ?></th>
+                        <th class="col sku p-2 text-center font-semibold"><?= $escaper->escapeHtml(__('SKU')) ?></th>
+                        <th class="col price p-2 text-center font-semibold"><?= $escaper->escapeHtml(__('Price')) ?></th>
+                        <th class="col qty p-2 text-center font-semibold"><?= $escaper->escapeHtml(__('Qty Invoiced')) ?></th>
+                        <th class="col subtotal p-2 text-center font-semibold"><?= $escaper->escapeHtml(__('Subtotal')) ?></th>
+                    </tr>
+                </thead>
+                <?php $_items = $_invoice->getAllItems(); ?>
+                <?php foreach ($_items as $_item): ?>
+                    <?php if (!$_item->getOrderItem()->getParentItem()): ?>
+                        <tbody>
+                            <?= $block->getItemHtml($_item) ?>
+                        </tbody>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                <tfoot class="w-full block md:table-footer-group">
+                    <?= $block->getInvoiceTotalsHtml($_invoice) ?>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <?= $block->getInvoiceCommentsHtml($_invoice) ?>
+<?php endforeach; ?>

@@ -1,0 +1,276 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * Product media data template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\Gallery
+ */
+$product = $block->getProduct();
+$productId = $product->getId();
+$images = $block->getGalleryImages()->getItems();
+$helper = $block->getData('imageHelper');
+$configHelper = $block->getLayout()->createBlock(\ViraXpress\Catalog\Block\Product\ConfigBlock::class);
+$imageConfig = $configHelper->getConfig('viraxpress_config/image_resize/product_view_image_resize');
+$thumbnailType = $configHelper->getConfig('viraxpress_config/gallery/horizontal_vertical');
+$imageArray = [];
+if ($images) {
+    $intialImage = '';
+    foreach ($images as $key => $img) {
+        if (empty($intialImage)) {
+            $intialImage = $img['large_image_url'];
+        }
+        if (isset($img['video_src'])) {
+            $videoUrl = $img['video_src'];
+
+            if (strpos($videoUrl, 'youtu.be') !== false || strpos($videoUrl, 'youtube.com') !== false) {
+                $videoId = '';
+                if (preg_match('/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&\n?]+)/', $videoUrl, $matches)) {
+                    $videoId = $matches[1];
+                }
+                if (!empty($videoId)) {
+                    $embedUrl = "https://www.youtube.com/embed/$videoId";
+                    $img['video_src'] = $embedUrl;
+                }
+            }
+        }
+        $imageArray[] = [
+            "original_resize" => $img['url'],
+            "full" => $img['large_image_url'],
+            "thumb" => $img['small_image_url'],
+            "alt" => $img['label'],
+            "type" => $img['media_type'],
+            "videoUrl" => isset($img['video_src']) ? $img['video_src'] : null,
+        ];
+    }
+    if (empty($intialImage)) {
+        $intialImage = $helper->getDefaultPlaceholderUrl('image');
+    }
+    $smallWidth = $block->getImageAttribute('product_page_image_small', 'width');
+    $smallHeight = $block->getImageAttribute('product_page_image_small', 'height');
+    $mediumWidth = ($imageConfig['width']) ? $imageConfig['width'] : $block->getImageAttribute('product_page_image_large', 'width');
+    $mediumHeight = ($imageConfig['height']) ? $imageConfig['height'] : $block->getImageAttribute('product_page_image_large', 'height');
+} ?>
+
+<div x-data x-init="init()">
+    <div class="border border-gray-200 relative rounded overflow-hidden">
+        <?php if (!empty($images)): ?>
+            <img id="initialImage" fetchpriority="high" src="<?= $escaper->escapeHtmlAttr($intialImage) ?>" class="mx-auto relative z-[0]" alt="Product Image" width="<?= /* @noEscape */ $mediumWidth ?>" height="<?= /* @noEscape */ $mediumHeight ?>" />
+            <template x-if="showInitialImage">
+                <div class="absolute top-0 left-0 z-10 rounded overflow-hidden">
+                    <div class="splide product-gallery">
+                        <div class="splide__track">
+                            <div class="splide__list">
+                                <template x-for="(image, index) in images" :key="index">
+                                    <div class="splide__slide">
+                                        <a class="gallery__item" :href="image.type === 'external-video' ? image.videoUrl : image.original_resize">
+                                            <img fetchpriority="high" class="mx-auto" :data-id="index" :src="image.full" :alt="(image.alt) ? image.alt : ''" width="<?= /* @noEscape */ $mediumWidth ?>" height="<?= /* @noEscape */ $mediumHeight ?>" />
+                                        </a>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        <?php else: ?>
+            <div class="block">
+                <img fetchpriority="high" class="mx-auto" width="700" height="700" src="<?= /* @noEscape */ $helper->getDefaultPlaceholderUrl('image') ?>" />
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php if (!empty($images)): ?>
+        <template x-if="showInitialImage">
+            <div id="thumbnail-product-gallery" class="splide mt-5" aria-label="The carousel with thumbnails. Selecting a thumbnail will change the Beautiful Gallery carousel.">
+                <div class="splide__track">
+                    <div class="splide__list">
+                        <template x-for="(image, index) in images" :key="index">
+                            <div class="splide__slide rounded thumbnail border cursor-pointer border-gray-200">
+                                <img fetchpriority="high" class="mx-auto" :src="image.thumb" width="<?= /* @noEscape */ $smallWidth ?>" height="<?= /* @noEscape */ $smallHeight ?>" :alt="(image.alt) ? image.alt : ''" />
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <script>
+            function productMain() {
+                'use strict';
+                return {
+                    isVisible:'Details',
+                    images: [],
+                    showInitialImage: false,
+                    imageData: '<?= /* @noEscape */ json_encode($imageArray) ?>',
+                    isMouseMoved: false,
+                    init() {
+                        var self = this;
+                        this.images = JSON.parse(this.imageData);
+
+                        document.addEventListener("mousemove", () => {
+                            this.injectComponent();
+                        });
+
+                        window.addEventListener('scroll', () => {
+                            this.injectComponent();
+                        })
+                    },
+
+                    injectComponent() {
+                        // Check if Splide is loaded
+                        if (!this.isMouseMoved) {
+                            this.isMouseMoved = true;
+                            this.showInitialImage = true;
+
+                            const script = document.createElement('script');
+                            script.src = '<?= /* @noEscape */ $block->getViewFileUrl('core-js/splide.min.js') ?>';
+                            script.type = 'text/javascript';
+                            script.onload = () => {
+                                if (typeof Splide !== 'undefined') {
+                                    this.initiateProductGallery();
+                                    this.initiateLightboxGallery();
+                                    initiateProductsSlider(); // function to initialize the product slider
+                                    document.getElementById("initialImage").classList.add('opacity-0');
+                                } else {
+                                    console.error('Splide.js library is not loaded.');
+                                }
+                            };
+                            document.head.appendChild(script);
+                        }
+                    },
+
+                    initiateLightboxGallery() {
+                        const lightBox = document.querySelectorAll('.gallery__item');
+
+                        if (lightBox.length > 0) {
+
+                            const lightBoxStyles = document.createElement("link");
+                            lightBoxStyles.rel = "stylesheet";
+                            lightBoxStyles.type = "text/css";
+                            lightBoxStyles.href = '<?= /* @noEscape */ $block->getViewFileUrl('Magento_Catalog::css/glightbox.min.css') ?>';
+                            document.head.appendChild(lightBoxStyles);
+
+                            const lightBoxScript = document.createElement('script');
+                            lightBoxScript.src = '<?= /* @noEscape */ $block->getViewFileUrl('Magento_Catalog::js/glightbox.min.js') ?>';
+                            lightBoxScript.type = 'text/javascript';
+                            lightBoxScript.onload = () => {
+                                if (typeof GLightbox !== 'undefined') {
+                                    const lightbox = GLightbox({
+                                        selector: '.gallery__item',
+                                        touchNavigation: true, // swipe
+                                        width: '100vw',
+                                        height: '100vh',
+                                        videosWidth: '75%',
+                                        autofocusVideos: true,
+                                    });
+                                    this.$watch('images', value => {
+                                        lightbox.reload(); // For swatch images
+                                    });
+                                } else {
+                                    console.error('GLightbox.js library is not loaded.');
+                                }
+                            };
+                            document.head.appendChild(lightBoxScript);
+                        }
+                    },
+
+                    initiateProductGallery() {
+
+                        var productGalleryMain = new Splide('.product-gallery', {
+                            perPage: 1,
+                            perMove: 1,
+                            type: 'slide',
+                            arrowPath: 'm8.25 4.5 7.5 7.5-7.5 7.5',
+                            arrows: true,
+                            pagination: false,
+                            keyboard: true, // Splide listens to key events at the document level and moves ALL productGallery when arrow keys are used. Also, keyboard controls are not expected by real users.
+                            slideFocus: true, // removes tabindex="0" from each slide wrapper, since we only want our links inside each slide to receive focus.  
+                        }).mount();
+                        var thumbnailGallery = new Splide('#thumbnail-product-gallery', {
+                            // direction: 'ttb',
+                            // height: 'auto',
+                            perPage: 4,
+                            perMove: 1,
+                            gap: '20px',
+                            type: 'slide',
+                            arrowPath: 'm8.25 4.5 7.5 7.5-7.5 7.5',
+                            arrows: true,
+                            pagination: false,
+                            keyboard: false, // Splide listens to key events at the document level and moves ALL productGallery when arrow keys are used. Also, keyboard controls are not expected by real users.
+                            slideFocus: false, // removes tabindex="0" from each slide wrapper, since we only want our links inside each slide to receive focus.  
+                        }).mount();
+
+                        var thumbnails = document.getElementsByClassName("thumbnail");
+                        var current;
+
+                        for (var i = 0; i < thumbnails.length; i++) {
+                            initThumbnail(thumbnails[i], i);
+                        }
+
+                        function initThumbnail(thumbnail, index) {
+                            thumbnail.addEventListener("click", function() {
+                                productGalleryMain.go(index);
+                            });
+                        }
+                        productGalleryMain.on("mounted move", function() {
+                            var thumbnail = thumbnails[productGalleryMain.index];
+                            if (thumbnail) {
+                                thumbnails[0].classList.remove("is-active");
+                                if (current) {
+                                    current.classList.remove("is-active");
+                                }
+                                thumbnail.classList.remove("is-active");
+                                thumbnail.classList.add("is-active");
+                                current = thumbnail;
+                            }
+                        });
+
+
+                        this.$watch('images', value => {
+                            productGalleryMain.refresh(); // For swatch images
+                            thumbnailGallery.refresh(); // For swatch images
+                            var thumbnails = document.getElementsByClassName("thumbnail");
+                            var current;
+                            for (var i = 0; i < thumbnails.length; i++) {
+                                initThumbnail(thumbnails[i], i);
+                            }
+
+                            function initThumbnail(thumbnail, index) {
+                                thumbnail.addEventListener("click", function() {
+                                    productGalleryMain.go(index);
+                                });
+                            }
+                        });
+
+                    }
+                };
+            }
+        </script>
+    <?php else: ?>
+        <script>
+            function productMain() {
+                'use strict';
+                return {
+
+                };
+            }
+        </script>
+    <?php endif; ?>
+</div>

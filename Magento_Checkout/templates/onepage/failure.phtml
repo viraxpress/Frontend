@@ -1,0 +1,35 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ *//**
+
+
+/** @var $block \Magento\Checkout\Block\Onepage\Failure */
+?>
+<?php if ($block->getRealOrderId()): ?>
+    <p><?= $escaper->escapeHtml(__('Order #') . $block->getRealOrderId()) ?></p>
+<?php endif ?>
+<?php if ($error = $block->getErrorMessage()): ?>
+    <p><?= $escaper->escapeHtml($error) ?></p>
+<?php endif ?>
+<p><?= $escaper->escapeHtml(
+    __('Click <a href="%1">here</a> to continue shopping.', $escaper->escapeUrl($block->getContinueShoppingUrl())),
+    ['a']
+) ?>
+</p>

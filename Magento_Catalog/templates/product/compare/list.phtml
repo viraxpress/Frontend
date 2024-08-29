@@ -1,0 +1,268 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+// phpcs:disable PSR2.ControlStructures.SwitchDeclaration
+// phpcs:disable Generic.WhiteSpace.ScopeIndent
+
+/* @var $block \Magento\Catalog\Block\Product\Compare\ListCompare */
+?>
+<?php $total = $block->getItems()->getSize() ?>
+<?php if ($total): ?>
+    <a href="#" class="action print hidden-print primary-btn" title="<?= $escaper->escapeHtmlAttr(__('Print This Page')) ?>" onclick="handlePrintClick(event)">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+        </svg>
+        <span><?= $escaper->escapeHtml(__('Print This Page')) ?></span>
+    </a>
+    <div class="table-wrapper comparison mb-10" x-data="initCompareWishlist()">
+        <div class="overflow-x-auto max-w-full">
+            <table class="min-w-full divide-y divide-gray-300">
+                <thead>
+                    <tr>
+                        <?php $index = 0 ?>
+                        <?php foreach ($block->getItems() as $item): ?>
+                            <?php if ($index++ == 0): ?>
+                                <th class="px-3 py-3.5 w-[170px] min-w-[170px] text-left font-medium text-gray-900">
+                                    <span class="sr-only"><?= $escaper->escapeHtml(__('Remove Product')) ?></span>
+                                </th>
+                            <?php endif; ?>
+                            <td class="p-1 text-left w-[230px] min-w-[230px] font-medium text-gray-900">
+                                <?php $compareHelper = $this->helper(Magento\Catalog\Helper\Product\Compare::class); ?>
+                                <button x-on:click.prevent="removeCompareProduct(<?= (int)$item->getId() ?>)" data-post='<?= /* @noEscape */ $compareHelper->getPostDataRemove($item) ?>' class="action delete block px-3 py-2.5 rounded text-center w-full cursor-pointer hover:bg-red-600/90 hover:text-white" title="<?= $escaper->escapeHtmlAttr(__('Remove Product')) ?>" tabindex="0">
+                                    <span><?= $escaper->escapeHtml(__('Remove Product')) ?></span>
+                            </button>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr class="divide-x divide-gray-200">
+                        <?php $index = 0; ?>
+                        <?php $helper = $this->helper(Magento\Catalog\Helper\Output::class); ?>
+                        <?php /** @var $item \Magento\Catalog\Model\Product */ ?>
+                        <?php foreach ($block->getItems() as $item): ?>
+                            <?php if ($index++ == 0): ?>
+                                <th scope="row" class="px-3 py-3.5 text-left font-medium text-gray-900">
+                                    <span><?= $escaper->escapeHtml(__('Product')) ?></span>
+                                </th>
+                            <?php endif; ?>
+                            <td data-th="<?= $escaper->escapeHtmlAttr(__('Product')) ?>" class="px-3 py-3.5 text-left text-gray-900">
+                                <?php $productImage = $block->getImage($item, 'product_comparison_list'); ?>
+                                <a class="product-item-photo" href="<?= $escaper->escapeUrl($block->getProductUrl($item)) ?>" title="<?= /* @noEscape */ $block->stripTags($item->getName(), null, true) ?>">
+                                    <img class="mx-auto <?= $escaper->escapeHtmlAttr($block->getClass()) ?>" src="<?= $escaper->escapeUrl($productImage->getImageUrl()) ?>" loading="eager" fetchpriority="high"
+                                    width="<?= $escaper->escapeHtmlAttr($productImage->getWidth()) ?>"
+                                    height="<?= $escaper->escapeHtmlAttr($productImage->getHeight()) ?>"
+                                    alt="<?= $escaper->escapeHtmlAttr($productImage->getLabel()) ?>"
+                                    title="<?= $escaper->escapeHtmlAttr($productImage->getLabel()) ?>" />
+                                </a>
+                                <a class="mb-2 font-medium text-center text-black block" role="link" href="<?= $escaper->escapeUrl($block->getProductUrl($item)) ?>" title="<?= /* @noEscape */ $block->stripTags($item->getName(), null, true) ?>">
+                                    <?= /* @noEscape */ $helper->productAttribute($item, $item->getName(), 'name') ?>
+                                </a>
+                                <div class="block">
+                                    <?= $block->getReviewsSummaryHtml($item, 'short') ?>
+                                </div>
+                                <?= /* @noEscape */ $block->getProductPrice($item, '-compare-list-top') ?>
+                                <div class="product-item-actions flex justify-between items-center gap-3 mt-3 hidden-print">
+                                    <?php if ($item->isSaleable()): ?>
+                                        <?php $formId = base64_encode($item->getId() . "-product_list_addtocart_form");
+                                        $formId = preg_replace("/[^a-zA-Z0-9]/", "", $formId); ?>
+                                        <form id="<?= $escaper->escapeHtmlAttr($formId) ?>" class="inline-block">
+                                            <input name="form_key" type="hidden" x-bind:value="getFormKeyCookie()">
+                                            <input name="product" type="hidden" value="<?= $escaper->escapeHtmlAttr($item->getId()) ?>">
+                                            <button type="button" @click.prevent="cartAddFormHandler('<?= $escaper->escapeHtmlAttr($formId) ?>', '<?= $escaper->escapeUrl($this->helper(Magento\Catalog\Helper\Product\Compare::class)->getAddToCartUrl($item)) ?>')" title="Add to Cart" class="primary-btn relative">
+                                                <svg class="w-6 h-6 flex-shrink-0" :class="addToCartLoader == '<?= (int)$item->getId() ?>' ? 'opacity-0' : 'opacity-100'" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+                                                </svg>
+                                                <template x-if="addToCartLoader == '<?= (int)$item->getId() ?>'">
+                                                  <span class="w-6 h-6 inline-block border-2 border-white border-r-transparent rounded-full animate-spin absolute z-10"></span>
+                                              </template>
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        <?php if ($item->isAvailable()): ?>
+                                            <div class="stock available"><span><?= $escaper->escapeHtml(__('In stock')) ?></span></div>
+                                        <?php else: ?>
+                                            <div class="stock unavailable"><span><?= $escaper->escapeHtml(__('Out of stock')) ?></span></div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                    <?php if ($this->helper(Magento\Wishlist\Helper\Data::class)->isAllow()): ?>
+                                        <button x-on:click.prevent="addToWishlist(<?= (int)$item->getId() ?>)" data-post='<?= /* @noEscape */ $block->getAddToWishlistParams($item) ?>' class="action towishlist inline-flex items-center justify-center rounded-md border border-transparent group/wishlist py-2.5 px-3 gap-3 text-sm font-medium bg-slate-200 focus:ring-2 focus:ring-offset-2 focus:ring-slate-200" title="<?= $escaper->escapeHtmlAttr(__('Add to Wish List')) ?>" aria-label="<?= $escaper->escapeHtmlAttr(__('Add to Wish List')) ?>" role="button" tabindex="0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-6 h-6 transition-all fill-transparent duration-200 ease-in-out group-hover/wishlist:fill-primary group-hover/wishlist:stroke-primary">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"></path>
+                                            </svg>
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                </tbody>
+                <tbody class="divide-y divide-gray-200">
+                    <?php foreach ($block->getAttributes() as $attribute): ?>
+                        <?php $index = 0; ?>
+                        <?php if ($block->hasAttributeValueForProducts($attribute)): ?>
+                            <tr class="divide-x divide-gray-200">
+                                <?php foreach ($block->getItems() as $item): ?>
+                                    <?php if ($index++ == 0): ?>
+                                        <th scope="row" class="px-3 py-3.5 text-left font-medium text-gray-900">
+                                            <?= $escaper->escapeHtml($attribute->getStoreLabel() ? $attribute->getStoreLabel() : __($attribute->getFrontendLabel())) ?>
+                                        </th>
+                                    <?php endif; ?>
+                                    <td class="px-3 py-3.5 text-left text-gray-900">
+                                        <div class="attribute value">
+                                            <?php switch ($attribute->getAttributeCode()) {
+                                                case "price": ?>
+                                                    <?=
+                                                    /* @noEscape */ $block->getProductPrice(
+                                                        $item,
+                                                        '-compare-list-' . $attribute->getCode()
+                                                    )
+                                                    ?>
+                                                <?php break;
+                                                case "small_image": ?>
+                                                    <?php $block->getImage($item, 'product_small_image')->toHtml(); ?>
+                                                <?php break;
+                                                default: ?>
+                                                    <?php if (is_string($block->getProductAttributeValue($item, $attribute))): ?>
+                                                        <?= /* @noEscape */ $helper->productAttribute($item, $block->getProductAttributeValue($item, $attribute), $attribute->getAttributeCode()) ?>
+                                                    <?php else: ?>
+                                                        <?= $escaper->escapeHtml($helper->productAttribute($item, $block->getProductAttributeValue($item, $attribute), $attribute->getAttributeCode())) ?>
+                                                    <?php endif; ?>
+                                            <?php break;
+                                            } ?>
+                                        </div>
+                                    </td>
+                                <?php endforeach; ?>
+                            </tr>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <div class="relative z-50" role="dialog" aria-modal="true" x-cloak x-show="compareItemRemove" id="compare-product-delete-confirmation">
+            <div class="fixed inset-0 bg-black/50 bg-opacity-25 transition-opacity" x-cloak x-show="compareItemRemove" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+            <div class="fixed inset-0 z-10 w-screen overflow-y-auto p-4 sm:p-6 md:p-20" x-cloak x-show="compareItemRemove">
+                <div class="mx-auto max-w-md transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all" x-cloak x-show="compareItemRemove" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
+                    <div class="relative">
+                        <div class="p-5 space-y-5" x-bind:id="'mini-cart-item-remove-' + deleteItemInfo.id">
+                            <div>
+                                <p class="text-sm leading-6 m-0 mt-1 text-gray-800">
+                                    <?= $escaper->escapeHtml(__('Are you sure you would like to remove this item from the compare product?')) ?>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end items-center gap-5 p-4">
+                            <button type="button" @click="compareItemRemove = false; " class="inline-block text-sm leading-6 font-medium">
+                                <?= $escaper->escapeHtml(__('Cancel')) ?>
+                            </button>
+                            <button type="button" @click="itemDelete(deleteItemInfo)" class="inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 py-1.5 text-sm font-medium leading-6 text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                                <template x-if="deleteItemConfirm">
+                                    <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
+                                </template>
+                                <span><?= $escaper->escapeHtml(__('Remove')) ?></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="message info empty mb-6">
+        <?= $escaper->escapeHtml(__('You have no items to compare.')) ?>
+    </div>
+<?php endif; ?>
+<script>
+    function handlePrintClick(event) {
+        event.preventDefault();
+        window.print();
+    }
+</script>
+
+<script>
+    function initCompareWishlist() {
+        async function addToWishlist(productId) {
+            try {
+                const dataPost = JSON.parse(event.currentTarget.getAttribute('data-post'));
+                const formData = new FormData();
+                formData.append('form_key', getFormKeyCookie());
+                formData.append('product', dataPost['data']['product']);
+                formData.append('uenc', dataPost['data']['uenc']);
+
+                const response = await fetch(dataPost['action'], {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    window.location.href = response.url;
+                } else {
+                    console.error('Fetch error:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        function removeCompareProduct(productId) {
+            const dataPost = JSON.parse(event.currentTarget.getAttribute('data-post'));
+            this.deleteItemInfo.id = dataPost['data']['product'];
+            this.deleteItemInfo.url = dataPost['action'];
+            this.compareItemRemove = true;
+        }
+
+        async function itemDelete(t) {
+            let formData = new FormData();
+            formData.append("product", t.id);
+            formData.append("form_key", getFormKeyCookie());
+            this.deleteItemConfirm = true;
+
+            try {
+                const response = await fetch(t.url, {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include"
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to remove item from the compare products");
+                }
+
+                window.location.reload(); // Fixed method for reloading the page
+            } catch (error) {
+                window.location.href = `${BASE_URL}checkout/cart`;
+                console.error("Error:", error);
+            }
+        }
+
+        return {
+            addToWishlist,
+            removeCompareProduct,
+            itemDelete,
+            addToCartLoader: '',
+            compareItemRemove: false,
+            deleteItemConfirm: false,
+            deleteItemInfo: { id: "", url: "" }
+        }
+    }
+</script>

@@ -1,0 +1,165 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+/**
+ * Shopping cart template
+ *
+ * @var $block \Magento\Checkout\Block\Cart
+ */
+$viewModel = $block->getData('view_model');
+?>
+
+<?php if ($block->getItemsCount()): ?>
+    <div class="bg-white" x-data="ShoppingCart()">
+        <?php // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput?>
+        <?= $block->getChildHtml('with-items'); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (!$block->getItemsCount()): ?>
+    <div class="bg-white">
+        <?php // phpcs:ignore Magento2.Security.LanguageConstruct.DirectOutput?>
+        <?= $block->getChildHtml('no-items'); ?>
+    </div>
+<?php endif; ?>
+<script>
+<?php if ($viewModel->isModuleEnabled('Magento_GiftMessage')): ?>
+    function giftOptionsItem(itemId) {
+        return {
+            isGiftMessageOpened: false,
+            isItemsLevelEnabled: window.giftOptionsConfig.isItemLevelGiftOptionsEnabled,
+            giftItemMessage: {
+                to: '',
+                from: '',
+                message: '',
+            },
+            itemLevelMessage: false,
+            isItemHasMessage: '',
+            isGiftMessageOptionModal: false,
+            addSpinner: false,
+
+            init() {
+                this.itemLevelMessage = window.giftOptionsConfig.giftMessage.itemLevel[itemId].is_available;
+                if (window.giftOptionsConfig.giftMessage.itemLevel[itemId].message) {
+                    this.isItemHasMessage = false;
+                    this.giftItemMessage.to = window.giftOptionsConfig.giftMessage.itemLevel[itemId].message.recipient;
+                    this.giftItemMessage.from = window.giftOptionsConfig.giftMessage.itemLevel[itemId].message.sender;
+                    this.giftItemMessage.message = window.giftOptionsConfig.giftMessage.itemLevel[itemId].message.message;
+                    this.isGiftMessageOpened = true;
+                } else {
+                    this.isItemHasMessage = true;
+                    this.isGiftMessageOpened = false;
+                }
+            },
+
+            giftOptionsItemFormSubmit() {
+                const formValues = {
+                    to: this.giftItemMessage.to,
+                    from: this.giftItemMessage.from,
+                    message: this.giftItemMessage.message
+                };
+                this.submitGiftOptionsItem(formValues.to, formValues.from, formValues.message);
+            },
+
+            submitGiftOptionsItem(to, from, message) {
+                this.addSpinner = true;
+                fetch(this.getItemFormSubmissionUrl(), {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        gift_message: {
+                            recipient: to,
+                            sender: from,
+                            message: message,
+                        }
+                    }),
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        console.error('Error:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+            },
+
+            getItemFormSubmissionUrl() {
+                const baseUrl = BASE_URL + 'rest/' + window.checkoutConfig.storeCode + '/V1/';
+                return window.giftOptionsConfig.isCustomerLoggedIn ?
+                    baseUrl + 'carts/mine/gift-message/' + itemId :
+                    baseUrl + 'guest-carts/' + window.checkoutConfig.quoteData.entity_id + '/gift-message/' + itemId;
+            },
+
+            giftOptionItemcancelButton() {
+                this.isGiftMessageOpened = !this.isGiftMessageOpened;
+                this.isItemHasMessage = !this.isItemHasMessage;
+                if (window.giftOptionsConfig.giftMessage.itemLevel[itemId].message.message) {
+                    this.isGiftMessageOpened = true;
+                    this.isItemHasMessage = false;
+                }
+            },
+
+            editGiftOptionItemMessage() {
+                this.isGiftMessageOpened = true;
+                this.isItemHasMessage = true;
+            },
+
+            deleteItemGiftMessage() {
+                event.preventDefault();
+                this.submitGiftOptionsItem(null, null, null);
+            }
+        }
+    }
+<?php endif; ?>
+    function removeItemAtCart(button) {
+        var url = BASE_URL + 'checkout/cart/delete';
+        var productId = button.dataset.item;
+        var uenc = button.dataset.uenc;
+        var cookieValue = getFormKeyCookie();
+
+        var formData = new FormData();
+        formData.append("id", productId);
+        formData.append("uenc", uenc);
+        formData.append("form_key", cookieValue);
+
+        // Fetch API POST request
+        fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.error('Error removing item:', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+    }
+</script>

@@ -1,0 +1,48 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+    $output = $block->getOutput();
+    $regionCode = $block->getRegionCode();
+    $region = $block->getRegion();
+    $countryId = $block->getCountryId();
+    $regionFactory = $block->getRegionModel();
+?>
+<?php if (!empty($output)): ?>
+    <select id="region_id" title="State/Province" name="region_id"
+    required x-on:input.debounce="onChange"
+    class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 region_id validate-select" >
+    <option value=""><?= $escaper->escapeHtml(__('Please select a region, state or province.')) ?></option>
+    <?php foreach ($output as $key => $value): ?>
+            <?php if ($key == $regionCode): ?>
+                    <option
+                    value="<?= $escaper->escapeHtmlAttr($regionFactory->loadByCode($key, $countryId)->getId()) ?>"
+                    selected><?= $escaper->escapeHtmlAttr($value) ?></option>
+             <?php else: ?>
+                    <option
+                    value="<?= $escaper->escapeHtmlAttr($regionFactory->loadByCode($key, $countryId)->getId())?>">
+                    <?= $escaper->escapeHtmlAttr($value) ?></option>
+            <?php endif; ?>
+    <?php endforeach; ?>
+    </select>
+<?php else: ?>
+    <input id="region" required name="region" x-on:input.debounce="onChange"value="<?= $escaper->escapeHtmlAttr($region) ?>" class="form-input validate-not-number-first block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 " />
+<?php endif; ?>

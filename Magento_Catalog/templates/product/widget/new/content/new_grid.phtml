@@ -1,0 +1,226 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+/**
+ * Template for displaying new products widget
+ *
+ * @var $block \Magento\Catalog\Block\Product\Widget\NewWidget
+ */
+use Magento\Framework\App\Action\Action;
+
+// phpcs:disable Magento2.Files.LineLength.MaxExceeded
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+
+if ($exist = ($block->getProductCollection() && $block->getProductCollection()->getSize())) {
+    $type = 'widget-new-grid';
+
+    $mode = 'grid';
+
+    $image = 'new_products_content_widget_grid';
+    $title = __('New Products');
+    $items = $block->getProductCollection()->getItems();
+
+    $showWishlist = true;
+    $showCompare = true;
+    $showCart = true;
+    $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::DEFAULT_VIEW;
+    $description = false;
+    $configHelper = $this->helper(\ViraXpress\Store\Helper\Cssconfig::class);
+    $imagehelper = $this->helper(\Magento\Catalog\Helper\Image::class);
+    $imageConfig = $configHelper->getConfig('viraxpress_config/image_resize/product_carousel_image_resize');
+}
+?>
+
+<?php if ($exist): ?>
+    <div class="block widget block-new-products <?= /* @noEscape */ $mode ?>" x-data="newProductGridWidget()">
+        <div class="block-title ">
+            <h3 class="text-xl font-semibold text-gray-900 mb-6" role="heading" aria-level="2"><?= $escaper->escapeHtml($title) ?></h3>
+        </div>
+        <div class="block-content">
+            <?= /* @noEscape */ '<!-- ' . $image . '-->' ?>
+            <div class="product-items <?= /* @noEscape */ $type ?> products-<?= /* @noEscape */ $mode ?> grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <?php foreach ($items as $_item): ?>
+                    <div class="product-item bg-white border-2 border-b-2 border-transparent transition duration-200 border-b-primary hover:rounded hover:border-2 hover:border-primary relative group widget-new-product-grid-<?= $escaper->escapeHtmlAttr($_item->getId()) ?> w-full">
+                        <?php if ($showWishlist || $showCompare): ?>
+                            <div class="inline-flex absolute transition-all duration-500 ease-in-out top-4 right-4 flex-col gap-2 z-10">
+                                <?php if ($this->helper(Magento\Wishlist\Helper\Data::class)->isAllow() && $showWishlist): ?>
+                                    <div class="action-wishlist">
+                                        <?php
+                                        $wishlistParams = json_decode($block->getAddToWishlistParams($_item), true);
+                                        if (isset($wishlistParams['data']) && !empty($wishlistParams['data'])) {
+                                            $params['product'] = isset($wishlistParams['data']['product']) ? $wishlistParams['data']['product'] : null;
+                                            $params['uenc'] = isset($wishlistParams['data']['uenc']) ? $wishlistParams['data']['uenc'] : null;
+                                        }
+                                        $url = isset($wishlistParams['action']) ? $wishlistParams['action'] : $block->getUrl('wishlist/index/add');
+                                        $wishlistFormId = base64_encode($params['product'] . "-product_list_wishlist_form");
+                                        $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
+                                        ?>
+                                        <form id="<?= $escaper->escapeHtmlAttr($wishlistFormId) ?>">
+                                            <input type="hidden" name="product" value="<?= $escaper->escapeHtmlAttr($params['product']) ?>" />
+                                            <input type="hidden" name="uenc" value="<?= $escaper->escapeHtmlAttr($params['uenc']) ?>" />
+                                            <button type="type" role="button" x-on:click="widgetNewProductGridAddToWishlist('<?= $escaper->escapeHtmlAttr($wishlistFormId) ?>', '<?= $escaper->escapeUrl($url) ?>', event)" title="<?= $escaper->escapeHtmlAttr(__('Add to Wish List')) ?>" class="action towishlist inline-block group/wishlist p-3 lg:p-2 bg-white rounded-full shadow-sm border border-gray-100">
+                                                <span class="sr-only"><?= $escaper->escapeHtml(__('Add to Wish List')) ?></span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-5 h-5 transition-all fill-transparent duration-200 ease-in-out group-hover/wishlist:fill-primary group-hover/wishlist:stroke-primary">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if ($block->getAddToCompareUrl() && $showCompare): ?>
+                                    <div class="action-compare">
+                                        <?php $compareHelper = $this->helper(\Magento\Catalog\Helper\Product\Compare::class);
+                                        $jsonData = json_decode($compareHelper->getPostDataParams($_item), true);
+                                        ?>
+                                        <button x-on:click="addToCompare(<?= (int)$_item->getEntityId() ?>)" class="inline-block w-max p-3 lg:p-2 group/compare  bg-white rounded-full shadow-sm border border-gray-100 tocompare cursor-pointer" title="<?= $escaper->escapeHtmlAttr(__('Add to Compare')) ?>" >
+                                            <span class="sr-only"><?= $escaper->escapeHtml(__('Add to Compare')) ?></span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 transition-all duration-200 ease-in-out group-hover/compare:stroke-primary">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                        <a href="<?= $escaper->escapeUrl($block->getProductUrl($_item)) ?>" class="product-item-photo rounded overflow-hidden flex justify-center items-center">
+                           <?php $productImage = $block->getImage($_item, $image);
+                            $imageWidth = ($imageConfig['width']) ? $imageConfig['width'] : $productImage->getWidth();
+                            $imageHeight = ($imageConfig['height']) ? $imageConfig['height'] : $productImage->getHeight();
+                            $productImageConfig = $imagehelper->init($_item, $image)->resize($imageWidth, $imageHeight);
+                            $productImageUrl = $productImageConfig->getUrl();
+                            ?>
+                           <img class="<?= $escaper->escapeHtmlAttr($block->getClass()) ?>" id="product-image-container-list-<?= $escaper->escapeHtmlAttr($_item->getId()) ?>" src="<?= $escaper->escapeUrl($productImageUrl) ?>" loading="lazy" width="<?= $escaper->escapeHtmlAttr($imageWidth) ?>" height="<?= $escaper->escapeHtmlAttr($imageHeight) ?>" alt="<?= $escaper->escapeHtmlAttr($productImage->getLabel()) ?>" title="<?= $escaper->escapeHtmlAttr($productImage->getLabel()) ?>" />
+                        </a>
+                        <div class="product-item-details px-4 py-3 flex flex-col justify-start items-start">
+                            <p class="mb-3 font-medium text-black block capitalize break-words">
+                                <a title="<?= $escaper->escapeHtml($_item->getName()) ?>" href="<?= $escaper->escapeUrl($block->getProductUrl($_item)) ?>" class="product-item-link">
+                                    <?= $escaper->escapeHtml($_item->getName()) ?>
+                                </a>
+                            </p>
+                           <?= $block->getReviewsSummaryHtml($_item, 'short', true) ?>
+                           <?php if ($_item->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
+                                $swatchBlock = $block->getLayout()->createBlock(\Magento\Swatches\Block\Product\Renderer\Listing\Configurable::class)->setTemplate("Magento_Swatches::product/category/renderer.phtml");
+                                /* @noEscape */
+                                echo $swatchBlock->setProduct($_item)->toHtml();
+                                $scriptBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\SwatchRenderer::class)
+                                    ->setTemplate("Magento_Swatches::js/script.phtml");
+
+                                if ($scriptBlock->canRender()) {
+                                    echo $scriptBlock->toHtml();
+                                }
+                           } ?>
+                            <div class="flex mt-8 text-xl font-semibold items-end flex-1 w-full">
+                                <?= $block->getProductPriceHtml($_item, $type); ?>
+                                <div class="ml-auto">
+                                    <?php if ($showCart): ?>
+                                        <?php if ($_item->isSaleable()): ?>
+                                            <?php if (!$_item->getTypeInstance()->isPossibleBuyFromList($_item)): ?>
+                                                <button class="action tocart primary border-0 text-primary rounded-md" x-on:click="redirectToProductDetail('<?= $escaper->escapeUrl($block->getAddToCartUrl($_item)) ?>')" type="button" title="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>">
+                                                    <span class="sr-only"><?= $escaper->escapeHtml(__('Add to Cart')) ?></span>
+                                                    <svg class="h-7 w-7 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+                                                    </svg>
+                                                </button>
+                                            <?php else: ?>
+                                                <?php
+                                                $postDataHelper = $this->helper(Magento\Framework\Data\Helper\PostHelper::class);
+                                                $postData = $postDataHelper->getPostData(
+                                                    $escaper->escapeUrl($block->getAddToCartUrl($_item)),
+                                                    ['product' => (int) $_item->getEntityId()]
+                                                );
+                                                $postParams = json_decode($postData, true);
+                                                $formId = base64_encode($postParams['data']['product'] . "-new_product_grid_addtocart_form");
+                                                $formId = preg_replace("/[^a-zA-Z0-9]/", "", $formId);
+                                                ?>
+                                                <form id="<?= $escaper->escapeHtmlAttr($formId) ?>">
+                                                    <input type="hidden" name="product" value="<?= $escaper->escapeHtmlAttr($postParams['data']['product']) ?>">
+                                                    <input type="hidden" name="<?= $escaper->escapeHtmlAttr(Action::PARAM_NAME_URL_ENCODED) ?>" value="<?= $escaper->escapeHtmlAttr($postParams['data'][Action::PARAM_NAME_URL_ENCODED]) ?>">
+                                                    <button type="button" x-on:click="cartAddFormHandler('<?= $escaper->escapeHtmlAttr($formId) ?>', '<?= $escaper->escapeUrl($postParams['action']) ?>')" title="<?= $escaper->escapeHtml(__('Add to Cart')) ?>" class="action tocart primary border-0 text-primary rounded-md">
+                                                        <svg class="h-7 w-7 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+                                                        </svg>
+                                                        <span class="sr-only"><?= $escaper->escapeHtml(__('Add to Cart')) ?></span>
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            <?php if ($_item->isAvailable()): ?>
+                                                <div class="stock available">
+                                                    <span><?= $escaper->escapeHtml(__('In stock')) ?></span>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="stock unavailable">
+                                                    <span><?= $escaper->escapeHtml(__('Out of stock')) ?></span>
+                                                </div>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach ?>
+            </div>
+            <div class="flex flex-col sm:flex-row flex-wrap justify-end items-center md:items-start gap-5 mt-5 pt-5 border-t border-gray-200">
+                <?= $block->getPagerHtml() ?>
+            </div>
+        </div>
+    </div>
+    <script>
+        function newProductGridWidget() {
+            return {
+                addToCartLoader: false,
+                redirectToProductDetail(url) {
+                    window.location.href = url;
+                },
+                widgetNewProductGridAddToWishlist(formId, url, event) {
+                    var form = document.getElementById(formId);
+                    var productInput = form.querySelector('input[name="product"]');
+                    this.addToCartLoader = productInput.value;
+                    form.addEventListener("submit", function (event) { event.preventDefault(); });
+                    const formData = new FormData(form);
+                    formData.append('form_key', getFormKeyCookie());
+
+                    fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'include'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            }
+                        } else {
+                            console.error('Error:', response.status);
+                        }
+                    })
+                    .catch(error => {
+                        // Handle fetch errors
+                        console.error('Fetch error:', error);
+                    });
+                }
+            }
+        }
+    </script>
+<?php endif; ?>

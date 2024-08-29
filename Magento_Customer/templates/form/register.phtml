@@ -1,0 +1,331 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Customer\Helper\Address;
+use ViraXpress\Customer\ViewModel\ReCaptcha;
+
+/** @var \Magento\Customer\Block\Form\Register $block */
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+$formId = 'accountcreate';
+/** @var Magento\Customer\Helper\Address $addressHelper */
+$addressHelper = $block->getData('addressHelper');
+/** @var \Magento\Directory\Helper\Data $directoryHelper */
+$directoryHelper = $block->getData('directoryHelper');
+/** @var \Magento\Customer\ViewModel\Address\RegionProvider $regionProvider */
+$regionProvider = $block->getRegionProvider();
+$formData = $block->getFormData();
+/** @var \Magento\Customer\ViewModel\CreateAccountButton $createAccountButtonViewModel */
+$createAccountButtonViewModel = $block->getData('create_account_button_view_model');
+$directoryViewModel = $block->getData("country_provider");
+$addressId = $directoryViewModel->getFormData();
+$directoryViewModel = $block->getData("country_provider");
+$postCodePatterns = $directoryViewModel->getSerializedPostCodes();
+$currentCustomerViewModel = $block->getData("current_customer");
+$lastOrderByGuest = $block->getData("last_order_by_guest");
+$guestInfo = $lastOrderByGuest->getCustomerData();
+$additionalInfoHtml = $block->getChildHtml('form_additional_info');
+?>  
+<?php $displayAll = $block->getConfig('general/region/display_all'); ?>
+<?= $block->getChildHtml('form_fields_before') ?>
+<?php /* Extensions placeholder */ ?>
+<?= $block->getChildHtml('customer.form.register.extra') ?>
+
+<form class="form create account form-create-account flex flex-col lg:grid lg:grid-cols-1 lg:grid-cols-2 gap-10 mb-10" x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->escapeUrl($block->getPostActionUrl()) ?>'))" @submit="onSubmit" id="<?= $escaper->escapeHtmlAttr($formId) ?>" enctype="multipart/form-data">
+    <fieldset class="fieldset create info space-y-6">
+        <legend class="legend w-full text-xl text-gray-900 border-b py-2 border-gray-200 font-medium">
+            <span><?= $escaper->escapeHtml(__('Personal Information')) ?></span>
+        </legend>
+        <input type="hidden" name="success_url" value="<?= $escaper->escapeUrl($block->getSuccessUrl()) ?>">
+        <input type="hidden" name="error_url" value="<?= $escaper->escapeUrl($block->getErrorUrl()) ?>">
+
+        <?= $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Name::class)->setObject($formData)->setForceUseCustomerAttributes(true)->toHtml() ?>
+        
+        <?php if ($block->isNewsletterEnabled()): ?>
+            <div class="field choice newsletter flex justify-start items-center gap-x-3">
+                <input id="newsletter-sign-up" name="is_subscribed" type="checkbox" class="checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary" value="1" <?= $formData->getIsSubscribed() ? 'checked="checked"' : ''?>>
+                <label for="newsletter-sign-up" class="label cursor-pointer text-sm font-medium text-gray-900">
+                    <span><?= $escaper->escapeHtml(__('Sign Up for Newsletter')) ?></span>
+                </label>
+            </div>
+            <?= $block->getChildHtml('customer.form.register.newsletter') ?>
+        <?php endif ?>
+        <?php if ($block->getShowAddressFields()): ?>
+            <div class="flex justify-start items-center gap-x-3">
+                <input id="address-template-sign-up" name="is_address_rendered" type="checkbox" x-model="displayAddressFields" class="checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary" />
+                <label for="address-template-sign-up" class="label cursor-pointer text-sm font-medium text-gray-900">
+                    <span><?= $escaper->escapeHtml(__('Add Address')) ?></span>
+                </label>
+            </div>
+        <?php endif ?>
+
+        <?php $_dob = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Dob::class) ?>
+        <?php if ($_dob->isEnabled()): ?>
+            <?= $_dob->setDate($formData->getDob())->toHtml() ?>
+        <?php endif ?>
+
+        <?php $_taxvat = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Taxvat::class) ?>
+        <?php if ($_taxvat->isEnabled()): ?>
+            <?= $_taxvat->setTaxvat($formData->getTaxvat())->toHtml() ?>
+        <?php endif ?>
+
+        <?php $_gender = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Gender::class) ?>
+        <?php if ($_gender->isEnabled()): ?>
+            <?= $_gender->setGender($formData->getGender())->toHtml() ?>
+        <?php endif ?>
+        <?= $block->getChildHtml('fieldset_create_info_additional') ?>
+    </fieldset>
+    <fieldset class="fieldset create account space-y-6">
+        <legend class="legend w-full text-xl text-gray-900 border-b py-2 border-gray-200 font-medium"><?= $escaper->escapeHtml(__('Sign-in Information')) ?></legend>
+        <div class="field required">
+            <label for="email" class="label block text-sm leading-6 text-gray-900">
+                <?= $escaper->escapeHtml(__('Email')) ?><span class="text-required ml-1">*</span>
+            </label>
+            <div class="control mt-2 relative">
+                <input id="email" name="email" type="email" required autocomplete="email" value="<?= $escaper->escapeHtmlAttr(isset($guestInfo['email']) ? $guestInfo['email'] : '') ?>" title="<?= $escaper->escapeHtmlAttr(__('Email')) ?>" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" x-on:input.debounce="onChange">
+            </div>
+        </div>
+        <div class="field password required" x-data="{ showPassword: false }">
+            <label for="password" class="label block text-sm leading-6 text-gray-900">
+                <?= $escaper->escapeHtml(__('Password')) ?><span class="text-required ml-1">*</span>
+            </label>
+            <div class="control mt-2 relative">
+                <input id="password" name="password" :type="showPassword ? 'text' : 'password'" required title="<?= $escaper->escapeHtmlAttr(__('Password')) ?>" autocomplete="off" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 pr-8" x-on:input.debounce="onChange">
+                            
+                <div class="absolute top-1/2 right-4 z-10 cursor-pointer -translate-y-1/2">
+                    <svg x-cloak x-show="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" @click="showPassword = !showPassword">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <svg x-cloak x-show="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" class="h-4 text-gray-700 hidden" fill="none" @click="showPassword = !showPassword">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="field confirmation required" x-data="{ showConfirmPassword: false }">
+            <label for="password_confirmation" class="label block text-sm leading-6 text-gray-900">
+                <span><?= $escaper->escapeHtml(__('Confirm Password')) ?></span><span class="text-required ml-1">*</span>
+            </label>
+            <div class="control mt-2 relative">
+               <input id="password_confirmation" name="password_confirmation" :type="showConfirmPassword ? 'text' : 'password'" required title="<?= $escaper->escapeHtmlAttr(__('Confirm Password')) ?>" autocomplete="off" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 pr-8" x-on:input.debounce="onChange">
+                <div class="absolute top-1/2 right-4 z-10 cursor-pointer -translate-y-1/2">
+                    <svg x-cloak x-show="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" @click="showConfirmPassword = !showConfirmPassword">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <svg x-cloak x-show="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" class="h-4 text-gray-700 hidden" fill="none" @click="showConfirmPassword = !showConfirmPassword">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <?php if ($block->getShowAddressFields()): ?>
+    <template x-if="displayAddressFields === true">
+        <fieldset class="fieldset address col-span-2 grid grid-cols-1 lg:grid-cols-12 gap-6 gap-x-10 ">
+            <legend class="legend w-full text-xl text-gray-900 border-b py-2 border-gray-200 font-medium col-span-2 mb-6">
+                <span><?= $escaper->escapeHtml(__('Address Information')) ?></span>
+            </legend>
+            <?php $cityValidationClass = $addressHelper->getAttributeValidationClass('city'); ?>
+            <?php $postcodeValidationClass = $addressHelper->getAttributeValidationClass('postcode'); ?>
+            <?php $regionValidationClass = $addressHelper->getAttributeValidationClass('region'); ?>
+            <input type="hidden" name="create_address" value="1" />
+
+            <?php $_company = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Company::class) ?>
+            <?php if ($_company->isEnabled()): ?>
+                <?= $_company->setCompany($formData->getCompany())->toHtml() ?>
+            <?php endif ?>
+
+            <div class="flex flex-col lg:flex-row gap-y-5 col-span-6">
+                <div class="flex-1">
+                    <?php $_telephone = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Telephone::class) ?>
+                    <?php if ($_telephone->isEnabled()): ?>
+                        <?= $_telephone->setTelephone($formData->getTelephone())->toHtml() ?>
+                    <?php endif ?>
+                </div>
+                    <?php $_fax = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Fax::class) ?>
+                    <?php if ($_fax->isEnabled()): ?>
+                        <div class="flex-1">
+                            <?= $_fax->setFax($formData->getFax())->toHtml() ?>
+                        </div>
+                    <?php endif ?>
+            </div>
+            <?php
+            $_streetValidationClass = $addressHelper->getAttributeValidationClass('street');
+            ?>
+            <div class="grid grid-cols-1 gap-6 col-span-6">
+                <div class="field">
+                    <label for="street_1" class="block text-sm leading-6 text-gray-900">
+                        <span><?= $escaper->escapeHtml(__('Street Address')) ?><span class="text-required ml-1">*</span></label></span>
+                    </label>
+                    <div class="mt-2 control">
+                        <input type="text" name="street[0]" value="<?= $escaper->escapeHtmlAttr($formData->getStreet(0)) ?>" title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('street') ?>" id="street_1" x-on:input.debounce="onChange" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_streetValidationClass) ?>">
+                    </div>
+                </div>
+                <?php
+                $_streetValidationClass = $_streetValidationClass !== null ?
+                    trim(str_replace('required-entry', '', $_streetValidationClass)) : '';
+                $streetLines = $addressHelper->getStreetLines();
+                ?>
+                <?php for ($_i = 2, $_n = $streetLines; $_i <= $_n; $_i++): ?>
+                    <div class="field additional">
+                        <div class="mt-2 control">
+                            <input type="text" name="street[<?= /* @noEscape */ $_i ?>]" value="<?= $escaper->escapeHtml($formData->getStreetLine($_i - 1)) ?>" title="<?= $escaper->escapeHtmlAttr(__('Street Address %1', $_i)) ?>" id="street_<?= /* @noEscape */ $_i ?>" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_streetValidationClass) ?>">
+                        </div>
+                    </div>
+                <?php endfor; ?>
+            </div>
+
+            <?php if ($addressHelper->isVatAttributeVisible()): ?>
+                <?php $_vatidValidationClass = $addressHelper->getAttributeValidationClass('vat_id'); ?>
+                <div class="field taxvat col-span-6">
+                    <label class="block text-sm leading-6 text-gray-900" for="vat_id">
+                        <span><?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('vat_id') ?></span>
+                    </label>
+                    <div class="mt-2 control">
+                        <input type="text" name="vat_id" value="<?= $escaper->escapeHtmlAttr($formData->getVatId()) ?>" title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('vat_id') ?>" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_vatidValidationClass) ?>" id="vat_id">
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php $countries = $block->getCountryCollection()->setForegroundCountries($directoryViewModel->getTopCountryCodes())->toOptionArray(); ?>
+            <div x-data="customerRegister" class="space-y-6 col-span-6">
+                <div class="field country">
+                    <label for="country" class="block text-sm leading-6 text-gray-900">Country <span class="text-required ml-1">*</span></label>
+                    <div class="mt-2 control">
+                        <select id="country"
+                            @change="onCountryChange(event)"
+                            x-on:input.debounce="onChange"
+                            required name="country_id"
+                            title="Country"
+                            class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 validate-select">
+                            <?php foreach ($countries as $country): ?>
+                                <option
+                                name="<?= /** @noEscape */ $country['label'] ?>"
+                                value="<?=/** @noEscape */$country['value'] ?>" <?= ($block->getCountryId() ===  $country['value']) ? 'selected="selected"' : '' ?>>
+                                    <?= /** @noEscape */ $country['label'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="field state col-span-6">
+                    <label for="region_id" class="block text-sm leading-6 text-gray-900">State/Province <span class="text-required ml-1">*</span></label>
+                    <div class="mt-2 control" id="field_region_id">
+                        <template x-if="isRegionAvailable">
+                            <select id="region_id" title="State/Province" name="region_id" required="" x-on:input.debounce="onChange" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 region_id validate-select">
+                                <option value="">Please select a region, state or province.</option>
+                                <template x-for="(region, key) in regionArray" :key="key">
+                                    <option :value="key" x-text="region"></option>
+                                </template>
+                            </select>
+                        </template>
+                        <template x-if="!isRegionAvailable">
+                            <input id="region" required="" name="region" x-on:input.debounce="onChange" value="" class="form-input validate-not-number-first block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <script>
+                function customerRegister() {
+                    return {
+                        url: "<?= $escaper->escapeUrl($block->getBaseUrl()) ?>viraxpresscustomer/address/state",
+                        regionArray: {},
+                        isRegionAvailable: false,
+                        init() {
+                            this.onCountryChange();
+                        },
+
+                        onCountryChange(event) {
+                            var countryId = document.getElementById('country').value;
+                            fetch(this.url+ '?event_country=' + countryId)
+                            .then((response) => {
+                                if (response.ok) {
+                                   return response.json();
+                                }
+                            }).then((data) => { 
+                                if (data && Object.keys(data).length > 0) {
+                                    this.isRegionAvailable = true;
+                                } else {
+                                    this.isRegionAvailable = false;
+                                }
+                                this.regionArray = data;
+                            }).catch((error) => { console.error("Fetch error:", error); });
+                        }
+                    }
+                }
+            </script>
+            <div class="col-span-6 space-y-6">
+                <div class="col-span-6 lg:col-span-3">
+                    <div class="field">
+                        <label for="city" class="block text-sm leading-6 text-gray-900">
+                            <span><?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('city') ?> <span class="text-required ml-1">*</span></label></span>
+                        </label>
+                        <div class="mt-2 control">
+                            <input type="text" name="city" value="<?= $escaper->escapeHtmlAttr($formData->getCity()) ?>" x-on:input.debounce="onChange" required title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('city') ?>" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($cityValidationClass) ?>" id="city">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-6 lg:col-span-3">
+                    <div class="field">
+                        <label for="zip" class="block text-sm leading-6 text-gray-900">
+                            <span><?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('postcode') ?><span class="text-required ml-1">*</span></span>
+                        </label>
+                        <div class="mt-2 control">
+                            <input type="text" name="postcode" value="<?= $escaper->escapeHtmlAttr($formData->getPostcode()) ?>" title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('postcode') ?>" id="zip" x-on:input.debounce="onChange" required  class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 validate-zip-international
+                            <?= $escaper->escapeHtmlAttr($postcodeValidationClass) ?>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <?php $addressAttributes = $block->getChildBlock('customer_form_address_user_attributes'); ?>
+
+            <?php if ($addressAttributes): ?>
+                <?php $addressAttributes->setEntityType('customer_address'); ?>
+                <?php $addressAttributes->setFieldIdFormat('address:%1$s')->setFieldNameFormat('address[%1$s]'); ?>
+                <?php $block->restoreSessionData($addressAttributes->getMetadataForm(), 'address'); ?>
+                <?= $addressAttributes->setShowContainer(false)->toHtml() ?>
+            <?php endif; ?>
+            <input type="hidden" name="default_billing" value="1">
+            <input type="hidden" name="default_shipping" value="1">
+        </fieldset>
+    </template>
+    <?php endif; ?>
+
+    <?php if (!empty($additionalInfoHtml)): ?>
+        <fieldset class="fieldset additional_info">
+            <?= $escaper->escapeHtml($additionalInfoHtml) ?>
+        </fieldset>
+    <?php endif; ?>
+
+
+    <div class="actions-toolbar col-span-2">
+        <div class="primary text-center">
+            <button type="submit" class="action submit primary primary-btn" title="<?= $escaper->escapeHtmlAttr(__('Create an Account')) ?>" <?= $createAccountButtonViewModel->disabled() ? 'disabled="disabled"' : '' ?>>
+                <template x-if="displayLoading">
+                    <span class="w-6 h-6 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
+                </template>
+                <span><?= $escaper->escapeHtml(__('Create An Account')) ?></span>
+            </button>
+        </div>
+    </div>
+</form>

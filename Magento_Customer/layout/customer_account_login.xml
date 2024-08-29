@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Customer Login</title>
+        <link src="core-js/form-validations.min.js" />
+    </head>
+    <body>
+        <referenceBlock name="page.main.title">
+            <arguments>
+                <argument name="css_class" xsi:type="string">text-xl text-gray-900 text-center my-5 mb-10 font-medium</argument>
+            </arguments>
+        </referenceBlock>
+
+
+        <referenceBlock name="require-cookie" remove="true" />
+
+        <!-- Rearranging the element position -->
+        <move element="page.main.title" destination="customer.login.container" before="customer_form_login" />
+
+        <referenceContainer name="content">
+            <referenceContainer name="customer.login.container" htmlClass="login-container my-20 mx-auto max-w-md w-full p-5 border border-gray-200 shadow-md rounded-lg" />
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,25 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+$blockObj= $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Dob::class);
+$translatedCalendarConfigJson = $blockObj->getTranslatedCalendarConfigJson(); ?>
+<input type="text" name="<?= $escaper->escapeHtmlAttr($block->getName()) ?>" id="<?= $escaper->escapeHtmlAttr($block->getId()) ?>" value="<?= $escaper->escapeHtml($block->getValue()) ?>" class="<?= $escaper->escapeHtmlAttr($block->getClass()) . $escaper->escapeHtmlAttr($block->getExtraParams()) . ' datePicker block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6' ?>" data-post="<?= $escaper->escapeHtml($translatedCalendarConfigJson, ENT_QUOTES, 'UTF-8') ?>"/>

@@ -1,0 +1,80 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+declare(strict_types=1);
+
+/** @var $block \Magento\ReCaptchaUi\Block\ReCaptcha */
+?>
+<?php
+$uiConfig = $block->getCaptchaUiConfig();
+$isInvisibleRecaptcha = false;
+if (!empty($uiConfig) && isset($uiConfig['invisible'])) {
+    $isInvisibleRecaptcha = $uiConfig['invisible'];
+}
+?>
+<div
+    class="field-recaptcha"
+    id="<?= /* @noEscape */ $block->getRecaptchaId() ?>-container"
+>
+
+    <div id=<?= $escaper->escapeHtmlAttr($block->getReCaptchaId())."-wrapper"?>>
+        <div class="g-recaptcha"></div>
+        <?php if (!$isInvisibleRecaptcha): ?>
+        <div class="field">
+            <div class="control">
+                <input type="checkbox"
+                       value=""
+                       class="required-captcha checkbox"
+                       name="recaptcha-validate-"
+                       required
+                       x-on:input.debounce="onChange"
+                       tabindex="-1">
+            </div>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+<style type="text/css">
+    <?='#'.$escaper->escapeHtmlAttr($block->getReCaptchaId())."-wrapper"?> .required-captcha.checkbox {
+        position: absolute;
+        display: block;
+        visibility: visible;
+        overflow: hidden;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+    }
+</style>
+<script>
+    let isScriptLoaded = false;
+    document.addEventListener("mousemove", function(event) {
+        if (!isScriptLoaded) {
+            isScriptLoaded = true;
+            initReCaptcha('<?= $escaper->escapeHtmlAttr($block->getReCaptchaId()) ?>', <?= $block->getJsLayout() ?>);
+        }
+    });
+    document.addEventListener("touchstart", function(event) {
+        if (!isScriptLoaded) {
+            isScriptLoaded = true;
+            initReCaptcha('<?= $escaper->escapeHtmlAttr($block->getReCaptchaId()) ?>', <?= $block->getJsLayout() ?>);
+        }
+    });
+</script>

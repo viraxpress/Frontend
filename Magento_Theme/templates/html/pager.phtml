@@ -1,0 +1,168 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * Pager template
+ *
+ * @var \Magento\Theme\Block\Html\Pager $block
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Magento\Framework\Locale\LocaleFormatter $localeFormatter
+ */
+$currentUrl = $block->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true]);
+$moduleName = $block->getRequest()->getModuleName();
+$controllerName = $block->getRequest()->getControllerName();
+$actionName = $block->getRequest()->getActionName();
+$layoutName = $moduleName . '_' . $controllerName . '_' . $actionName;
+?>
+<?php if ($block->getCollection()->getSize()): ?>
+    <?php if ($block->getShowAmounts()): ?>
+        <div class="w-full">
+            <p class="text-sm text-gray-700 text-center sm:text-left">
+                <?php if ($block->getLastPageNum()>1): ?>
+                    <?= $escaper->escapeHtml(__('Showing')) ?>
+                    <span class="font-medium">
+                        <?= $escaper->escapeHtml($localeFormatter->formatNumber($block->getFirstNum()))?>
+                    </span>
+                     <?= $escaper->escapeHtml(__('to')) ?>
+                    <span class="font-medium">
+                        <?= $escaper->escapeHtml($localeFormatter->formatNumber($block->getLastNum()))?>
+                    </span>
+                    <?= $escaper->escapeHtml(__('of')) ?>
+                    <span class="font-medium">
+                        <?= $escaper->escapeHtml($localeFormatter->formatNumber($block->getTotalNum()))?>
+                    </span>
+                    <?= $escaper->escapeHtml(__('results')) ?>
+                <?php elseif ($block->getTotalNum() == 1): ?>
+                    <?= $escaper->escapeHtml(__('%1 Item', $localeFormatter->formatNumber($block->getTotalNum()))) ?>
+                <?php else: ?>
+                    <?= $escaper->escapeHtml(__('%1 Item(s)', $localeFormatter->formatNumber($block->getTotalNum()))) ?>
+                <?php endif; ?>
+            </p>
+        </div>
+    <?php endif ?>
+    <?php if ($block->getLastPageNum()>1): ?>
+        <div class="pages sm:flex-1">
+            <ul class="isolate inline-flex -space-x-px rounded-md" aria-labelledby="paging-label">
+                <li class="item pages-item-previous">
+                    <?php $text = $block->getAnchorTextForPrevious() ? $block->getAnchorTextForPrevious() : '';?>
+                    <a class="<?= $escaper->escapeHtmlAttr($text ? 'link ' : 'action ') ?> previous cursor-pointer relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 <?= $block->isFirstPage() ? 'pointer-events-none cursor-not-allowed opacity-50' : '' ?>"
+                       href="<?= $escaper->escapeUrl($block->getPreviousPageUrl()) ?>"
+                       title="<?= $escaper->escapeHtmlAttr($text ? $text : __('Previous')) ?>">
+                        <span class="label sr-only"><?= $escaper->escapeHtml(__('Page')) ?></span>
+                        <span class="label sr-only"><?= $escaper->escapeHtml($text ? $text : __('Previous')) ?></span>
+                         <svg class="h-5 w-5 fill-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </li>
+
+            <?php if ($block->canShowFirst()): ?>
+                <li class="item">
+                   <a class="page first cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" href="<?= $escaper->escapeUrl($block->getFirstPageUrl()) ?>">
+                        <span class="label sr-only"><?= $escaper->escapeHtml(__('Page')) ?></span>
+                        <span><?= $escaper->escapeHtml($localeFormatter->formatNumber(1)) ?></span>
+                   </a>
+                </li>
+            <?php endif;?>
+
+            <?php if ($block->canShowPreviousJump()): ?>
+                <li class="item">
+                    <a class="page previous jump cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                       title=""
+                       aria-label="<?= $escaper->escapeHtmlAttr(__(
+                           'Skip to page %1',
+                           $localeFormatter->formatNumber($block->getPreviousJumpPage())
+                       )) ?>"
+                       href="<?= $escaper->escapeUrl($block->getPreviousJumpUrl()) ?>">
+                        <span>...</span>
+                    </a>
+                </li>
+            <?php endif;?>
+
+            <?php foreach ($block->getFramePages() as $_page): ?>
+                <?php if ($block->isPageCurrent($_page)): ?>
+                    <li class="item current cursor-pointer relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary current-read-page bg-primary text-white">
+                        <strong class="page">
+                            <span class="label sr-only"><?= $escaper->escapeHtml(__('You\'re currently reading page')) ?></span>
+                            <span><?= $escaper->escapeHtml($localeFormatter->formatNumber($_page)) ?></span>
+                        </strong>
+                    </li>
+                <?php else: ?>
+                   <li class="item">
+                      <a href="<?= $escaper->escapeUrl($block->getPageUrl($_page)) ?>" class="page cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 current-read-page white-pa">
+                            <span class="label sr-only"><?= $escaper->escapeHtml(__('Page')) ?></span>
+                            <span><?= $escaper->escapeHtml($localeFormatter->formatNumber($_page)) ?></span>
+                        </a>
+                    </li>
+                <?php endif;?>
+            <?php endforeach;?>
+
+            <?php if ($block->canShowNextJump()): ?>
+                <li class="">
+                   <a class="page next jump cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
+                       title=""
+                       aria-label="<?= $escaper->escapeHtmlAttr(__(
+                           'Skip to page %1',
+                           $localeFormatter->formatNumber($block->getNextJumpPage())
+                       )) ?>"
+                       href="<?= $escaper->escapeUrl($block->getNextJumpUrl()) ?>">
+                        <span>...</span>
+                    </a>
+                </li>
+            <?php endif;?>
+
+            <?php if ($block->canShowLast()): ?>
+                <li class="item">
+                   <a class="page last cursor-pointer relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" href="<?= $escaper->escapeUrl($block->getLastPageUrl()) ?>">
+                      <span class="label sr-only"><?= $escaper->escapeHtml(__('Page')) ?></span>
+                      <span><?= $escaper->escapeHtml($localeFormatter->formatNumber($block->getLastPageNum())) ?></span>
+                  </a>
+                </li>
+            <?php endif;?>
+
+            <?php $text = $block->getAnchorTextForNext() ? $block->getAnchorTextForNext() : ''; ?>
+            <li class="item">
+                <a class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 <?= $block->isLastPage() ? 'pointer-events-none cursor-not-allowed opacity-50' : 'cursor-pointer' ?>" href="<?= $escaper->escapeUrl($block->getNextPageUrl()) ?>">
+                    <span class="sr-only"><?= $escaper->escapeHtml($text ? $text : __('Next')) ?></span>
+                    <svg class="h-5 w-5 fill-gray-900" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                       <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+             </li>
+            </ul>
+        </div>
+    <?php endif; ?>
+    <?php if (!in_array($layoutName, ['catalog_product_view', 'checkout_cart_index','checkout_cart_configure','wishlist_index_configure'])): ?>
+        <?php if ($block->isShowPerPage()): ?>
+           <div class="limiter toolbar-limiter flex items-center">
+               <label for="limiter" class="cursor-pointer limiter-label mr-1  text-sm text-gray-700"><?= $escaper->escapeHtml(__('Show')) ?></label>
+               <select id="limiter" class="cursor-pointer limiter-options text-sm rounded-md px-2 pr-8 py-2 ring-1 ring-inset ring-gray-300 text-gray-900" data-product-count="<?= $escaper->escapeHtml($block->getTotalNum()) ?>">
+                    <?php foreach ($block->getAvailableLimit() as $_key => $_limit): ?>
+                        <option value="<?= $escaper->escapeUrl($block->getLimitUrl($_key)) ?>" data-post="<?= $escaper->escapeUrl($block->getLimitUrl($_key)) ?>" <?php if ($block->isLimitCurrent($_key)): ?> selected="selected" <?php endif ?>>
+                          <?= $escaper->escapeHtml($localeFormatter->formatNumber((int) $_limit)) ?>
+                       </option>
+                    <?php endforeach; ?>
+               </select>
+               <span class="limiter-text hidden"><?= $escaper->escapeHtml(__('per page')) ?></span>
+          </div>
+      <?php endif ?>
+   <?php endif ?>
+<?php endif ?>

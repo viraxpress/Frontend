@@ -1,0 +1,49 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * @var \Magento\Theme\Block\Html\Header\Logo $block
+ * @var \Magento\Theme\ViewModel\Block\Html\Header\LogoSizeResolverInterface|null $logoSizeResolver
+ */
+
+$storeName = $block->getThemeName() ?: $block->getLogoAlt();
+$logoSizeResolver = $block->getLogoSizeResolver();
+$logoWidth = $logoSizeResolver && $logoSizeResolver->getWidth() ?
+$logoSizeResolver->getWidth() : $block->getLogoWidth();
+$logoHeight = $logoSizeResolver && $logoSizeResolver->getHeight() ?
+$logoSizeResolver->getHeight() : $block->getLogoHeight();
+?>
+
+<button x-data @click="$dispatch('set-mobile-nav-state', true);" type="button"
+class="inline-block p-[0.2em] lg:hidden print:hidden" title="Mobile Menu" >
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+        class="w-7 h-7">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+    </svg>
+</button>
+<a href="<?= $escaper->escapeUrl($block->getUrl('')) ?>" title="<?= $escaper->escapeHtmlAttr($storeName) ?>"
+    class="logo inline-block min-h-[56.4px] lg:p-[0.2em] print:mt-2 print:mb-6" aria-label="Header Logo">
+    <img src="<?= $escaper->escapeUrl($block->getLogoSrc()) ?>" 
+        title="<?= $escaper->escapeHtmlAttr($block->getLogoAlt()) ?>" 
+        alt="<?= $escaper->escapeHtmlAttr($block->getLogoAlt()) ?> on Footer" 
+        <?= $logoWidth ? 'width="' . $escaper->escapeHtmlAttr($logoWidth) . '"' : '' ?> 
+        <?= $logoHeight ? 'height="' . $escaper->escapeHtmlAttr($logoHeight) . '"' : '' ?> />
+</a>

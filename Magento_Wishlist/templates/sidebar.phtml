@@ -1,0 +1,131 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Wishlist\Block\Customer\Sidebar $block */
+
+use Magento\Framework\Url\EncoderInterface;
+?>
+<?php
+$wishlstViewModel = $block->getData('wishlistDataViewModel');
+$customerViewModel = $block->getData('customerAuthViewModel');
+$isLoggedIn = $customerViewModel->isLoggedIn();
+?>
+<?php if ($isLoggedIn): ?>
+    <?php if ($wishlstViewModel->isAllow()): ?>
+        <div class="block-wishlist block w-full" x-data="LayerWishlistItems()" x-init="init()">
+            <template x-if="itemCount">
+                <div class="wishlist-widget mt-8">
+                    <div class="block-title mb-5 flex justify-between items-center gap-x-2">
+                        <h2 class="text-base xl:text-lg font-semibold flex justify-start items-center gap-x-2">
+                            <span role="heading" aria-level="2">
+                                <?= $escaper->escapeHtml($block->getTitle()) ?>
+                            </span>
+                            <span class="inline-block font-regular">(<span x-text="totalItem"></span>)</span>
+                        </h2>
+                        <a class="text-primary text-sm hover:underline font-medium" title="Go to Wishlist" role="link" href="<?= $escaper->escapeUrl($block->getUrl("wishlist/")) ?>">View All</a>
+                    </div>
+                    <div class="block-content">
+                        <ul class="wish-list space-y-3">
+                            <template x-for="item in wishlist.items">
+                                <li class="grid grid-cols-12 gap-x-2 mb-4 bg-gray-50 rounded-md border border-gray-100 p-2">
+                                    <a :href="item.product_url" class="col-span-2 block" :aria-label="item.image.alt">
+                                        <img :src="item.image.src" :alt="item.image.alt" class="rounded-t-xl">
+                                    </a>
+                                    <div class="col-span-10 text-sm leading-6 flex justify-between items-center gap-x-2">
+                                        <a :href="item.product_url" class="font-medium" :title="item.product_name" x-text="item.product_name"></a>
+                                        <button type="button" title="Remove" class="border-0 text-red-600 rounded-md" x-on:click.prevent="itemRemove(item.delete_item_params)" :data-param="item.delete_item_params">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+            </template>
+        </div>
+    <?php endif ?>
+    <script>
+        function LayerWishlistItems() {
+            return {
+                itemCount: 0,
+                totalItem: 0,
+                wishlist: [],
+                init() {
+                    const intervalId = setInterval(() => {
+                        clearInterval(intervalId);
+                        this.fetchWishlistData();
+                    }, 2000);
+                },
+                fetchWishlistData() {
+                    if (customerData && customerData.get && customerData.get('wishlist')) {
+                        const wishlistCustomerData = customerData.get('wishlist');
+                        if (wishlistCustomerData && wishlistCustomerData.counter != null) {
+                            this.wishlist = wishlistCustomerData;
+                            this.itemCount = wishlistCustomerData.items.length;
+                            this.totalItem = wishlistCustomerData.counter ? wishlistCustomerData.counter.replace(/[^0-9]/g, '') : '';
+                        } else {
+                            this.wishlist = [];
+                            this.itemCount = 0;
+                            this.totalItem = 0;
+                        }
+                    } else {
+                        this.wishlist = [];
+                        this.itemCount = 0;
+                        this.totalItem = 0;
+                    }
+                },
+                itemRemove(jsonString) {
+                    var params = JSON.parse(jsonString);
+                    var requestParams = [];
+                    if (params.data.item) {
+                        var formKey = getFormKeyCookie();
+
+                        const formData = new FormData();
+                        formData.append('form_key', formKey);
+                        formData.append('item', params.data.item);
+                        formData.append('qty', params.data.qty);
+                        formData.append('uenc', params.data.uenc);
+                        fetch(params.action, {
+                                method: 'POST',
+                                body: formData,
+                                credentials: 'include'
+                            })
+                            .then(response => {
+                                if (response.ok) {
+                                    window.location.reload();
+                                } else {
+                                    console.error('Error:', response.status);
+                                }
+                            })
+                            .catch(error => {
+                                // Handle fetch errors
+                                console.error('Fetch error:', error);
+                            });
+                    }
+                }
+            }
+        }
+    </script>
+<?php endif ?>

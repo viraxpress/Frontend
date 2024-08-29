@@ -1,0 +1,76 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+
+<script> 
+document.addEventListener('DOMContentLoaded', () => {
+    const header = document.querySelector('header');
+    const pageWrapper = document.querySelector('.page-wrapper');
+    const panelClose = document.querySelector(".headerPanel-closeBtn");
+
+    let oldScrollY = window.scrollY;
+    const headerHeight = header.offsetHeight;
+    let ticking = false;
+
+    function applyFixedHeader(scrollY) {
+        header.style.position = 'fixed';
+        header.style.zIndex = '50';
+        header.style.width = '100%';
+        header.style.top = oldScrollY < scrollY ? `-${headerHeight}px` : '0';
+    }
+
+    function resetHeader() {
+        pageWrapper.style.paddingTop = '';
+        header.style.position = '';
+        header.style.zIndex = '';
+        header.style.width = '';
+        header.style.top = '';
+    }
+
+    function updateStyles(scrollY) {
+        if (scrollY > headerHeight) {
+            pageWrapper.style.paddingTop = `${headerHeight}px`;
+            applyFixedHeader(scrollY);
+        } else if (scrollY < 46) {
+            resetHeader();
+        }
+        oldScrollY = scrollY;
+    }
+
+    function onScroll() {
+        const scrollY = window.scrollY;
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                updateStyles(scrollY);
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }
+
+    function onPanelClose() {
+        pageWrapper.style.paddingTop = '0px';
+    }
+
+    window.addEventListener('scroll', onScroll);
+    panelClose.addEventListener("click", onPanelClose);
+});
+</script>

@@ -1,0 +1,41 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * @var $block \Magento\Theme\Block\Html\Title
+ */
+$cssClass = $block->getCssClass() ? ' ' . $block->getCssClass() : '';
+$titleWrapperCssClass = $block->getData('title_wrapper_css_class') ? ' ' . $block->getData('title_wrapper_css_class') : '';
+$titleHtml = trim($block->getPageHeading()) ?
+    '<span class="base"' . $block->getAddBaseAttribute() . '>'
+    . $escaper->escapeHtml($block->getPageHeading()) . '</span>' : '';
+?>
+
+<?php if ($titleHtml): ?>
+<div class="page-title-wrapper <?= $escaper->escapeHtmlAttr($titleWrapperCssClass) ?>">
+    <h1 class="page-title font-bold text-3xl text-gray-800 <?= $escaper->escapeHtmlAttr($cssClass) ?>"
+        <?= $block->getId() ? 'id="' . $escaper->escapeHtmlAttr($block->getId()) . '"' : '' ?>
+        <?= $block->getAddBaseAttributeAria() ? 'aria-labelledby="' . $escaper->escapeHtmlAttr($block->getAddBaseAttributeAria()) . '"' : '' ?>>
+        <?= /* @noEscape */ $titleHtml ?>
+    </h1>
+    <?= $block->getChildHtml() ?>
+</div>
+<?php endif; ?>

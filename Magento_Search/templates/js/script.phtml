@@ -1,0 +1,96 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+
+<script>
+    // Enable strict mode for better error handling
+    'use strict';
+
+    function quickSearch(isAllowSuggestion, minLen) {
+        return {
+            searchSuggestionList: [],
+            searchQuery: '',
+            isSearchOpen: false,
+            allowedSuggestion: isAllowSuggestion,
+            searchMinimumLength: minLen,
+            showErrorMessage: false,
+            selectedIndex: null,
+
+            toggleSlideOver() {
+                this.isSearchOpen = !this.isSearchOpen;
+                if (this.isSearchOpen) {
+                    document.getElementById('html-body').classList.add('overflow-hidden');
+                    setTimeout(() => {
+                        this.searchQuery = '';
+                        document.getElementById('search').focus();
+                    }, 100);
+                } else {
+                    this.close();
+                }
+            },
+
+            searchSuggestionValue() {
+                this.showErrorMessage = this.searchQuery.length < this.searchMinimumLength;
+                if (this.searchQuery.length >= this.searchMinimumLength) {
+                    this.showErrorMessage = false;
+                    this.getSuggestionResults(this.searchQuery);
+                } else {
+                    this.showErrorMessage = false;
+                    this.searchSuggestionList = [];
+                }
+            },
+
+            searchSubmit(term = null) {
+                term = term || this.searchQuery;
+                if (term.length < this.searchMinimumLength) {
+                    this.showErrorMessage = true;
+                } else {
+                    this.$refs.form.submit();
+                }
+            },
+
+            navigateSuggestions(direction) {
+                if (this.searchSuggestionList.length === 0) return;
+                if (direction === 'up' && this.selectedIndex > 0) {
+                    this.selectedIndex--;
+                } else if (direction === 'down' && this.selectedIndex < this.searchSuggestionList.length - 1) {
+                    this.selectedIndex++;
+                }
+                this.searchQuery = this.searchSuggestionList[this.selectedIndex]?.title || this.searchQuery;
+            },
+
+            getSuggestionResults(field) {
+                const params = new URLSearchParams({ q: field });
+                const searchUrl = `${BASE_URL}search/ajax/suggest?${params}`;
+                fetch(searchUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(response => response.json())
+                    .then(result => this.searchSuggestionList = result);
+            },
+
+            close() {
+                this.isSearchOpen = false;
+                document.getElementById('html-body').classList.remove('overflow-hidden');
+                this.showErrorMessage = false;
+                this.searchSuggestionList = [];
+            }
+        }
+    }
+</script>

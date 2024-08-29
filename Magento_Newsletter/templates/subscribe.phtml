@@ -1,0 +1,42 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<div class="bg-white text-center py-16 mt-1 sm:py-24 lg:py-32">
+    <div class="block w-full">
+        <div class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            <h2 class="inline sm:block"><?= $escaper->escapeHtml(__('Want product news and updates?')) ?></h2>
+            <p class="inline sm:block"><?= $escaper->escapeHtml(__('Sign up for our newsletter.')) ?></p>
+        </div>
+        <form class="mt-10" x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->escapeUrl($block->getFormActionUrl()) ?>'))" @submit="onSubmit" id="newsletter-form">
+            <div class="flex flex-col justify-center items-center md:items-start md:flex-row gap-4">
+                <div class="field">
+                    <label for="newsletter" class="sr-only"><?= $escaper->escapeHtml(__('Email address')); ?></label>
+                    <div>
+                        <input type="email" name="email" id="newsletter" autocomplete="email" x-on:input.debounce="onChange" required class="min-w-0 flex-auto block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" placeholder="Enter your email">
+                        <?= $block->getChildHtml('newsletter_form_additional_info') ?>
+                    </div>
+                </div>
+                <button type="submit" class="flex-none primary-btn"><?= $escaper->escapeHtml(__('Subscribe')) ?></button>
+            </div>
+            <p class="mt-4 text-sm leading-6 text-gray-900"><?= $escaper->escapeHtml(__('We care about your data. Read our ')) ?><a href="/privacy-policy-cookie-restriction-mode" class="font-semibold text-primary hover:text-primary/90"><?= $escaper->escapeHtml(__('privacy&nbsp;policy')) ?></a>.</p>
+        </form>
+    </div>
+</div>

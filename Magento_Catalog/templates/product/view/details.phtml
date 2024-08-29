@@ -1,0 +1,105 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Catalog\Block\Product\View\Details $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+$reviewCountSize = $block->getLayout()->createBlock(\Magento\Review\Block\Product\Review::class);
+$page = $block->getRequest()->getParam('p');
+?>
+<?php if ($detailedInfoGroup = $block->getGroupSortedChildNames('detailed_info', 'getChildHtml')): ?>
+    <div x-data="productTabSlider()" @set-active-tab.window="activeTab = $event.detail" class="my-5 py-5 hx-product-tabs" data-page="<?= $page ? 1 : 0 ?>">
+        <?php $layout = $block->getLayout(); ?>
+        <div x-ref="slider" data-interval="6000">
+            <div class="flex justify-start items-end gap-2 border-b border-gray-200 select-none" role="tablist">
+                <?php foreach ($detailedInfoGroup as $key => $name): ?>
+                    <?php
+                    $html = $layout->renderElement($name);
+                    if (!$html || !trim($html)) {
+                        continue;
+                    }
+                    $alias = $layout->getElementAlias($name);
+                    $label = $block->getChildData($alias, 'title');
+                    ?>
+                    <button type="button" title="tab" data-key="<?= $escaper->escapeHtmlAttr($key) ?>" data-title="<?= $escaper->escapeHtmlAttr($name) ?>" @click="activeTab=<?= $escaper->escapeHtmlAttr($key) ?>" class="inline-flex flex-col-reverse gap-1 sm:flex-row justify-center items-center sm:gap-2 px-[15px] py-[10px] text-sm lg:text-base transition-all duration-200 border-b-2 font-medium product-details-tab" :class="activeTab === <?= $escaper->escapeHtmlAttr($key) ?> ? 'border-primary text-primary hover:text-primary hover:bg-primary/5 focus:text-primary focus:bg-primary/5': ' border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:text-gray-900 focus:bg-gray-200 '" role="tab" :aria-selected="activeTab === <?= $escaper->escapeHtmlAttr($key) ?> ? 'true' : 'false'" aria-controls="<?= $escaper->escapeHtmlAttr($alias) ?>">
+                        <?php if ($name == 'reviews.tab'): ?>
+                            <?= $escaper->escapeHtml(__('Reviews')) ?>
+                            <span :class="activeTab === <?= $escaper->escapeHtmlAttr($key) ?> ? 'bg-primary text-white border-primary' : 'border-gray-200' " class="inline-block text-sm leading-[26px] w-7 border rounded-md">
+                                <?= /* @noEscape */ $reviewCountSize->getCollectionSize() ?>
+                            </span>
+                        <?php else: ?>
+                            <?= /* @noEscape */ $label ?>
+                        <?php endif; ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            <div class="grid">
+                <?php foreach ($detailedInfoGroup as $key => $name): ?>
+                    <?php
+                    $html = $layout->renderElement($name);
+                    if (!$html || !trim($html)) {
+                        continue;
+                    }
+                    $alias = $layout->getElementAlias($name);
+                    $label = $block->getChildData($alias, 'title');
+                    ?>
+                    <div x-show="activeTab === <?= /* @noEscape */ $key ?>">
+                        <div class="pt-10 leading-6 text-gray-800" id="<?= $escaper->escapeHtmlAttr($alias) ?>" role="tabpanel" aria-labelledby="<?= $escaper->escapeHtmlAttr($alias) ?>">
+                            <?= /* @noEscape */ $html ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function productTabSlider() {
+            return {
+                activeTab: 0,
+
+                init() {
+                    var productDetailsTabs = document.getElementsByClassName("product-details-tab");
+                    var currentUrl = window.location.href;
+                    var hasReviewsFragment = currentUrl.includes("#reviews");
+                    if (hasReviewsFragment) {
+                        for (var i = 0; i < productDetailsTabs.length; i++) {
+                            if (productDetailsTabs[i].dataset.title == 'reviews.tab') {
+                                var dataKey = parseInt(productDetailsTabs[i].getAttribute("data-key"));
+                                this.activeTab = dataKey;
+                            }
+                        }
+                    }
+                    var numberOfTabs = productDetailsTabs.length;
+
+                    if (numberOfTabs === 1) {
+                        var dataKey = parseInt(productDetailsTabs[0].getAttribute("data-key"));
+                        this.activeTab = dataKey;
+                    }
+
+                    if(document.querySelector('.hx-product-tabs').getAttribute('data-page') == 1) {
+                        this.activeTab = parseInt(document.querySelector('[data-title="reviews.tab"]').getAttribute('data-key'));
+                    }
+                }
+            }
+        }
+    </script>
+
+<?php endif; ?>

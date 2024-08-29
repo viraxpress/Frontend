@@ -1,0 +1,110 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ *  General template for displaying group of blocks divided into sections
+ */
+
+$groupName = $block->getGroupName();
+$groupCssClass = $block->getGroupCss();
+$groupChildNames = $block->getGroupChildNames($groupName);
+?>
+
+<?php if ($groupChildNames): ?>
+    <div class="bg-white" x-data="mobileMenu()" @set-mobile-nav-state.window="isMenuOpen = $event.detail" x-on:keydown.escape.prevent.stop="closeMenu()" x-on:focusin.window="!$refs.menu.contains($event.target) && closeMenu()" x-id="['mobile-menu']">
+        <div class="relative z-50 lg:hidden" role="dialog" :aria-modal="isMenuOpen ? 'true' : 'false'" x-cloak x-ref="menu" x-show="isMenuOpen" :id="$id('mobile-menu')">
+            <div class="fixed inset-0 bg-black/50 bg-opacity-75 transition-opacity" x-cloak x-show="isMenuOpen" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+            <div class="fixed inset-0 overflow-hidden" x-cloak x-show="isMenuOpen">
+                <div class="absolute inset-0 overflow-hidden" x-cloak x-show="isMenuOpen">
+                    <div class="pointer-events-none fixed inset-y-0 left-0 flex max-w-[80%]" x-cloak x-show='isMenuOpen'>
+                        <div class="pointer-events-auto relative w-screen max-w-md" x-cloak x-show="isMenuOpen" x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" x-on:click.outside="toggleMenu()">
+                            <div class="absolute -right-7 top-4 z-10" x-cloak x-show="isMenuOpen" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+                                <button type="button" role="button" title="close" class="relative rounded-md text-gray-300 hover:text-white" x-on:click="toggleMenu()">
+                                    <span class="absolute -inset-2.5"></span>
+                                    <span class="sr-only"><?= $escaper->escapeHtml(__('Close panel')) ?></span>
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="flex h-full flex-col bg-white shadow-xl">
+                                <div class="sections <?= $escaper->escapeHtmlAttr($groupCssClass) ?>">
+                                    <?php $layout = $block->getLayout(); ?>
+                                    <div class="section-items <?= $escaper->escapeHtmlAttr($groupCssClass) ?>-items" x-data="{ activeTab: <?= $escaper->escapeHtmlAttr(array_key_first($groupChildNames)) ?> }">
+                                        <div class="flex justify-start items-center border-b border-gray-200 my-4 px-1">
+                                            <?php foreach ($groupChildNames as $key => $name): ?>
+                                                <?php
+                                                $html = $layout->renderElement($name);
+                                                if (!($html && trim($html)) && !$block->getUseForce()) {
+                                                    continue;
+                                                }
+                                                $alias = $layout->getElementAlias($name);
+                                                $label = $block->getChildData($alias, 'title');
+                                                ?>
+                                                <div role="tab">
+                                                    <button type="button" class="<?= $escaper->escapeHtmlAttr($groupCssClass) ?>-item-switch inline-block px-4 py-3 transition-all duration-200 border-b-2 font-medium" :class="activeTab === <?= $escaper->escapeHtmlAttr($key) ?> ? 'border-primary text-primary hover:text-primary hover:bg-primary/5 focus:text-primary focus:bg-primary/5' : 'border-transparent text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:text-gray-900 focus:bg-gray-200'" x-on:click.prevent="activeTab = <?= $escaper->escapeHtmlAttr($key) ?>">
+                                                        <?= /* @noEscape */ $label ?>
+                                                    </button>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                        <div class="tab-content">
+                                            <?php foreach ($groupChildNames as $key => $name): ?>
+                                                <?php
+                                                $html = $layout->renderElement($name);
+                                                if (!($html && trim($html)) && !$block->getUseForce()) {
+                                                    continue;
+                                                }
+                                                $alias = $layout->getElementAlias($name);
+                                                ?>
+                                                <div class="section-item-content <?= $key === 0 ? 'overflow-y-auto max-h-[calc(100vh-100px)] ' : '' ?> <?= $escaper->escapeHtmlAttr($groupCssClass) ?>-item-content divide-y divide-gray-200" x-show="activeTab === <?= $escaper->escapeHtmlAttr($key) ?>" x-cloak id="<?= $escaper->escapeHtmlAttr($alias) ?>">
+                                                    <?= /* @noEscape */ $html ?>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const headerLinks = document.querySelector('.header.links');
+        const clonedHeaderLinks = headerLinks.cloneNode(true);
+        document.getElementById('store.links').appendChild(clonedHeaderLinks);
+        
+        function mobileMenu() {
+            return {
+                isMenuOpen: false,
+                toggleMenu() {
+                    this.isMenuOpen = !this.isMenuOpen;
+                    if (this.isMenuOpen) this.$refs.menu.focus();
+                },
+                closeMenu() {
+                    this.isMenuOpen = false;
+                }
+            }
+        }
+    </script>
+<?php endif; ?>

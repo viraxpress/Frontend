@@ -1,0 +1,47 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * @var \Magento\AdvancedSearch\Block\SearchData $block
+ * @var \Magento\Framework\Locale\LocaleFormatter $localeFormatter
+ */
+?>
+<?php
+/** @var \Magento\Search\Model\QueryResult[] $data */
+$data = $block->getItems();
+if (count($data)): ?>
+    <div class="flex justify-start items-center flex-wrap gap-3 mb-5">
+        <div role="heading" aria-level="3" aria-labelledby="related-search-terms" tabindex="0" class="font-medium text-gray-900">
+            <?= $escaper->escapeHtml(__('Related search terms:')) ?>
+            <span id="related-search-terms" class="sr-only"><?= $escaper->escapeHtml(__('Related search terms:')) ?></span>
+        </div>
+        <?php foreach ($data as $additionalInfo): ?>
+            <a href="<?= $escaper->escapeUrl($block->getLink($additionalInfo->getQueryText())) ?>" class="inline-block leading-[normal] p-2 px-4 bg-gray-100 rounded">
+                <?= $escaper->escapeHtml($additionalInfo->getQueryText()) ?>
+            </a>
+            <?php if ($block->isShowResultsCount()): ?>
+                <span class="inline-block">
+                    <?= /* @noEscape */ $localeFormatter->formatNumber((int)$additionalInfo->getResultsCount()) ?>
+                </span>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>

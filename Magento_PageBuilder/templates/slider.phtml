@@ -1,0 +1,131 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<script>
+(function() {
+    const carouselElements = document.querySelectorAll(`[data-content-type="slider"]`);
+
+    // Debounce function to limit event handler execution
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    // Function to check if Splide.js is already added
+    function isSplideAdded() {
+        const scripts = document.getElementsByTagName('script');
+        for (let i = 0; i < scripts.length; i++) {
+            const src = scripts[i].getAttribute('src');
+            if (src && src.includes('splide.min.js')) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Function to load Splide.js
+    async function loadSplide() {
+        if (!window.Splide) {
+            await import(window.SPLIDE_JS);
+        }
+    }
+
+    // Function to set slider options
+    function setSliderOptions(slider) {
+        const showNavigation = slider.dataset.showArrows === 'true';
+        const initiateLoop = slider.dataset.infiniteLoop === 'true';
+        const showPagination = slider.dataset.showDots === 'true';
+        const initiateAutoplay = slider.dataset.autoplay === 'true';
+
+        return {
+            perPage: 1,
+            perMove: 1,
+            type: initiateLoop ? 'loop' : 'slide',
+            arrows: showNavigation,
+            pagination: showPagination,
+            keyboard: true,
+            slideFocus: true,
+            autoplay: initiateAutoplay,
+            interval: 1000,
+            pauseOnHover: initiateAutoplay,
+            pauseOnFocus: initiateAutoplay,
+        };
+    }
+
+    // Function to initiate a single slider
+    function initiateSliderCarousel(slider) {
+        const newSlider = document.createElement('div');
+        newSlider.classList.add('splide');
+        newSlider.innerHTML = `
+            <div class="splide__track">
+                <div class="splide__list">${slider.innerHTML}</div>
+            </div>
+        `;
+
+        newSlider.querySelectorAll('[data-content-type="slide"]').forEach(slide => {
+            slide.classList.add('splide__slide');
+        });
+
+        const sliderOptions = setSliderOptions(slider);
+
+        if (slider.parentNode) {
+            slider.parentNode.replaceChild(newSlider, slider);
+
+            requestAnimationFrame(() => {
+                new Splide(newSlider, sliderOptions).mount();
+                newSlider.classList.add('splide__initiated');
+            });
+        }
+    }
+
+    // Main function to initiate carousels
+    async function initiateCarousels(elements) {
+        await loadSplide();
+
+        elements.forEach(element => {
+            if (element.dataset.contentType === 'slider') {
+                initiateSliderCarousel(element);
+            }
+        });
+    }
+
+    // Debounced event handler for user interaction
+    const handleUserInteraction = debounce(async () => {
+        if (carouselElements.length > 0) {
+            if (isSplideAdded()) {
+                await initiateCarousels(carouselElements);
+            } else {
+                await loadSplide();
+                await initiateCarousels(carouselElements);
+            }
+        }
+    }, 200); // Adjust the debounce wait time as needed
+
+    // Attach event listeners for hover and scroll
+    document.addEventListener('mouseover', handleUserInteraction);
+    document.addEventListener('scroll', handleUserInteraction);
+
+    window.isSplideAdded = isSplideAdded;
+})();
+</script>

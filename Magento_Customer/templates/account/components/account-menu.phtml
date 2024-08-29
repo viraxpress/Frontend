@@ -1,0 +1,43 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+    $highlight = '';
+?>
+<?php if ($block->getIsHighlighted()): ?>
+    <?php $highlight = ' current'; ?>
+<?php endif; ?>
+
+<?php if ($block->getIsCurrent()): ?>
+    <li class="nav item p-2 current transition-all rounded-md bg-primary/10 px-3 leading-6 text-primary focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary">
+        <?= $escaper->escapeHtml(__($block->getLabel())) ?>
+    </li>
+<?php else: ?>
+    <li class="nav item<?= $escaper->escapeHtml($highlight) ?>">
+        <a class="text-gray-900 lg:text-gray-700 block px-2 py-3 lg:p-2 rounded capitalize lg:hover:bg-primary/10 hover:text-primary lg:focus:bg-primary lg:focus:text-white" href="<?= $escaper->escapeHtml($block->getHref()) ?>" <?= /* @noEscape */ $block->getTitle() ? ' title="' .  $escaper->escapeHtml(__($block->getTitle())) . '"' : '' ?><?= /* @noEscape */ $block->getAttributesHtml() ?>>
+            <?php if ($block->getIsHighlighted()): ?>
+                <?= $escaper->escapeHtml(__($block->getLabel())) ?>
+            <?php else: ?> 
+                <?= $escaper->escapeHtml(__($block->getLabel())) ?>
+            <?php endif; ?>
+        </a>
+    </li>
+<?php endif; ?>

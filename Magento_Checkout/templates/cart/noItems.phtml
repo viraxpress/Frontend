@@ -1,0 +1,44 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**  @var $block \Magento\Checkout\Block\Cart */
+?>
+<?= $block->getChildHtml('checkout_cart_empty_widget') ?>
+<div class="flex flex-col h-full justify-center items-center mb-10 p-5">
+    <span>
+        <svg class="h-16 w-16 flex-shrink-0 text-gray-700" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+        </svg>
+    </span>
+    <h2 class="mt-3 text-lg font-semibold leading-6 text-gray-900 text-center">
+        <?= $escaper->escapeHtml(__('You have no items in your shopping cart.')) ?>
+    </h2>
+    <p class="text-gray-600 mt-2 text-center">
+        <?= $escaper->escapeHtml(
+            __(
+                'Continue your shopping <a href="%1" class="text-primary font-medium">journey</a>',
+                $escaper->escapeUrl($block->getContinueShoppingUrl())
+            ),
+            ['a']
+        ) ?>
+    </p>
+</div>
+<?= $block->getChildHtml('shopping.cart.table.after') ?>

@@ -1,0 +1,67 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Customer\Block\Newsletter $block */
+?>
+<?= $block->getChildHtml('form_before') ?>
+<form class="form form-newsletter-manage w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6"
+action="<?= $escaper->escapeUrl($block->getAction()) ?>" method="post" hx-replace-url="true"
+id="form-validate" x-data="newsletterSubscription()">
+    <fieldset class="fieldset">
+        <input name="form_key" type="hidden" :value="formKey">
+        <div class="newsletter">
+            <div class="mb-5 pb-2 border-b border-gray-200 flex justify-between items-center">
+                <div class="block-title text-lg text-gray-800 font-semibold">
+                    <?= $escaper->escapeHtml(__('Subscription option')) ?>
+                </div>
+            </div>
+            <div class="block space-y-5">
+                <div class="field choice pb-2 flex items-center gap-x-3">
+                    <input class="h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary"
+                    type="checkbox" name="is_subscribed" id="subscription" value="1"
+                    title="<?= $escaper->escapeHtmlAttr(__('General Subscription')) ?>"
+                    <?php if ($block->getIsSubscribed()): ?> checked="checked" <?php endif; ?> class="checkbox">
+                    <label for="subscription" class="label text-md leading-6 text-gray-900 cursor-pointer">
+                        <span><?= $escaper->escapeHtml(__('General Subscription')) ?></span>
+                    </label>
+                </div>
+
+                <?= $block->getChildHtml('customer.form.newsletter.extra') ?>
+
+                <div class="actions-toolbar">
+                    <div class="primary"><button type="submit" title="<?= $escaper->escapeHtmlAttr(__('Save')) ?>"
+                    class="action save primary primary-btn flex">
+                        <span><?= $escaper->escapeHtml(__('Save')) ?></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>
+<script>
+    function newsletterSubscription() {
+        return {
+            formKey: getFormKeyCookie(),
+        }
+    }
+</script>
+<?php /* Extensions placeholder */ ?>
+<?= $block->getChildHtml('customer.form.newsletter.extra2') ?>

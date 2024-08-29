@@ -1,0 +1,102 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/* @var $block \Magento\Catalog\Block\Product\View\Options\Type\File */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+<?php $_option = $block->getOption(); ?>
+<?php $_fileInfo = $block->getFileInfo(); ?>
+<?php $_fileExists = $_fileInfo->hasData(); ?>
+<?php $_fileName = 'options_' . $escaper->escapeHtmlAttr($_option->getId()) . '_file'; ?>
+<?php $_fieldNameAction = $_fileName . '_action'; ?>
+<?php $_fieldValueAction = $_fileExists ? 'save_old' : 'save_new'; ?>
+<?php $_fileNamed = $_fileName . '_name'; ?>
+<?php $class = ($_option->getIsRequire()) ? ' required' : ''; ?>
+
+<div class="field mt-5 file<?= /* @noEscape */ $class ?>">
+    <label class="label label text-sm font-medium text-gray-900" for="<?= /* @noEscape */ $_fileName ?>" id="<?= /* @noEscape */ $_fileName ?>-label">
+        <span><?= $escaper->escapeHtml($_option->getTitle()) ?></span>
+        <?= /* @noEscape */ $block->getFormattedPrice() ?>
+        <?php if ($_option->getIsRequire()): ?>
+            <span class="text-required ml-1">*</span>
+        <?php endif; ?>
+    </label>
+    <?php if ($_fileExists):?>
+    <div class="control">
+        <span class="<?= /* @noEscape */ $_fileNamed ?>"><?= $escaper->escapeHtml($_fileInfo->getTitle()) ?></span>
+        <a href="javascript:void(0)" class="label" id="change-<?= /* @noEscape */ $_fileName ?>" hx-on:click="changeOpt(event)" >
+            <?= $escaper->escapeHtml(__('Change')) ?>
+        </a>
+        <?php if (!$_option->getIsRequire()):?>
+            <input type="checkbox" id="delete-<?= /* @noEscape */ $_fileName ?>" />
+            <span class="label"><?= $escaper->escapeHtml(__('Delete')) ?></span>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+    <div class="control" id="input-box-<?= /* @noEscape */ $_fileName ?>">
+        <input type="file"
+               name="<?= /* @noEscape */ $_fileName ?>"
+               id="<?= /* @noEscape */ $_fileName ?>"
+               hx-on:change="changeCustomizableOption(event)"  <?= /* @noEscape */ $class ?>
+               class="product-custom-option<?= $_option->getIsRequire() ? ' required' : '' ?>"
+            <?= $_fileExists ? 'disabled="disabled"' : '' ?> />
+        <input type="hidden" class="product-custom-option" name="<?= /* @noEscape */ $_fieldNameAction ?>"
+               value="<?= /* @noEscape */ $_fieldValueAction ?>" />
+        <?php if ($_option->getFileExtension()):?>
+            <p class="note text-sm mt-2">
+                <?= $escaper->escapeHtml(__('Compatible file extensions to upload')) ?>:
+                <strong><?= $escaper->escapeHtml($_option->getFileExtension()) ?></strong>
+            </p>
+        <?php endif; ?>
+        <?php if ($_option->getImageSizeX() > 0):?>
+            <p class="note text-sm mt-2 text-required">
+                <?= $escaper->escapeHtml(__('Maximum image width')) ?>: <strong><?= (int)$_option->getImageSizeX()
+                ?> <?= $escaper->escapeHtml(__('px.')) ?></strong>
+            </p>
+        <?php endif; ?>
+        <?php if ($_option->getImageSizeY() > 0):?>
+            <p class="note text-sm mt-2 text-required">
+                <?= $escaper->escapeHtml(__('Maximum image height')) ?>: <strong><?= (int)$_option->getImageSizeY()
+                ?> <?= $escaper->escapeHtml(__('px.')) ?></strong>
+            </p>
+        <?php endif; ?>
+    </div>
+    <?= $_fileExists ?
+        /* @noEscape */ $secureRenderer->renderStyleAsTag(
+            'display:none',
+            '#input-box-' . /* @noEscape */ $_fileName
+        ) : '' ?>
+</div>
+<script>
+    function changeOpt(event) {
+        const changeOptionId = event.target.id.split("_")[1];
+        var targetElement = document.getElementById("input-box-options_"+ changeOptionId +"_file");
+        if (targetElement.style.display === "none") {
+            targetElement.style.display = "block";
+            document.getElementById("options_"+ changeOptionId +"_file").disabled = false;
+            document.getElementsByName("options_"+ changeOptionId +"_file_action")[0].value = "save_new";
+        } else {
+            document.getElementById("options_"+ changeOptionId +"_file").setAttribute('disabled', 'disabled')
+            document.getElementsByName("options_"+ changeOptionId +"_file_action")[0].value = "save_old";
+            targetElement.style.display = "none";
+        }
+    }
+</script>

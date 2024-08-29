@@ -1,0 +1,250 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+/** @var $block \Magento\ConfigurableProduct\Block\Product\View\Type\Configurable*/
+$product    = $block->getProduct();
+$productId = $product->getId();
+$attributes = $block->decorateArray($block->getAllowAttributes());
+$swatchBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\Swatch::class);
+?>
+<?php
+$wishlistFormId = base64_encode($productId . "-product_view_wishlist_form");
+$wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
+?>
+<?php if ($product->isSaleable() && count($attributes)): ?>
+    <div x-data="initConfigurableOpt">
+        <?php $jsonConfig = json_decode($block->getJsonConfig(), true); ?>
+        <?php foreach ($attributes as $attribute): ?>
+            <?php $attributeId = $attribute->getAttributeId(); ?>
+            <?php $productAttribute = $attribute->getProductAttribute(); ?>
+            <div class="block">
+                <h3 class="text-base font-semibold text-gray-900">
+                    <?= $escaper->escapeHtml($productAttribute->getStoreLabel()) ?>
+                </h3>
+                <fieldset class="mt-2">
+                    <legend class="sr-only"></legend>
+                    <div class="flex items-center flex-wrap gap-x-3">
+                        <select id="attribute<?= $escaper->escapeHtmlAttr($attribute->getAttributeId()) ?>"
+                        name="super_attribute[<?= $escaper->escapeHtmlAttr($attribute->getAttributeId()) ?>]"
+                        class="form-select super-attribute-select" required="required" x-on:change="changeRadio"
+                        attr_id="<?= (int) $attributeId ?>"
+                        attr_code="<?=
+                        $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code'])
+                        ?>">
+                            <option value=""><?= $escaper->escapeHtml(__('Choose an Option...')) ?></option>
+                            <?php foreach ($jsonConfig['attributes'][(int) $attributeId]['options'] as $item): ?>
+                                <option value="<?= $escaper->escapeHtmlAttr($item['id']) ?>"
+                                x-bind:selected="(attrArrays !== null && attrArrays['<?= $escaper->escapeHtmlAttr($attributeId) ?>'] == <?= $escaper->escapeHtmlAttr($item['id']) ?>) ? true : null" >
+                                    <?= $escaper->escapeHtmlAttr($item['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </fieldset>
+            </div>
+        <?php endforeach;?>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var preSelectedOptions = document.getElementById("product_addtocart_form");
+            if (preSelectedOptions) {
+                var selectOption = preSelectedOptions.getElementsByTagName("select");
+                for (var i = 0; i < selectOption.length; i++) {
+                    var singleSelect = document.getElementById(selectOption[i].id);
+                    var name = selectOption[i].name;
+                    var value = singleSelect.options[singleSelect.selectedIndex].value;
+                    let wishlistForm = document.getElementById('<?= $escaper->escapeHtmlAttr($wishlistFormId) ?>');
+                    if (wishlistForm && value) {
+                        let wishlistQtyElement = wishlistForm.querySelector("input[name='" + name + "']");
+                        if (wishlistQtyElement) {
+                            wishlistQtyElement.value = value;
+                        } else {
+                            let newWishlistQtyElement = document.createElement("input");
+                            newWishlistQtyElement.type = "hidden";
+                            newWishlistQtyElement.name = name;
+                            newWishlistQtyElement.value = value;
+                            wishlistForm.appendChild(newWishlistQtyElement);
+                        }
+                    }
+                }
+            }
+        });
+
+        function initConfigurableOpt() {
+            return {
+                productOptions: '',
+                selectedSwatch: [],
+                selectedImages: [],
+                jsonConfig: Object.assign(
+                    <?= /* @noEscape */ $block->getJsonConfig() ?>
+                ),
+                attrArrays: [],
+                init() {
+                    const decodedString = this.decodeUrl();
+                    if (decodedString !== 'null' && this.hasAttrInPath()) {
+                        this.attrArrays = JSON.parse(decodedString);
+                        this.preSelectOptions(JSON.parse(decodedString));
+                        this.updateUI();
+                        this.$watch('selectedImages', (value) => this.$dispatch('set-gallery', { images: value }));
+                    }
+                },
+                decodeUrl() {
+                    const currentUrl = window.location.href;
+                    const urlParts = currentUrl.split('/');
+                    const attrIndex = urlParts.indexOf('attr');
+                    const pathname = new URL(currentUrl).pathname;
+                    const filteredPathParts = pathname.split('/').filter(part => part !== '');
+                    const basename = filteredPathParts.pop();
+                    const base64String = basename.replace(/[-_.]/g, m => ({ '-': '+', '_': '/', '.': '=' }[m]));
+
+                    return (!basename.endsWith('.html') && attrIndex !== -1) ? atob(base64String) : 'null';
+                },
+                hasAttrInPath() {
+                    const filteredPathParts = window.location.pathname.split('/').filter(part => part !== '');
+                    return filteredPathParts.includes('attr');
+                },
+                preSelectOptions(attrArray) {
+                    let preSelectIds = Object.keys(this.jsonConfig.index);
+                    this.selectedSwatch = attrArray;
+
+                    Object.keys(this.jsonConfig.attributes).forEach(attribute => {
+                        const productsAttr = attrArray[attribute]
+                            ? preSelectIds.filter(productIndex => this.jsonConfig.index[productIndex][attribute] === attrArray[attribute])
+                            : [];
+                        preSelectIds = productsAttr.length ? productsAttr : preSelectIds;
+                    });
+
+                    this.productOptions = preSelectIds[0];
+                },
+                updateUI() {
+                    const priceValue = this.productOptions ? this.jsonConfig.optionPrices[this.productOptions] : this.jsonConfig.prices;
+                    const finalPrice = priceValue.finalPrice.amount;
+                    const baseOldPrice = priceValue.baseOldPrice.amount;
+                    const tierPrices = priceValue.tierPrices;
+                    const storeLocale = '<?= /* @noEscape */ $swatchBlock->getStoreLocale() ?>';
+                    const currentCurrencyCode = '<?= /* @noEscape */ $swatchBlock->getCurrentCurrencyCode() ?>';
+
+                    this.updatePrice(finalPrice, baseOldPrice, storeLocale, currentCurrencyCode);
+                    this.updateTierPrices(tierPrices, storeLocale, currentCurrencyCode);
+                    this.updateSelectedImages();
+                },
+                updatePrice(finalPrice, baseOldPrice, storeLocale, currentCurrencyCode) {
+                    const slyOldPrice = document.querySelector('.sly-old-price');
+                    if (slyOldPrice) {
+                        slyOldPrice.classList.toggle('invisible', finalPrice >= baseOldPrice);
+                    }
+
+                    const productPrice = document.querySelector(`#product-price-<?= /* @noEscape */ $productId ?> span`);
+                    if (productPrice) {
+                        productPrice.innerHTML = finalPrice.toLocaleString(storeLocale.replace('_', '-'), {
+                            style: 'currency',
+                            currency: currentCurrencyCode
+                        });
+                    }
+
+                    const priceLabel = document.querySelector('.price-label');
+                    if (priceLabel) {
+                        priceLabel.classList.toggle('invisible', this.selectedSwatch.length === Object.keys(this.selectedSwatch).filter(Boolean).length);
+                    }
+                },
+                updateTierPrices(tierPrices, storeLocale, currentCurrencyCode) {
+                    const productTier = document.getElementById('config-product-tier');
+                    if (productTier) {
+                        if (tierPrices.length) {
+                            productTier.classList.remove('invisible');
+                            productTier.innerHTML = '';
+                            const ul = document.createElement('ul');
+                            ul.classList.add('prices-tier', 'items');
+
+                            tierPrices.forEach(tier => {
+                                const li = document.createElement('li');
+                                li.classList.add('item');
+                                const price = tier.price.toLocaleString(storeLocale.replace('_', '-'), {
+                                    style: 'currency',
+                                    currency: currentCurrencyCode
+                                });
+                                li.textContent = `Buy ${tier.qty} for ${price} each and save ${tier.percentage}%`;
+                                ul.appendChild(li);
+                            });
+
+                            productTier.appendChild(ul);
+                        } else {
+                            productTier.classList.add('invisible');
+                        }
+                    }
+                },
+                updateSelectedImages() {
+                    this.selectedImages = this.jsonConfig.images[this.productOptions];
+                    this.$dispatch('set-gallery', { images: this.selectedImages });
+                },
+                changeRadio(e) {
+                    this.selectedSwatch[e.target.attributes.attr_id.value] = e.target.value;
+                    let childIds = Object.keys(this.jsonConfig.index);
+
+                    Object.keys(this.jsonConfig.attributes).forEach(attribute => {
+                        const productsAttr = this.selectedSwatch[attribute]
+                            ? childIds.filter(productIndex => this.jsonConfig.index[productIndex][attribute] === this.selectedSwatch[attribute])
+                            : [];
+                        childIds = productsAttr.length ? productsAttr : childIds;
+                    });
+
+                    this.productOptions = childIds[0];
+                    this.updateUI();
+                    this.fetchOptionData(e);
+                    this.updateWishlistForm(e);
+                },
+                fetchOptionData(e) {
+                    const attrOptionVal = this.jsonConfig.attributes[e.target.attributes.attr_id.value].options.find(
+                        option => option.id === e.target.value
+                    );
+                    let childProductIds = Object.keys(this.jsonConfig.index);
+                    fetch(`${BASE_URL}viraxpressswatches/product/options?id=<?= /* @noEscape */ $productId ?>&child=${childProductIds}&code=${e.target.attributes.attr_code.value}&opid=${attrOptionVal.id}`)
+                        .then(response => response.ok ? response.json() : Promise.reject('Failed to load options'))
+                        .then(data => {
+                            Object.keys(data).forEach(key => {
+                                const option = document.querySelector(`[value="${data[key]}"]`);
+                                if (option) {
+                                    option.disabled = (e.target.value === key || e.target.value === data[key]);
+                                }
+                            });
+                        })
+                        .catch(error => console.error('Error:', error));
+                },
+                updateWishlistForm(e) {
+                    const wishlistFormId = '<?= /* @noEscape */ preg_replace("/[^a-zA-Z0-9]/", "", base64_encode($productId . "-product_view_wishlist_form")) ?>';
+
+                    const form = document.getElementById(wishlistFormId);
+                    if (form) {
+                        let inputElement = form.querySelector(`input[name="super_attribute[${e.target.attributes.attr_id.value}]"]`);
+                        if (!inputElement) {
+                            inputElement = document.createElement('input');
+                            inputElement.type = 'hidden';
+                            inputElement.name = `super_attribute[${e.target.attributes.attr_id.value}]`;
+                            form.appendChild(inputElement);
+                        }
+                        inputElement.value = e.target.value;
+                    }
+                }
+            };
+        }
+    </script>
+<?php endif;?>

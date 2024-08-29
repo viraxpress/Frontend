@@ -1,0 +1,39 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php if (!empty($crumbs) && is_array($crumbs)): ?>
+    <div class="breadcrumbs my-3">
+        <ul class="items flex justify-start items-center gap-x-2">
+            <?php foreach ($crumbs as $crumbName => $crumbInfo): ?>
+                <li class="item flex justify-start text-xs text-black items-center <?= $escaper->escapeHtmlAttr($crumbName) ?>">
+                    <?php if (!empty($crumbInfo['link'])): ?>
+                        <a class="inline-block" role="link" href="<?= $escaper->escapeUrl($crumbInfo['link']) ?>" title="<?= $escaper->escapeHtml($crumbInfo['title']) ?>">
+                            <?= $escaper->escapeHtml($crumbInfo['label']) ?>
+                        </a>
+                        <span class="ml-2 inline-block">/</span>
+                    <?php else: ?>
+                        <?= $escaper->escapeHtml($crumbInfo['label']) ?>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php endif; ?>

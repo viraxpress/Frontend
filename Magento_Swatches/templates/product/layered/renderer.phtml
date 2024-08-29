@@ -1,0 +1,133 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable PSR2.ControlStructures.SwitchDeclaration
+// phpcs:disable Generic.WhiteSpace.ScopeIndent
+
+/** @var $block \Magento\Swatches\Block\LayeredNavigation\RenderLayered */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+/** @var \Magento\Framework\Escaper $escaper */
+?>
+<?php $config = $block->getLayout()->createBlock(ViraXpress\Catalog\Block\Product\ConfigBlock::class); ?>
+<?php $swatchData = $block->getSwatchData(); ?>
+<div class="swatch-attribute swatch-layered <?= $escaper->escapeHtmlAttr($swatchData['attribute_code']) ?>"
+     data-attribute-code="<?= $escaper->escapeHtmlAttr($swatchData['attribute_code']) ?>"
+     data-attribute-id="<?= $escaper->escapeHtmlAttr($swatchData['attribute_id']) ?>" x-data="configLayeredNavigation()">
+    <div class="swatch-attribute-options flex justify-start flex-wrap items-start gap-4">
+        <?php foreach ($swatchData['options'] as $option => $label): ?>
+            
+                <a href="<?= $escaper->escapeUrl($label['link']) ?>" rel="nofollow"
+               aria-label="<?= $escaper->escapeHtmlAttr($label['label']) ?>"
+               class="swatch-option-link-layered">
+                <?php if (isset($swatchData['swatches'][$option]['type'])): ?>
+                    <?php switch ($swatchData['swatches'][$option]['type']) {
+                        case '3':
+                            ?>
+                            <span class="swatch-option inline-flex w-7 h-7 shadow-sm justify-center items-center bg-gray-200 rounded text-sm <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?>  text <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
+                                 tabindex="-1"
+                                 data-option-type="3"
+                                 data-option-id="<?= $escaper->escapeHtmlAttr($option) ?>"
+                                 data-option-label="<?= $escaper->escapeHtmlAttr($label['label']) ?>"
+                                 data-option-tooltip-thumb=""
+                                 data-option-tooltip-value="<?= $escaper->escapeHtmlAttr($label['label']) ?>"
+                                ><?= $escaper->escapeHtmlAttr($label['label']) ?></span>
+                            <?php break;
+                        case '2':
+                            ?>
+                            <?php $swatchThumbPath = $block->getSwatchPath('swatch_thumb', $swatchData['swatches'][$option]['value']);?>
+                            <?php $swatchImagePath = $block->getSwatchPath(
+                                'swatch_image',
+                                $swatchData['swatches'][$option]['value']
+                            );
+                            $escapedUrl = $escaper->escapeUrl($swatchImagePath);
+                            ?>
+                            <span class="swatch-option swatch-images-options w-7 h-7 shadow-sm rounded image <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?> <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
+                                 tabindex="-1"
+                                 data-option-type="2"
+                                 data-option-id="<?= $escaper->escapeHtmlAttr($option) ?>"
+                                 data-option-label="<?= $escaper->escapeHtmlAttr($label['label']) ?>"
+                                 data-option-tooltip-thumb="<?= $escaper->escapeUrl($swatchThumbPath) ?>"
+                                 data-option-swatch-image-url="<?= $escaper->escapeUrl($escapedUrl) ?>"
+                                 data-option-tooltip-value="">
+                            </span>
+                            <?php break;
+                        case '1':
+                            ?>
+                            <?php
+                            $backgroundStyle = isset($swatchData['swatches'][$option]['value']) ? $escaper->escapeJs(
+                                str_replace('\'', '\\\'', $swatchData['swatches'][$option]['value'])
+                            ) : '';
+                            ?>
+                            <span class="swatch-option swatch-colors-options inline-block w-7 h-7 shadow-sm rounded <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?> color <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
+                                 tabindex="-1"
+                                 data-option-type="1"
+                                 data-option-id="<?= $escaper->escapeHtmlAttr($option) ?>"
+                                 data-option-label="<?= $escaper->escapeHtmlAttr($label['label']) ?>"
+                                 data-option-tooltip-thumb=""
+                                 data-option-background-color="<?= $escaper->escapeHtmlAttr($backgroundStyle) ?>"
+                                 data-option-tooltip-value="<?= $escaper->escapeHtmlAttr(
+                                     $swatchData['swatches'][$option]['value']
+                                 ) ?>">
+                            </span>
+                            <?php break;
+                        case '0':
+                        default:
+                            ?>
+                            <span class="swatch-option inline-flex w-7 h-7 shadow-sm justify-center items-center bg-gray-200 rounded text-sm <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?>  text <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
+                                 tabindex="-1"
+                                 data-option-type="0"
+                                 data-option-id="<?= $escaper->escapeHtmlAttr($option) ?>"
+                                 data-option-label="<?= $escaper->escapeHtmlAttr($label['label']) ?>"
+                                 data-option-tooltip-thumb=""
+                                 data-option-tooltip-value=""
+                                ><?= $escaper->escapeHtml($swatchData['swatches'][$option]['value']) ?></span>
+                        <?php break;
+                    } ?>
+                <?php endif; ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<script>
+    function configLayeredNavigation() {
+        return {
+            init() {
+                var colorSwatches = document.querySelectorAll('.swatch-colors-options');
+                if (colorSwatches) {
+                    colorSwatches.forEach(function(element) {
+                        var backgroundColor = element.getAttribute('data-option-tooltip-value');
+                        element.style.backgroundColor = backgroundColor;
+                    });
+                }
+
+                var imageSwatches = document.querySelectorAll('.swatch-images-options');
+                if (imageSwatches) {
+                    imageSwatches.forEach(function(element) {
+                        var escapedUrl = element.getAttribute('data-option-swatch-image-url');
+                        element.style.background = "url('" + escapedUrl + "') no-repeat center";
+                        element.style.backgroundSize = "initial";
+                    });
+                }
+            },
+        }
+    }
+</script>

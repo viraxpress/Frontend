@@ -1,0 +1,300 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Customer\Block\Address\Edit $block */
+/** @var \Magento\Customer\ViewModel\Address $viewModel */
+/** @var \Magento\Framework\Escaper $escaper */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+/** @var \Magento\Customer\ViewModel\Address\RegionProvider $regionProvider */
+$viewModel = $block->getViewModel();
+$directoryViewModel = $block->getData("country_provider"); ?>
+<?php $_street = $block->getAttributeData()->getFrontendLabel('street'); ?>
+
+<?php $_cityValidationClass = $viewModel->addressGetAttributeValidationClass('city'); ?>
+<?php $_postcodeValidationClass_value = $viewModel->addressGetAttributeValidationClass('postcode'); ?>
+<?php $_postcodeValidationClass = $_postcodeValidationClass_value; ?>
+<?php $_streetValidationClass = $viewModel->addressGetAttributeValidationClass('street'); ?>
+<?php $_streetValidationClassNotRequired = $_streetValidationClass !== null ?
+    trim(str_replace('required-entry', '', $_streetValidationClass)) : ''; ?>
+<?php
+$_currentCustomer = $directoryViewModel->getCurrentCustomer();
+$companyValue = isset($_currentCustomer) && $_currentCustomer->getPrimaryBillingAddress()
+    ? $_currentCustomer->getPrimaryBillingAddress()->getCompany()
+    : '';
+$addressId = $directoryViewModel->getFormData();
+$postCodePatterns = $block->getPostCodeConfig()->getSerializedPostCodes();
+?>
+<?php $_company = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Company::class) ?>
+<?php $_telephone = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Telephone::class) ?>
+<?php $_fax = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Fax::class) ?>
+<?php $showOptionalRegions = $block->getConfig('general/region/display_all'); ?>
+
+<form class="space-customer-address-new" id="customer-address-form"
+x-data="Object.assign( formValidateData.formDataValidation($root,'<?= $escaper->escapeUrl($block->getSaveUrl()) ?>'))"
+@submit="onSubmit">
+    <input type="hidden" name="success_url" value="<?= $escaper->escapeUrl($block->getSuccessUrl()) ?>">
+    <input type="hidden" name="error_url" value="<?= $escaper->escapeUrl($block->getErrorUrl()) ?>">
+    <div class="grid grid-cols-12 gap-6 mb-6">
+        <div class="col-span-12 w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white">
+            <div class="mb-5 pb-2 border-b border-gray-200 flex justify-between items-center">
+                <div class="block-title text-lg text-gray-800 font-semibold">
+                    <?= $escaper->escapeHtml(__('Contact Information')) ?>
+                </div>
+            </div>
+            <div class="grid grid-cols-12 gap-5">
+                <?= $block->getNameBlockHtml() ?>
+                <?php if ($_company->isEnabled()): ?>
+                    <?= $_company->setCompany($block->getAddress()->getCompany())->toHtml() ?>
+                <?php endif ?>
+
+                <?php if ($_telephone->isEnabled()): ?>
+                    <?= $_telephone->setTelephone($block->getAddress()->getTelephone())->toHtml() ?>
+                <?php endif ?>
+
+                <?php if ($_fax->isEnabled()): ?>
+                    <?= $_fax->setFax($block->getAddress()->getFax())->toHtml() ?>
+                <?php endif ?>
+            </div>
+        </div>
+        <div class="col-span-12 w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white">
+            <div class="mb-5 pb-2 border-b border-gray-200 flex justify-between items-center">
+                <div class="block-title text-lg text-gray-800 font-semibold">
+                    <?= $escaper->escapeHtml(__('Street Address')) ?>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div class="col-span-2">
+                    <div class="field">
+                        <label for="street_1" class="block text-sm leading-6 text-gray-900">
+                            <?= $escaper->escapeHtml(__('Street Address ')) ?>
+                            <span class="text-required ml-1">*</span>
+                        </label>
+                        <div class="mt-1 control">
+                            <input id="street_1" name="street[0]" type="text" autocomplete="address"
+                            x-on:input.debounce="onChange"
+                            value="<?= $escaper->escapeHtmlAttr($block->getStreetLine(1)) ?>"
+                            title="<?= /* @noEscape */ $_street ?>" required
+                            class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_streetValidationClass) ?>">
+                        </div>
+                    </div>
+                </div>
+                <?php for ($_i = 1, $_n = $viewModel->addressGetStreetLines(); $_i < $_n; $_i++): ?>
+                    <div class="col-span-2">
+                        <div class="field">
+                            <label for="street_<?= /* @noEscape */ $_i + 1 ?>"
+                            class="block text-sm leading-6 text-gray-900 hidden">
+                                <?= $escaper->escapeHtml(__('Street Address: Line %1', $_i + 1)) ?>
+                            </label>
+                            <div class="mt-1 control">
+                                <input id="street_<?= /* @noEscape */ $_i + 1 ?>"
+                                value="<?= $escaper->escapeHtmlAttr($block->getStreetLine($_i + 1)) ?>"
+                                title="<?= $escaper->escapeHtmlAttr(__('Street Address %1', $_i + 1)) ?>"
+                                name="street[<?= /* @noEscape */ $_i ?>]" type="text" autocomplete="name"
+                                class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_streetValidationClassNotRequired) ?>">
+                            </div>
+                        </div>
+                    </div>
+                <?php endfor; ?>
+                <div class="col-span-2 sm:col-span-1">
+                    <div class="field">
+                        <label for="city" class="block text-sm leading-6 text-gray-900">
+                            <?= $escaper->escapeHtml(__('City ')) ?><span class="text-required ml-1">*</span>
+                        </label>
+                        <div class="mt-1 control">
+                            <input id="city" name="city"
+                            value="<?= $escaper->escapeHtmlAttr($block->getAddress()->getCity()) ?>"
+                            title="<?= $escaper->escapeHtmlAttr(__('City')) ?>" type="text"
+                            autocomplete="city" x-on:input.debounce="onChange" required
+                            class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_cityValidationClass) ?>">
+                        </div>
+                    </div>
+                </div>
+                <div x-data="addressEditCountryRegion" class="space-y-5">
+                    <div class="col-span-2 sm:col-span-1">
+                        <?php $countries = $block->getCountryCollection()->setForegroundCountries($directoryViewModel->getTopCountryCodes())->toOptionArray(); ?>
+                        <div class="field">
+                            <label for="country" class="block text-sm leading-6 text-gray-900">
+                                <?= $escaper->escapeHtml(__('Country  ')) ?><span class="text-required ml-1">*</span>
+                            </label>
+                            <div class="mt-1 control">
+                                <select id="country" @change="onCountryChange" x-on:input.debounce="onChange" required
+                                name="country_id" title="Country"
+                                class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                                    <?php foreach ($countries as $country): ?>
+                                        <option name="<?=/** @noEscape */ $country['label'] ?>"
+                                        value="<?= /** @noEscape */ $country['value'] ?>" <?= ($block->getCountryId() ===  $country['value']) ? 'selected="selected"' : '' ?>>
+                                            <?= /** @noEscape */ $country['label'] ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <div class="field">
+                            <label for="region_id" class="block text-sm leading-6 text-gray-900">
+                                <?= $escaper->escapeHtml(__('State/Province ')) ?>
+                                <span class="text-required ml-1">*</span>
+                            </label>
+                            <div class="mt-1 control" id="field_region_id">
+                                <template x-if="isRegionAvailable">
+                                    <select id="region_id" title="State/Province" name="region_id" required=""
+                                    x-on:input.debounce="onChange"
+                                    class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 region_id validate-select">
+                                        <option value="">Please select a region, state or province.</option>
+                                        <template x-for="(region, key) in regionArray" :key="key">
+                                            <option :value="key" x-text="region"
+                                            :selected="region === '<?= $escaper->escapeHtmlAttr($block->getRegion()) ?>'"></option>
+                                        </template>
+                                    </select>
+                                </template>
+                                <template x-if="!isRegionAvailable">
+                                    <input id="region" required="" name="region" x-on:input.debounce="onChange"
+                                    value="<?= $escaper->escapeHtmlAttr($block->getRegion()) ?>"
+                                    class="form-input validate-not-number-first block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    function addressEditCountryRegion() {
+                        return {
+                            url: "<?= $escaper->escapeUrl($block->getBaseUrl()) ?>viraxpresscustomer/address/state",
+                            regionArray: {},
+                            isRegionAvailable: false,
+                            init() {
+                                this.onCountryChange();
+                            },
+
+                            onCountryChange(event) {
+                                var countryId = document.getElementById('country').value;
+                                fetch(this.url+ '?event_country=' + encodeURIComponent(countryId))
+                                .then((response) => {
+                                    if (response.ok) {
+                                       return response.json();
+                                    }
+                                }).then((data) => { 
+                                    if (data && Object.keys(data).length > 0) {
+                                        this.isRegionAvailable = true;
+                                    } else {
+                                        this.isRegionAvailable = false;
+                                    }
+                                    this.regionArray = data;
+                                }).catch((error) => { console.error("Fetch error:", error); });
+                            }
+                        }
+                    }
+                </script>
+                <div class="col-span-2 sm:col-span-1">
+                    <div class="field">
+                        <label for="postcode" class="block text-sm leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Zip/Postal Code ')) ?><span class="text-required ml-1">*</span></label>
+                        <div class="mt-1 control">
+                            <input id="postcode"
+                            value="<?= $escaper->escapeHtmlAttr($block->getAddress()->getPostcode()) ?>"
+                            title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('postcode') ?>"
+                            name="postcode" x-on:input.debounce="onChange" required type="text"
+                            autocomplete="postcode" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 validate-zip-international <?= $escaper->escapeHtmlAttr($_postcodeValidationClass) ?>">
+                            <div role="alert" class="message warning">
+                                <span></span>
+                            </div>
+                            <?= /* @noEscape */ $secureRenderer->renderStyleAsTag("display: none;", 'div.message.warning') ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-2">
+                    <div class="space-y-3">
+                        <div class="relative flex gap-x-3">
+                            <div class="flex items-start gap-x-3">
+                                <?php if ($block->isDefaultBilling()): ?>
+                                    <div class="message info inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-inset ring-green-600/20"><?= $escaper->escapeHtml(__("It's a default billing address.")) ?>
+                                    </div>
+                                <?php elseif ($block->canSetAsDefaultBilling()): ?>
+                                    <input id="default-billing" name="default_billing" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary">
+                                    <div class="text-sm leading-tight">
+                                        <label for="default-billing" class="text-sm text-gray-900 cursor-pointer">
+                                            <?= $escaper->escapeHtml(__('Use as my default billing address')) ?>
+                                        </label>
+                                    </div>
+                                <?php else: ?>
+                                    <input type="hidden" name="default_billing" value="1" />
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="relative flex gap-x-3">
+                            <div class="flex items-start gap-x-3">
+                                <?php if ($block->isDefaultShipping()): ?>
+                                    <div class="message info inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-inset ring-green-600/20"><?= $escaper->escapeHtml(__("It's a default shipping address.")) ?>
+                                    </div>
+                                <?php elseif ($block->canSetAsDefaultShipping()): ?>
+                                    <input id="default-shipping" name="default_shipping" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary">
+                                    <div class="text-sm leading-tight">
+                                        <label for="default-shipping" class="text-sm text-gray-900 cursor-pointer">
+                                            <?= $escaper->escapeHtml(__('Use as my default shipping address')) ?>
+                                        </label>
+                                    </div>
+                                <?php else: ?>
+                                    <input type="hidden" name="default_shipping" value="1">
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions-toolbar col-span-2 mt-5 flex flex-row-reverse justify-between gap-5 items-center">
+                    <div class="primary">
+                        <button type="submit" class="action save primary primary-btn" title="<?= $escaper->escapeHtmlAttr(__('Save Address')) ?>">
+                            <template x-if="displayLoading">
+                                <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
+                            </template>
+                            <?= $escaper->escapeHtml(__('Save Address')) ?>
+                        </button>
+                    </div>
+                    <div class="secondary">
+                        <a class="action back text-md inline-flex items-center gap-2 hover:underline" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"></path>
+                            </svg>
+                            <?= $escaper->escapeHtml(__('Back')) ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const configPattern = <?= /* @noEscape */ $postCodePatterns ?>;
+        formValidateData.formDataValidation.addRule('postcode', (postCode, field) => {
+            const countryId = document.getElementById('country')?.value;
+            const countryPostCode = countryId && configPattern ? configPattern[countryId] : false;
+            if (!postCode || !countryPostCode) {
+                return true
+            }
+            return Object.values(countryPostCode).some(configPattern => new RegExp(configPattern.pattern).test(postCode)) || [
+                'Provided Zip/Postal Code seems to be invalid.',
+                'Example: ' + Object.values(countryPostCode).map(configPattern => configPattern.example).join('; ') + '. ',
+                'If you believe it is the right one you can ignore this notice.'
+            ];
+        });
+    });
+</script>

@@ -1,0 +1,110 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+// @codingStandardsIgnoreFile
+?>
+<?php $_order = $block->getOrder() ?>
+<?php $_invoice = $block->getInvoice() ?>
+<?php if ($_invoice): ?>
+    <?php $_invoices = [$_invoice]; ?>
+<?php else: ?>
+    <?php $_invoices = $_order->getInvoiceCollection() ?>
+<?php endif; ?>
+<?php foreach ($_invoices as $_invoice): ?>
+<div class="order-details-items invoice w-full">
+    <div class="order-title block-title border-b border-gray-200 py-2 px-4 text-base mb-4 flex gap-4 justify-between print:border-0 print:p-0">
+        <strong><?= $block->escapeHtml(__('Invoice #')) ?><?= $block->escapeHtml($_invoice->getIncrementId()) ?></strong>
+    </div>
+    <div class="table-wrapper table-order-items invoice w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
+        <table class="data table table-order-items invoice w-full" id="my-invoice-table-<?= (int) $_invoice->getId() ?>">
+            <caption class="table-caption hidden"><?= $block->escapeHtml(__('Items Invoiced')) ?></caption>
+            <thead class="border-b border-gray-200 hidden md:table-header-group">
+            <tr>
+                <th class="col name p-2 text-left text-sm font-semibold text-gray-800"><?= $block->escapeHtml(__('Product Name')) ?></th>
+                <th class="col sku p-2 text-sm font-semibold text-gray-800"><?= $block->escapeHtml(__('SKU')) ?></th>
+                <th class="col price p-2 text-sm font-semibold text-gray-800"><?= $block->escapeHtml(__('Price')) ?></th>
+                <th class="col qty p-2 text-sm font-semibold text-gray-800"><?= $block->escapeHtml(__('Qty Invoiced')) ?></th>
+                <th class="col subtotal p-2 text-sm font-semibold text-gray-800"><?= $block->escapeHtml(__('Subtotal')) ?></th>
+            </tr>
+            </thead>
+            <?php $_items = $_invoice->getItemsCollection(); ?>
+            <?php foreach ($_items as $_item): ?>
+                <?php if (!$_item->getOrderItem()->getParentItem()): ?>
+                    <tbody>
+                        <?= $block->getItemHtml($_item) ?>
+                    </tbody>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <tfoot class="w-full block md:table-footer-group">
+                <?= $block->getInvoiceTotalsHtml($_invoice) ?>
+            </tfoot>
+        </table>
+    </div>
+    <div class="block block-order-details-view w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
+        <div class="block-title border-b border-gray-200 py-2 text-base mb-4 flex gap-4 justify-between">
+            <strong><?= $block->escapeHtml(__('Order Information')) ?></strong>
+        </div>
+        <div class="block-content grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <?php if (!$_order->getIsVirtual()): ?>
+            <div class="box box-order-shipping-address">
+                <div class="box-title">
+                    <strong><?= $block->escapeHtml(__('Shipping Address')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php $_shipping = $_invoice->getShippingAddress() ?>
+                    <address><?= /* @noEscape */ $block->formatAddress($_shipping, 'html') ?></address>
+                </div>
+            </div>
+
+            <div class="box box-order-shipping-method">
+                <div class="box-title">
+                    <strong><?= $block->escapeHtml(__('Shipping Method')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php if ($_order->getShippingDescription()): ?>
+                        <?= $block->escapeHtml($_order->getShippingDescription()) ?>
+                    <?php else: ?>
+                        <?= $block->escapeHtml(__('No shipping information available')) ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+            <div class="box box-order-billing-address">
+                <div class="box-title">
+                    <strong><?= $block->escapeHtml(__('Billing Address')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?php $_billing = $_invoice->getbillingAddress() ?>
+                    <address><?= /* @noEscape */ $block->formatAddress($_order->getBillingAddress(), 'html') ?></address>
+                </div>
+            </div>
+
+            <div class="box box-order-billing-method">
+                <div class="box-title">
+                    <strong><?= $block->escapeHtml(__('Payment Method')) ?></strong>
+                </div>
+                <div class="box-content">
+                    <?= $block->getPaymentInfoHtml() ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>

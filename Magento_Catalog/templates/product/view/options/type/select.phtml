@@ -1,0 +1,47 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+
+<?php /* @var $block \Magento\Catalog\Block\Product\View\Options\Type\Select */ ?>
+<?php
+$_option = $block->getOption();
+$class = ($_option->getIsRequire()) ? ' required' : '';
+$product = $block->getProduct();
+$productId = $product->getId();
+$productPrice = $product->getFinalPrice();
+$customBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\Swatch::class);
+?>
+<div class="field<?= /* @noEscape */ $class ?> mt-5">
+    <label class="label text-sm font-medium text-gray-900" for="select_<?= $escaper->escapeHtmlAttr($_option->getId()) ?>">
+        <span><?= $escaper->escapeHtml($_option->getTitle()) ?></span>
+        <?php if ($_option->getIsRequire()): ?>
+            <span class="text-required ml-1">*</span>
+        <?php endif; ?>
+    </label>
+    <div class="control mt-2">
+        <?= $block->getValuesHtml() ?>
+        <?php if ($_option->getIsRequire()): ?>
+            <?php if ($_option->getType() == \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_RADIO || $_option->getType() == \Magento\Catalog\Api\Data\ProductCustomOptionInterface::OPTION_TYPE_CHECKBOX): ?>
+                <span id="options-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>-container"></span>
+            <?php endif; ?>
+        <?php endif;?>
+    </div>
+</div>

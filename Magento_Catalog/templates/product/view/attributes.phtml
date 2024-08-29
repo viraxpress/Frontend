@@ -1,0 +1,64 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+/**
+ * Product additional attributes template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View\Attributes
+ */
+?>
+<?php
+$_helper = $this->helper(Magento\Catalog\Helper\Output::class);
+$_product = $block->getProduct();
+$_title = $block->getTitle();
+
+if (!empty($_title)) {
+    $_title = preg_replace('/\s+/', '', $_title);
+}
+?>
+<?php if ($_additional = $block->getAdditionalData()): ?>
+    <div class="w-full">
+        <button class="block w-full flex justify-between items-center pb-2 border-b border-black gap-4 text-base text-left font-semibold leading-6 text-gray-900" @click="isVisible !== '<?= $escaper->escapeHtmlAttr($_title) ?>' ? isVisible = '<?= $escaper->escapeHtmlAttr($_title) ?>' : isVisible = null">
+            <?= $escaper->escapeHtml($block->getData('title'))?>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 transition-all duration-300" :class="isVisible === '<?= $escaper->escapeHtmlAttr($_title) ?>' ? 'rotate-180' : 'rotate-0'">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        </button>
+        <div class="overflow-hidden transition-all max-h-0 mt-[2px] duration-500 over" style="" x-ref="<?= $escaper->escapeHtmlAttr($_title) ?>" x-bind:style="isVisible == '<?= $escaper->escapeHtmlAttr($_title) ?>' ? 'max-height: ' + $refs.<?= $escaper->escapeHtmlAttr($_title) ?>.scrollHeight + 'px' : ''">
+            <table class="min-w-full divide-y divide-gray-300 py-5">
+                <tbody class="divide-y divide-gray-300 text-sm bg-white">
+                    <?php foreach ($_additional as $_data): ?>
+                    <tr>
+                        <td class="py-4 pr-4 w-1/2 font-medium text-gray-900">
+                            <span><?= $escaper->escapeHtml($_data['label']) ?></span>
+                        </td>
+                        <td class="py-4 w-1/2 text-gray-700">
+                            <?= /* @noEscape */ $_helper->productAttribute($_product, $_data['value'], $_data['code']) ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<?php endif; ?>

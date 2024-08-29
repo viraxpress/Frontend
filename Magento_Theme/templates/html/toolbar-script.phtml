@@ -1,0 +1,107 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<script>
+function CatalogList() {
+    const updateUrlWithParams = (newParams) => {
+        const currentUrl = new URL(window.location.href);
+        const currentParams = new URLSearchParams(currentUrl.search);
+
+        newParams.forEach((value, key) => {
+            currentParams.set(key, value);
+        });
+
+        currentUrl.search = currentParams.toString();
+        window.location.href = currentUrl.toString();
+    };
+
+    const getParamsFromUrl = (url) => {
+        const urlObj = new URL(url, window.location.origin);
+        return urlObj.searchParams;
+    };
+
+    return {
+        dataDir: '', // Assuming this is set elsewhere
+
+        handleListDir() {
+            const directionParams = getParamsFromUrl(this.dataDir);
+            updateUrlWithParams(directionParams);
+        },
+
+        handleSort(event) {
+            const selectedOption = event.target.options[event.target.selectedIndex];
+            const sortParams = getParamsFromUrl(selectedOption.getAttribute('data-post'));
+            updateUrlWithParams(sortParams);
+        }
+    };
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var limiter = document.querySelector('#limiter');
+    if (limiter) {
+        limiter.addEventListener('change', function(event) {
+            var target = event.target;
+            if (target && target.id === 'limiter') {
+                var productTotalCount = target.getAttribute('data-product-count');
+                var selectedOption = target.options[target.selectedIndex];
+                limiterAjax(selectedOption, productTotalCount);
+            }
+        });
+    }
+});
+function limiterAjax(selectedOption, productTotalCount) {
+    const limitUrl = new URL(selectedOption.getAttribute('data-post'), window.location.origin);
+    const currentUrl = new URL(window.location.href);
+
+    const limitParams = limitUrl.searchParams;
+    const currentParams = currentUrl.searchParams;
+
+    handleSpecialCases(limitParams, currentParams, productTotalCount);
+
+    for (const [key, value] of limitParams.entries()) {
+        currentParams.set(key, value);
+    }
+
+    currentUrl.search = currentParams.toString();
+    window.location.href = currentUrl.toString();
+}
+
+function handleSpecialCases(limitParams, currentParams, productTotalCount) {
+    const productLimit = limitParams.get('product_list_limit');
+    const limit = limitParams.get('limit');
+
+    if (productLimit === 'all' || limit === 'all') {
+        currentParams.delete('p');
+    }
+
+    if (currentParams.has('p')) {
+        const listLimit = limit || productLimit;
+        const pageValue = Math.ceil(productTotalCount / listLimit);
+
+        if (currentParams.get('p') > pageValue) {
+            currentParams.set('p', pageValue);
+        }
+    }
+
+    if (currentParams.get('p') <= 1) {
+        currentParams.delete('p');
+    }
+}
+</script>

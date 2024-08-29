@@ -1,0 +1,83 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Framework\Escaper;
+use Magento\Review\Block\Product\ReviewRenderer;
+
+/** @var ReviewRenderer $block */
+/** @var Escaper $escaper */
+
+$rating = $block->getRatingSummary();
+if (!$rating) {
+    $rating = 0;
+}
+$url = $block->getReviewsUrl() . '#reviews';
+$urlForm = $block->getReviewsUrl() . '#review-form';
+?>
+<?php if ($block->isReviewEnabled()): ?>
+    <div class="text-center w-full">
+        <div class="mb-[15px] relative inline-block leading-[normal]">
+            <div class="text-gray-200 inline-flex space-x-1">
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+            </div>
+            <div class="overflow-hidden absolute left-0 top-0 text-primary flex space-x-1" style="width:<?= $escaper->escapeHtml($rating) ?>%">
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+                <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 flex-shrink-0">
+                    <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+                </svg>
+            </div>
+        </div>
+        <?php if ($block->getReviewsCount()): ?>
+            <a href="<?= $escaper->escapeUrl($url) ?>" class="inline-flex leading-[20px] text-xs relative -top-[2px] ml-0 sm:ml-2"><?= $escaper->escapeHtml($block->getReviewsCount()) ?>
+                <?= ($block->getReviewsCount() == 1) ? $escaper->escapeHtml(__('Review')) : $escaper->escapeHtml(__('Reviews')) ?>
+            </a>
+        <?php endif; ?>
+    </div>
+<?php elseif ($block->isReviewEnabled() && $block->getDisplayIfEmpty()): ?>
+    <div class="block">
+        <a href="<?= $escaper->escapeUrl($urlForm) ?>" class="inline-block"><?= $escaper->escapeHtml(__('Be the first to review this product')) ?></a>
+    </div>
+<?php endif; ?>

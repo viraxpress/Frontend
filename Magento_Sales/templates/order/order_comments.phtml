@@ -1,0 +1,39 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php /** @var  $block \Magento\Sales\Block\Order\View*/?>
+
+<?php $_history = $block->getOrder()->getVisibleStatusHistory() ?>
+<?php if (!empty($_history)): ?>
+    <div class="block block-order-details-comments pb-4">
+        <div class="block-title"><strong><?= $escaper->escapeHtml(__('About Your Order')) ?></strong></div>
+        <div class="block-content">
+            <dl class="order-comments">
+                <?php foreach ($_history as $_historyItem): ?>
+                    <dt class="comment-date">
+                        <?= /* @noEscape */ $block->formatDate($_historyItem->getCreatedAt(), \IntlDateFormatter::MEDIUM, true) ?>
+                    </dt>
+                    <dd class="comment-content"><?= $escaper->escapeHtml($_historyItem->getComment(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?></dd>
+                <?php endforeach; ?>
+            </dl>
+        </div>
+    </div>
+<?php endif; ?>

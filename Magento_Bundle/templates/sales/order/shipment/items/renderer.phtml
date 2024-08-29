@@ -1,0 +1,121 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// phpcs:disable Generic.Files.LineLength
+?>
+<?php
+/**
+ * @var \Magento\Bundle\Block\Sales\Order\Items\Renderer $block
+ * @var \Magento\Framework\Locale\LocaleFormatter $localeFormatter
+ */
+?>
+
+<?php $parentItem = $block->getItem() ?>
+<?php $items = array_merge([$parentItem->getOrderItem()], $parentItem->getOrderItem()->getChildrenItems()) ?>
+<?php $shipItems = $block->getChildren($parentItem) ?>
+<?php $_index = 0 ?>
+
+<?php $_prevOptionId = '' ?>
+
+<?php foreach ($items as $_item): ?>
+
+    <?php if ($block->getItemOptions() || $parentItem->getDescription() || $this->helper(Magento\GiftMessage\Helper\Message::class)->isMessagesAllowed('order_item', $parentItem) && $parentItem->getGiftMessageId()): ?>
+        <?php $_showlastRow = true ?>
+    <?php else: ?>
+        <?php $_showlastRow = false ?>
+    <?php endif; ?>
+
+    <?php if ($_item->getParentItem()): ?>
+        <?php $attributes = $block->getSelectionAttributes($_item) ?>
+        <?php if ($_prevOptionId != $attributes['option_id']): ?>
+            <tr class="options-label block md:table-row">
+                <td colspan="3" class="col label p-2 text-sm font-semibold before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative <?= $_item->getParentItem() ? 'before:text-sm' : 'before:text-base' ?>"><div class="option label"><?= $escaper->escapeHtml($attributes['option_label']) ?></div></td>
+            </tr>
+            <?php $_prevOptionId = $attributes['option_id'] ?>
+        <?php endif; ?>
+    <?php endif; ?>
+    <tr class="border-b border-gray-200 pb-4 mb-4 block md:table-row" id="order-item-row-<?= $escaper->escapeHtmlAttr($_item->getId()) ?>" class="<?php if ($_item->getParentItem()): ?>item-options-container<?php else: ?>item-parent<?php endif; ?>"<?php if ($_item->getParentItem()): ?> data-th="<?= $escaper->escapeHtmlAttr($attributes['option_label']) ?>"<?php endif; ?>>
+        <?php if (!$_item->getParentItem()): ?>
+            <td class="col name text-left font-semibold p-2 py-3 before:font-semibold before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('Product Name')) ?>">
+                <div class="col-name-wrapper">
+                    <span class="product name product-item-name"><?= $escaper->escapeHtml($_item->getName()) ?></span>
+                </div>
+            </td>
+        <?php else: ?>
+            <td class="col value text-left p-2 py-3 text-sm before:font-semibold before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtmlAttr(__('Product Name')) ?>">
+                <div class="col-value-wrapper">
+                    <?= $block->getValueHtml($_item) ?>
+                </div>
+            </td>
+        <?php endif; ?>
+        <td class="col sku text-left md:text-center p-2 py-3 text-sm before:font-semibold before:text-base before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative <?= $_item->getParentItem() ? 'before:text-sm' : 'before:text-base' ?>" data-th="<?= $escaper->escapeHtmlAttr(__('SKU')) ?>">
+            <div class="col-sku-wrapper">
+                <?= $escaper->escapeHtml($_item->getSku()) ?>
+            </div>
+        </td>
+        <td class="col qty text-left md:text-center p-2 py-3 text-sm before:font-semibold before:content-[attr(data-th)] md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative <?= $_item->getParentItem() ? 'before:text-sm' : 'before:text-base' ?>" data-th="<?= $escaper->escapeHtmlAttr(__('Qty Shipped')) ?>">
+            <div class="col-qty-wrapper">
+                <?php if (($block->isShipmentSeparately() && $_item->getParentItem()) || (!$block->isShipmentSeparately() && !$_item->getParentItem())): ?>
+                    <?php if (isset($shipItems[$_item->getId()])): ?>
+                        <?= /* @noEscape */ $localeFormatter->formatNumber((float)$shipItems[$_item->getId()]->getQty() * 1) ?>
+                    <?php elseif ($_item->getIsVirtual()): ?>
+                        <?= $escaper->escapeHtml(__('N/A')) ?>
+                    <?php else: ?>
+                        0
+                    <?php endif; ?>
+                <?php else: ?>
+                    &nbsp;
+                <?php endif; ?>
+            </div>
+        </td>
+    </tr>
+<?php endforeach; ?>
+
+<?php if ($_showlastRow && (($_options = $block->getItemOptions()) || $escaper->escapeHtml($_item->getDescription()))): ?>
+    <tr>
+        <td class="col options" colspan="3">
+            <?php if ($_options = $block->getItemOptions()): ?>
+                <dl class="item-options">
+                    <?php foreach ($_options as $_option): ?>
+                        <dt><?= $escaper->escapeHtml($_option['label']) ?></dt>
+                        <?php if (!$block->getPrintStatus()): ?>
+                            <?php $_formatedOptionValue = $block->getFormatedOptionValue($_option) ?>
+                            <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="tooltip wrapper"<?php endif; ?>>
+                                <?= /* @noEscape */ $_formatedOptionValue['value'] ?>
+                                <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                    <div class="tooltip content">
+                                        <dl class="item options">
+                                            <dt><?= $escaper->escapeHtml($_option['label']) ?></dt>
+                                            <dd><?= /* @noEscape */ $_formatedOptionValue['full_view'] ?></dd>
+                                        </dl>
+                                    </div>
+                                <?php endif; ?>
+                            </dd>
+                        <?php else: ?>
+                            <dd><?= $escaper->escapeHtml((isset($_option['print_value']) ? $_option['print_value']: $_option['value'])) ?></dd>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </dl>
+            <?php endif; ?>
+            <?= $escaper->escapeHtml($_item->getDescription()) ?>
+        </td>
+    </tr>
+<?php endif; ?>

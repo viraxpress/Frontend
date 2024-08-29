@@ -1,0 +1,181 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * Product list template
+ *
+ * @var $block \Magento\Catalog\Block\Product\ListProduct
+ * @var \Magento\Framework\Escaper $escaper
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+
+use Magento\Framework\App\Action\Action;
+?>
+<?php
+$_productCollection = $block->getLoadedProductCollection();
+/** @var \Magento\Catalog\Helper\Output $_helper */
+$_helper = $block->getData('outputHelper');
+$configHelper = $block->getLayout()->createBlock(\ViraXpress\Catalog\Block\Product\ConfigBlock::class);
+$imagehelper = $configHelper->getImageHelper();
+$imageConfig = $configHelper->getConfig('viraxpress_config/image_resize/product_list_image_resize');
+$gridImageConfig = $configHelper->getConfig('viraxpress_config/image_resize/product_list_grid_image_resize');
+?>
+
+<div class="mb-10">
+    <?php if (!$_productCollection->count()): ?>
+        <div class="message info empty">
+            <div><?= $escaper->escapeHtml(__('We can\'t find products matching the selection.')) ?></div>
+        </div>
+    <?php else: ?>
+        <?php
+        if ($block->getMode() === 'grid') {
+            $viewMode = 'grid';
+            $imageDisplayArea = 'category_page_grid';
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            $showDescription = false;
+        } else {
+            $viewMode = 'list';
+            $imageDisplayArea = 'category_page_grid';
+            $templateType = \Magento\Catalog\Block\Product\ReviewRendererInterface::SHORT_VIEW;
+            $showDescription = true;
+        }
+        /**
+         * Position for actions regarding image size changing in vde if needed
+         */
+        $pos = $block->getPositioned();
+        ?>
+
+        <?= $block->getToolbarHtml() ?>
+        <?= $block->getAdditionalHtml() ?>
+
+        <div class="grid grid-cols-12 gap-5 gap-y-10 listing-product mb-10 product-items" id="catalog-products">
+            <?php foreach ($_productCollection as $product): ?>
+                <div class="product-item list-product-<?= $escaper->escapeHtmlAttr($product->getId()) ?> bg-white border-2 border-transparent transition duration-500 hover:rounded hover:border-[#F2F2F2] relative group <?= $viewMode == 'grid' ? 'col-span-12 sm:col-span-6 xl:col-span-4 grid-view' : 'col-span-12 flex justify-start items-start list-view' ?>">
+                    <?php
+                    $productImage = $block->getImage($product, $imageDisplayArea);
+                    if ($block->getMode() === 'grid') {
+                        $imageWidth = ($gridImageConfig['grid_width']) ? $gridImageConfig['grid_width'] : $productImage->getWidth();
+                        $imageHeight = ($gridImageConfig['grid_height']) ? $gridImageConfig['grid_height'] : $productImage->getHeight();
+                    } else {
+                        $imageWidth = ($imageConfig['width']) ? $imageConfig['width'] : $productImage->getWidth();
+                        $imageHeight = ($imageConfig['height']) ? $imageConfig['height'] : $productImage->getHeight();
+                    }
+                    $productImageConfig = $imagehelper->init($product, $imageDisplayArea)->resize($imageWidth, $imageHeight);
+                    $productImageUrl = $productImageConfig->getUrl(); ?>
+                    <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>" class="product photo product-item-photo rounded relative overflow-hidden <?= $viewMode == 'grid' ? 'flex justify-center items-center' : 'inline-block shrink-0' ?>" tabindex="0">
+                        <img fetchpriority="high" loading="eager" class="<?= $escaper->escapeHtmlAttr($block->getClass()) ?>lazy text-[0] mx-auto transition duration-1000 ease-in-out group-hover:scale-[1.04]" id="product-image-container-list-<?= $escaper->escapeHtmlAttr($product->getId()) ?>" data-src="<?= $escaper->escapeUrl($productImageUrl) ?>" width="<?= $escaper->escapeHtmlAttr($imageWidth) ?>" height="<?= $escaper->escapeHtmlAttr($imageHeight) ?>" alt="<?= $escaper->escapeHtmlAttr($productImage->getLabel()) ?>"  onerror="this.style.display='none'" title="<?= $escaper->escapeHtmlAttr($productImage->getLabel()) ?>" />
+                        <span class="product photo skeleton skeleton-box absolute text-gray-400 bg-gray-100 inset-0 w-full h-full z-10 flex justify-center items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                            </svg>
+                        </span>
+                    </a>
+                    <div class="inline-flex absolute transition-all duration-500 ease-in-out top-4 right-4 flex-col gap-2 z-10">
+                        <?php if ($addToBlock = $block->getChildBlock('addto')): ?>
+                            <?= $addToBlock->setProduct($product)->getChildHtml() ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php $_productNameStripped = $block->stripTags($product->getName(), null, true); ?>
+                    <div class="px-4 py-3 <?= $viewMode == 'grid' ? 'block' : 'w-full h-full flex flex-col justify-start items-start' ?>">
+                        <a class="product-item-link mb-3 leading-normal font-medium text-black block text-center" href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>">
+                            <?=/* @noEscape */ $_helper->productAttribute($product, $product->getName(), 'name') ?>
+                        </a>
+                        <?= $block->getReviewsSummaryHtml($product, $templateType) ?>
+                        <?php if ($showDescription): ?>
+                            <div class="product description product-item-description font-regular mb-3 max-w-[calc(100%-50px)]">
+                                <?= /* @noEscape */ $_helper->productAttribute(
+                                    $product,
+                                    $product->getShortDescription(),
+                                    'short_description'
+                                ) ?>
+                                <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>" title="<?= /* @noEscape */ $_productNameStripped ?>" class="action more text-primary hover:underline mt-5"><?= $escaper->escapeHtml(__('Learn More')) ?></a>
+                            </div>
+                        <?php endif; ?>
+                        <?= $block->getProductDetailsHtml($product) ?>
+                        <div class="flex mt-3 text-xl font-semibold <?= $viewMode == 'grid' ? 'items-end' : 'items-end flex-1 w-full' ?>">
+                            <?= /* @noEscape */ $block->getProductPrice($product) ?>
+                            <div class="ml-auto">
+                                <?php if ($product->isSaleable()): ?>
+                                    <?php $postParams = $block->getAddToCartPostParams($product); ?>
+                                    <?php
+                                    $formId = base64_encode($postParams['data']['product'] . "-product_list_addtocart_form");
+                                    $formId = preg_replace("/[^a-zA-Z0-9]/", "", $formId);
+                                    ?>
+                                    <form id="<?= $escaper->escapeHtmlAttr($formId) ?>" class="m-0">
+                                        <input type="hidden" name="product" value="<?= $escaper->escapeHtmlAttr($postParams['data']['product']) ?>">
+                                        <input type="hidden" name="uenc" value="<?= $escaper->escapeHtmlAttr($postParams['data']['uenc']) ?>">
+                                        <button type="button" x-on:click="cartAddFormHandler('<?= $escaper->escapeHtmlAttr($formId) ?>', '<?= $escaper->escapeHtmlAttr($postParams['action']) ?>')" role="button" title="Add to Cart" class="border-0 relative text-primary rounded-md p-2">
+                                            <svg class="h-7 w-7 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+                                            </svg>
+                                            <template x-if="addToCartLoader == '<?= $escaper->escapeHtmlAttr($product->getId()) ?>'">
+                                                <span class="bg-white absolute inline-flex justify-center items-center w-full left-0 top-0 z-10 h-full">
+                                                    <svg aria-hidden="true" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-200 animate-spin fill-primary">
+                                                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"></path>
+                                                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"></path>
+                                                    </svg>
+                                                </span>
+                                            </template>
+                                        </button>
+                                    </form>
+                                <?php else: ?>
+                                    <?php if ($product->isAvailable()): ?>
+                                        <div class="stock available">
+                                            <span><?= $escaper->escapeHtml(__('In stock')) ?></span>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="stock unavailable">
+                                            <span><?= $escaper->escapeHtml(__('Out of stock')) ?></span>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+
+        <?= $block->getChildBlock('toolbar')->setIsBottom(true)->toHtml() ?>
+
+        <?php // phpcs:ignore Magento2.Legacy.PhtmlTemplate 
+        ?>
+    <?php endif; ?>
+</div>
+
+<script>
+    (function(){
+        const lazyImages = document.querySelectorAll("img.lazy");
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove("lazy");
+                    setTimeout(()=>{img.nextElementSibling.remove();}, 100)
+                    observer.unobserve(img);
+                }
+            });
+        });
+        lazyImages.forEach(img => observer.observe(img));
+    })();
+</script>

@@ -1,0 +1,110 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Framework\Escaper;
+use Magento\Review\Block\Product\ReviewRenderer;
+
+/** @var ReviewRenderer $block */
+/** @var Escaper $escaper */
+
+$url = $block->getReviewsUrl() . '#reviews';
+$urlForm = $block->getReviewsUrl() . '#review-form';
+
+?>
+<?php if ($block->isReviewEnabled() && $block->getReviewsCount()): ?>
+    <?php $rating = $block->getRatingSummary(); ?>
+    <?php if ($rating): ?>
+        <svg class="hidden">
+            <symbol id="star" width="32" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M31.77 11.857H19.74L15.99.5l-3.782 11.357H0l9.885 6.903-3.692 11.21 9.736-7.05 9.796 6.962-3.722-11.18 9.766-6.845z" fill="currentColor" />
+            </symbol>
+        </svg>
+        <div class="relative inline-block leading-normal">
+            <div class="text-gray-200 inline-flex space-x-1">
+                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                    <use xlink:href="#star"></use>
+                </svg>
+                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                    <use xlink:href="#star"></use>
+                </svg>
+                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                    <use xlink:href="#star"></use>
+                </svg>
+                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                    <use xlink:href="#star"></use>
+                </svg>
+                <svg viewBox="0 0 32 30" class="w-4 h-4">
+                    <use xlink:href="#star"></use>
+                </svg>
+            </div>
+            <div class="overflow-hidden absolute left-0 top-0 text-primary flex space-x-1" style="width:<?= $escaper->escapeHtmlAttr($rating) ?>%">
+                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                    <use xlink:href="#star"></use>
+                </svg>
+                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                    <use xlink:href="#star"></use>
+                </svg>
+                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                    <use xlink:href="#star"></use>
+                </svg>
+                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                    <use xlink:href="#star"></use>
+                </svg>
+                <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                    <use xlink:href="#star"></use>
+                </svg>
+            </div>
+        </div>
+    <?php endif; ?>
+    <div class="reviews-actions flex sm:inline-flex ml-0 sm:ml-5">
+        <button type="button" x-data @click="$dispatch('set-active-tab', 0); setTimeout(() => {window.scrollTo({top: document.getElementById('reviews').offsetTop - 80, behavior: 'smooth'});}, 50)" class="inline-block">
+            <span itemprop="reviewCount">
+                <?= $escaper->escapeHtml($block->getReviewsCount()) ?>
+            </span>
+            <?= ($block->getReviewsCount() == 1) ? $escaper->escapeHtml(__('Review')) : $escaper->escapeHtml(__('Reviews')) ?>
+        </button>
+        <div class="inline-flex ml-5 add_review_btn">
+            <button type="button" x-data @click="
+            $dispatch('set-active-tab', 0); 
+            setTimeout(() => {
+                const reviewsElement = document.getElementById('reviews');
+                const nicknameField = document.getElementById('nickname_field');
+                
+                window.scrollTo({ top: reviewsElement.offsetTop - 80, behavior: 'smooth' });
+                setTimeout(()=>{ nicknameField.focus();}, 800)
+            }, 50);
+        " class="inline-block"><?= $escaper->escapeHtml(__('Add Your Review')) ?></button>
+        </div>
+    </div>
+<?php elseif ($block->isReviewEnabled() && $block->getDisplayIfEmpty()): ?>
+    <div class="block">
+        <button type="button" x-data @click="
+            $dispatch('set-active-tab', 0); 
+            setTimeout(() => {
+                const reviewsElement = document.getElementById('reviews');
+                const nicknameField = document.getElementById('nickname_field');
+                
+                window.scrollTo({ top: reviewsElement.offsetTop - 80, behavior: 'smooth' });
+                setTimeout(()=>{ nicknameField.focus();}, 800)
+            }, 50);
+        " class="inline-block"><?= $escaper->escapeHtml(__('Be the first to review this product')) ?></button>
+    </div>
+<?php endif; ?>

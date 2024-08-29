@@ -1,0 +1,103 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+/**
+ * Product list toolbar
+ *
+ * @var $block \Magento\Catalog\Block\Product\ProductList\Toolbar
+ */
+$config = $block->getLayout()->createBlock(\ViraXpress\Catalog\Block\Product\ConfigBlock::class);
+$defaultGridPerPage = $config->getDefaultGridPerPage();
+$defaultListPerPage = $config->getDefaultListPerPage();
+?>
+<?php if ($block->isEnabledViewSwitcher()): ?>
+    <div class="category-view-mode flex justify-start items-start gap-x-4" x-data="CatalogViewMode()">
+        <?php $_modes = $block->getModes(); ?>
+        <?php if ($_modes && count($_modes) > 1): ?>
+            <?php foreach ($block->getModes() as $_code => $_label): ?>
+                <?php if ($_label == 'Grid'): ?>
+                    <button id="grid-view" type="submit" role="button" title="<?= $escaper->escapeHtml($_label) ?>" class="<?= $escaper->escapeHtmlAttr(strtolower($_code)) ?>-view hidden md:inline-block p-1.5 rounded grid-list-view shadow-sm border border-gray-200 <?= $block->isModeActive($_code) ? 'active' : 'de-active' ?>" x-data="{ viewMode: '<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_mode=grid' ?>', limiter:'<?= $escaper->escapeHtmlAttr($defaultGridPerPage) ?>' }" x-on:click="handleViewMode">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </span>
+                    </button>
+                <?php else: ?>
+                    <button id="list-view" type="submit" role="button" title="<?= $escaper->escapeHtmlAttr($_label) ?>" class="<?= $escaper->escapeHtmlAttr(strtolower($_code)) ?>-view hidden md:inline-block p-1.5 rounded grid-list-view shadow-sm border border-gray-200 <?= $block->isModeActive($_code) ? 'active' : 'de-active' ?>" x-data="{ viewMode: '<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_mode=list' ?>', limiter:'<?= $escaper->escapeHtmlAttr($defaultListPerPage) ?>' }" x-on:click="handleViewMode">
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22">
+                                <g>
+                                    <path d="M2 7h20a1 1 0 0 0 0-2H2a1 1 0 0 0 0 2zM22 11H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2zM22 17H2a1 1 0 0 0 0 2h20a1 1 0 0 0 0-2z" fill="currentColor"></path>
+                                </g>
+                            </svg>
+                        </span>
+                    </button>
+                <?php endif; ?>
+           <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
+<script>
+    function CatalogViewMode() {
+        return {
+            handleViewMode(e) {
+                const getURLParams = url => new URLSearchParams(url.includes('?') ? url.split('?')[1] : '');
+                const mergeParams = (params1, params2) => {
+                    const merged = new URLSearchParams(params1);
+                    for (const [key, value] of params2.entries()) {
+                        merged.set(key, value);
+                    }
+                    return merged;
+                };
+                const removeParam = (params, param) => {
+                    params.delete(param);
+                    return params;
+                };
+                
+                const currentUrl = new URL(window.location.href);
+                const currentParams = getURLParams(currentUrl.search);
+                const viewModeParams = getURLParams(this.viewMode);
+
+                if (viewModeParams.get('product_list_mode') === 'grid') {
+                    const limiter = this.limiter;
+                    const productTotalCount = document.getElementById('toolbar-amount').getAttribute('data-product-count');
+                    const pageValue = Math.ceil(productTotalCount / limiter);
+                    
+                    // if (parseInt(currentParams.get('p'), 10) > pageValue) {
+                    //     currentParams.set('p', pageValue);
+                    // }
+                    // if (pageValue <= 1) {
+                    // }
+                }
+                removeParam(currentParams, 'p');
+
+                const mergedParams = mergeParams(currentParams, viewModeParams);
+                window.location.href = `${currentUrl.origin}${currentUrl.pathname}?${mergedParams.toString()}`;
+            }
+        };
+    }
+</script>

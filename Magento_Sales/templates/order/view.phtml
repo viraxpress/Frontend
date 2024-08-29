@@ -1,0 +1,63 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+?>
+<?php /** @var  $block \Magento\Sales\Block\Order\View*/ ?>
+<div class="order-details-items ordered">
+    <?php $_order = $block->getOrder() ?>
+
+    <div class="order-title">
+        <strong class="hidden"><?= $escaper->escapeHtml(__('Items Ordered')) ?></strong>
+        <?php if (!empty($_order->getTracksCollection()->getItems())): ?>
+            <?= $block->getChildHtml('tracking-info-link') ?>
+        <?php endif; ?>
+    </div>
+
+    <?= $block->getChildHtml('order_items') ?>
+
+    <?php if ($this->helper(\Magento\GiftMessage\Helper\Message::class)->isMessagesAllowed('order', $_order)
+        && $_order->getGiftMessageId()): ?>
+        <div class="block block-order-details-gift-message w-full shadow-sm border border-gray-100 rounded-lg my-4 p-4 bg-white">
+            <div class="block-title border-b border-gray-200 pb-1 mb-2"><strong><?= $escaper->escapeHtml(__('Gift Message for This Order')) ?></strong></div>
+            <?php
+            $_giftMessage = $this->helper(\Magento\GiftMessage\Helper\Message::class)->getGiftMessageForEntity($_order);
+            ?>
+            <div class="block-content">
+                <dl class="item-options">
+                    <dt class="item-sender"><strong class="label pr-2"><?= $escaper->escapeHtml(__('From')) ?></strong><?= $escaper->escapeHtml($_giftMessage->getSender()) ?></dt>
+                    <dt class="item-recipient"><strong class="label pr-2"><?= $escaper->escapeHtml(__('To')) ?></strong><?= $escaper->escapeHtml($_giftMessage->getRecipient()) ?></dt>
+                    <dd class="item-message py-2">
+                        <?= /* @noEscape */ $this->helper(\Magento\GiftMessage\Helper\Message::class)->getEscapedGiftMessage($_order) ?>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="actions-toolbar w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white print:hidden">
+        <div class="secondary">
+            <a class="action back primary-btn" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>">
+                <span><?= $escaper->escapeHtml($block->getBackTitle()) ?></span>
+            </a>
+        </div>
+    </div>
+</div>

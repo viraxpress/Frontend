@@ -1,0 +1,41 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Customer\Block\Widget\Gender $block */
+?>
+
+<div class="gender<?= $escaper->escapeHtmlAttr($block->isRequired()) ? ' required' : '' ?> col-span-12 sm:col-span-6">
+    <label for="<?= $escaper->escapeHtmlAttr($block->getFieldId('gender')) ?>" class="block text-sm font-medium leading-6 text-gray-900">
+        <?= $escaper->escapeHtml(__('Gender')) ?>
+        <?php if ($block->isRequired()): ?>
+            <span class="inline-block ml-[2px] text-required">*</span>
+        <?php endif; ?>
+    </label>
+    <div class="mt-2">
+        <select id="<?= $escaper->escapeHtmlAttr($block->getFieldId('gender')) ?>" name="<?= $escaper->escapeHtmlAttr($block->getFieldName('gender')) ?>" title="<?= $escaper->escapeHtmlAttr($block->getStoreLabel('gender')) ?>" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 validate-select" x-on:input.debounce="onChange" <?php if ($block->isRequired()): ?>required<?php endif; ?>>
+            <?php $options = $block->getGenderOptions(); ?>
+            <?php $value = $block->getGender(); ?>
+            <?php foreach ($options as $option): ?>
+                <option value="<?= $escaper->escapeHtmlAttr($option->getValue()) ?>" <?= ($option->getValue() == $value) ? ' selected="selected"' : '' ?>><?= $escaper->escapeHtml(__($option->getLabel())) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+</div>

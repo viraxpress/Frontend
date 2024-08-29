@@ -1,0 +1,45 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * @var \Magento\Search\Block\Term $block
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php if (count($block->getTerms()) > 0): ?>
+    <ul class="search-terms flex justify-start items-start flex-wrap mb-10 gap-2">
+        <?php foreach ($block->getTerms() as $_term): ?>
+            <li id="term-<?= /* @noEscape */ $_term->getId() ?>" class="item">
+                <a href="<?= $escaper->escapeUrl($block->getSearchUrl($_term)) ?>" class="text-primary hover:underline">
+                    <?= $escaper->escapeHtml($_term->getQueryText()) ?>
+                </a>
+            </li>
+            <?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
+                "font-size:" . ($_term->getRatio()*70+75) . "%;",
+                'li#term-' . $_term->getId()
+            ) ?>
+        <?php endforeach; ?>
+    </ul>
+<?php else: ?>
+    <div class="message notice">
+        <div><?= $escaper->escapeHtml(__('There are no search terms available.')) ?></div>
+    </div>
+<?php endif; ?>

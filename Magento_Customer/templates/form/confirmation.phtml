@@ -1,0 +1,68 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Framework\View\Element\Template $block */
+?>
+<form id="email-conformation-guest" class="form send confirmation">
+    <fieldset class="fieldset" data-hasrequired="<?= $escaper->escapeHtmlAttr(__('* Required Fields')) ?>">
+        <p class="field note"><?= $escaper->escapeHtml(__('Please enter your email below and we will send you the confirmation link.')) ?></p>
+        <div class="field email required">
+            <label for="email_address" class="label"><span><?= $escaper->escapeHtml(__('Email')) ?></span></label>
+            <div class="control">
+                <input type="email" name="email" id="email_address" class="input-text" value="<?= $escaper->escapeHtmlAttr($block->getEmail()) ?>" data-validate="{required:true, 'validate-email':true}" data-mage-init='{"mage/trim-input":{}}'>
+            </div>
+        </div>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <button type="button" onclick="emailConformationGuest()" class="action send primary"><span><?= $escaper->escapeHtml(__('Send confirmation link')) ?></span></button>
+        </div>
+        <div class="secondary">
+            <a href="<?= $escaper->escapeUrl($block->getLoginUrl()) ?>" class="action back"><span><?= $escaper->escapeHtml(__('Back to Sign In')) ?></span></a>
+        </div>
+    </div>
+</form>
+<script>
+    function emailConformationGuest() {
+        var url = "<?= $escaper->escapeUrl($block->getUrl('customer/account/confirmation')) ?>";
+        var form = document.getElementById("email-conformation-guest");
+        form.addEventListener("submit", function (event) { event.preventDefault(); });
+        const formData = new FormData(form);
+        formData.append('form_key', getFormKeyCookie());
+
+        fetch(url, {
+            method: "POST",
+            body: formData
+        }).then(response => {
+            // Handle the response as needed
+            if (response.ok) {
+                    if (response.redirected) {
+                      if (window.location.href != response.url && response.url != BASE_URL) {
+                        window.location.href = response.url;
+                    }
+                }
+            }
+        }).catch(error => {
+            // Handle errors
+            console.error(error);
+        });
+    }
+</script>

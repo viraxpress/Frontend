@@ -1,0 +1,88 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Catalog\Model\Product\Option;
+
+/**
+ * @var $block \Magento\Catalog\Block\Product\View\Options\Type\Select\Checkable
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+$option = $block->getOption();
+$require = $option->getIsRequire() ? ' required' : '';
+if ($option): ?>
+    <?php
+    $configValue = $block->getPreconfiguredValue($option);
+    $optionType = $option->getType();
+    $arraySign = $optionType === Option::OPTION_TYPE_CHECKBOX ? '[]' : '';
+    $count = 1; ?>
+<div class="options-list nested" id="options-<?= $escaper->escapeHtmlAttr($option->getId()) ?>-list">
+    <?php if ($optionType === Option::OPTION_TYPE_RADIO && !$option->getIsRequire()):?>
+    <div class="field choice admin__field admin__field-option flex gap-x-3 items-center">
+        <input type="radio" <?= $escaper->escapeHtmlAttr($require) ?>
+            id="options_<?= $escaper->escapeHtmlAttr($option->getId()) ?>"
+            class="radio admin__control-radio product-custom-option h-4 w-4 cursor-pointer border-gray-300 text-primary focus:ring-primary"
+            name="options[<?= $escaper->escapeHtmlAttr($option->getId()) ?>]"
+            data-selector="options[<?= $escaper->escapeHtmlAttr($option->getId()) ?>]"
+            value=""
+            hx-on:change="changeCustomizableOption(event)"
+            checked="checked" />
+        <label class="label admin__field-label" for="options_<?= $escaper->escapeHtmlAttr($option->getId()) ?>">
+            <span>
+                <?= $escaper->escapeHtml(__('None'))  ?>
+            </span>
+        </label>
+    </div>
+<?php endif; ?>
+    <?php foreach ($option->getValues() as $value): ?>
+        <?php
+        $checked = '';
+        $count++;
+        if ($arraySign) {
+            $checked = is_array($configValue) && in_array($value->getOptionTypeId(), $configValue) ? 'checked' : '';
+        } else {
+            $checked = $configValue == $value->getOptionTypeId() ? 'checked' : '';
+        }
+        $dataSelector = 'options[' . $option->getId() . ']';
+        if ($arraySign) {
+            $dataSelector .= '[' . $value->getOptionTypeId() . ']';
+        }
+        ?>
+        <div class="field choice admin__field admin__field-option flex gap-x-3 items-center mb-3">
+            <input type="<?= $escaper->escapeHtmlAttr($optionType) ?>" <?= $escaper->escapeHtmlAttr($require) ?>
+                class="<?= $optionType === Option::OPTION_TYPE_RADIO
+                    ? 'radio admin__control-radio'
+                    : 'checkbox admin__control-checkbox rounded' ?> <?= $option->getIsRequire()
+                    ? 'required': '' ?> product-custom-option simple-radio-checkbox <?= $block->getSkipJsReloadPrice() ? '' : 'opConfig.reloadPrice()' ?> h-4 w-4 cursor-pointer border-gray-300 text-primary focus:ring-primary"
+                name="options[<?= $escaper->escapeHtmlAttr($option->getId()) ?>]<?= /* @noEscape */ $arraySign ?>"
+                id="options_<?= $escaper->escapeHtmlAttr($option->getId() . '_' . $count) ?>"
+                hx-on:change="changeCustomizableOption(event)"
+                value="<?= $escaper->escapeHtmlAttr($value->getOptionTypeId()) ?>"
+                <?= $escaper->escapeHtml($checked) ?>
+                data-selector="<?= $escaper->escapeHtmlAttr($dataSelector) ?>"
+                price="<?= $escaper->escapeHtmlAttr($block->getCurrencyByStore($value)) ?>" />
+            <label class="label admin__field-label" for="options_<?= $escaper->escapeHtmlAttr($option->getId() . '_' . $count) ?>">
+                <span> <?= $escaper->escapeHtml($value->getTitle()) ?> </span>
+                <?= /* @noEscape */ $block->formatPrice($value) ?>
+            </label>
+        </div>
+    <?php endforeach; ?>
+    </div>
+<?php endif; ?>

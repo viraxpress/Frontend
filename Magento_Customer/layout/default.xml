@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="top.links">
+            <block class="Magento\Customer\Block\Account\Link" name="my-account-link" template="Magento_Customer::account/link/my-account.phtml" />
+            <block class="Magento\Customer\Block\Account\RegisterLink" name="register-link" template="Magento_Customer::account/link/create-account.phtml" />
+            <block class="Magento\Customer\Block\Account\AuthorizationLink" name="authorization-link" template="Magento_Customer::account/link/authorization.phtml"/>
+        </referenceBlock>
+        <referenceContainer name="content">
+            <referenceBlock name="authentication-popup" remove="true" />
+            <referenceBlock name="customer.section.config" remove="true" />
+            <referenceBlock name="customer.customer.data" remove="true" />
+            <referenceBlock name="customer.data.invalidation.rules" remove="true" />
+        </referenceContainer>
+    </body>
+</page>

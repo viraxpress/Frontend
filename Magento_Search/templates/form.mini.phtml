@@ -1,0 +1,79 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+?>
+<?php
+/** @var $block \Magento\Framework\View\Element\Template */
+/** @var $escaper \Magento\Framework\Escaper */
+/** @var $configProvider \Magento\Search\ViewModel\ConfigProvider */
+$configProvider = $block->getData('configProvider');
+/** @var $versionManager \Magento\Search\ViewModel\AdditionalSearchFormData */
+$additionalSearchFormData = $block->getData('additionalSearchFormData');
+/** @var $helper \Magento\Search\Helper\Data */
+$helper = $configProvider->getSearchHelperData();
+$allowedSuggestion = $configProvider->isSuggestionsAllowed();
+$quickSearchUrl = $allowedSuggestion ? $escaper->escapeUrl($helper->getSuggestUrl()) : '';
+?>
+
+<div class="block block-search ml-auto flex order-3" x-data="quickSearch(<?= (bool) $configProvider->isSuggestionsAllowed() ? 1 : 0; ?>, <?= (int) $helper->getMinQueryLength() ?>)" x-on:keydown.escape.prevent.stop="close($refs.searchPanel)" x-id="['slider-over-button']">
+    <button type="button" role="button" title="<?= $escaper->escapeHtmlAttr('Search') ?>" class="p-2 text-gray-700 hover:text-black" @click="toggleSlideOver()" :aria-expanded="isSearchOpen.toString()" aria-expanded="false" aria-controls="slide-over-button-1">
+        <span class="sr-only"><?= $escaper->escapeHtml(__('Search')) ?></span>
+        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+        </svg>
+    </button>
+    <div class="relative z-50" x-cloak role="dialog" aria-modal="true" x-show="isSearchOpen" :id="$id('slider-over-button')" id="slide-over-button-1">
+        <div class="fixed inset-0 bg-black/50 bg-opacity-25 transition-opacity " x-cloak x-show="isSearchOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto p-4 sm:p-6 md:p-20" x-cloak x-show="isSearchOpen">
+            <div class="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all" x-cloak x-show="isSearchOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" @click.outside="close($event)">
+                <div class="relative">
+                    <svg class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"></path>
+                    </svg>
+                    <form id="quicksearch-form" class="flex justify-center items-center gap-x-5" x-ref="form" @submit.prevent="searchSubmit()" action="<?= $escaper->escapeUrl($helper->getResultUrl()) ?>" method="get" role="search">
+                        <input id="search" x-ref="searchInput" type="search" autocomplete="off" name="<?= $escaper->escapeHtmlAttr($helper->getQueryParamName()) ?>" maxlength="<?= $escaper->escapeHtmlAttr($helper->getMaxQueryLength()) ?>" x-model="searchQuery" x-on:focus.once="searchSuggestionValue" @input.debounce.300="searchSuggestionValue" value="<?= /* @noEscape */ $helper->getEscapedQueryText() ?>" class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0" placeholder="<?= $escaper->escapeHtmlAttr(__('Search Products...')) ?>" x-on:keydown.arrow-down.prevent="navigateSuggestions('down')" x-on:keydown.arrow-up.prevent="navigateSuggestions('up')" />
+                    </form>
+                    <template x-if="searchMinimumLength">
+                        <div id="error-message" class="pl-5  mt-1 text-error" x-show="showErrorMessage">
+                            <?= $escaper->escapeHtmlAttr(__('Minimum Search query length is ')) ?><span x-text="searchMinimumLength"></span>.
+                        </div>
+                    </template>
+                </div>
+                <template x-if="allowedSuggestion">
+                    <template x-if="searchSuggestionList.length > 0">
+                        <div>
+                            <ul role="list" class="divide-y divide-gray-100 p-3" id="catalog-search-result">
+                                <li>
+                                    <template x-for="(searchSuggest, index) in searchSuggestionList">
+                                        <a href="#" :id="'suggestion-' + index" class="flex justify-between p-2 bg-container-lighter even:bg-container mb-1 cursor-pointer border border-container hover:bg-container-darker" x-on:click="searchSubmit(searchSuggest.title)" x-on:keydown.enter="searchSubmit(searchSuggest.title)" :class="{ 'bg-gray-200': selectedIndex === index }">
+                                            <span x-text="searchSuggest.title"></span>
+                                            <span x-text="searchSuggest.num_results"></span>
+                                        </a>
+                                    </template>
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>

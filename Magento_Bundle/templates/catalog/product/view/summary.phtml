@@ -1,0 +1,70 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable PHPCompatibility.Miscellaneous.RemovedAlternativePHPTags.MaybeASPOpenTagFound
+$_product = $block->getProduct();
+?>
+<?php if ($_product->isSaleable() && $block->hasOptions()): ?>
+    <div id="bundleSummary" class="block-bundle-summary">
+        <h3 class="text-lg font-semibold capitalize text-black mb-10"><?= $escaper->escapeHtml(__('Your Customization')) ?></h3>
+        <div class="content">
+            <div class="bundle-info">
+                <div class="border border-gray-100 inline-block shadow-sm">
+                    <?= $block->getImage($_product, 'bundled_product_customization_page')->toHtml() ?>
+                </div>
+                <div class="product-details flex justify-between items-start gap-x-2 mt-2">
+                    <h5 class="product name font-medium"><?= $escaper->escapeHtml($_product->getName()) ?></h5>
+                    <?php if ($_product->getIsSalable()): ?>
+                        <div title="<?= $escaper->escapeHtmlAttr(__('Available')) ?>" class="stock available in-stock shrink-0">
+                            <?= $escaper->escapeHtml(__('In stock')) ?>
+                        </div>
+                    <?php else: ?>
+                        <div title="<?= $escaper->escapeHtmlAttr(__('Not Available')) ?>" class="stock unavailable out-of-stock shrink-0">
+                            <?= $escaper->escapeHtml(__('Out of stock')) ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="bundle-summary mt-5 pt-5 border-t border-gray-200">
+                <p class="subtitle font-medium text-black"></p>
+                <h3 class="text-lg font-semibold capitalize text-black mb-5"><?= $escaper->escapeHtml(__('Summary')) ?></h3>
+                <div id="bundle-summary">
+                    <template x-for="(optionGroup, index) in summaryDetails" :key="index">
+                        <template x-if="optionGroup">
+                            <ul class="bundle items space-y-4 mb-5">
+                                <li class="block">
+                                    <span class="text-base font-medium" x-text="optionGroup.title"></span>
+                                    <template x-for="(option, optionIndex) in optionGroup.options" :key="optionIndex">
+                                        <div>
+                                            <span class="inline-block font-medium" x-text="option.value.qty"></span>
+                                            x <span x-text="option.value.name"></span>
+                                        </div>
+                                    </template>
+                                </li>
+                            </ul>
+                        </template>
+                    </template>
+                    <?= $block->getChildHtml('', true) ?>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

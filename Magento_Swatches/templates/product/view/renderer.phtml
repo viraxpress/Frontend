@@ -1,0 +1,308 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php
+
+use Magento\Framework\Escaper;
+
+/** @var Escaper $escaper */
+/** @var $block \Magento\Swatches\Block\Product\Renderer\Configurable */
+/** @var \Magento\Swatches\ViewModel\Product\Renderer\Configurable $configurableViewModel */
+$configurableViewModel = $block->getConfigurableViewModel();
+
+$product = $block->getProduct();
+$productId = $product->getId();
+$attributes = $block->decorateArray($block->getAllowAttributes());
+$swatchBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\Swatch::class);
+?>
+<?php
+$wishlistFormId = base64_encode($productId . "-product_view_wishlist_form");
+$wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
+?>
+<?php if ($product->isSaleable()): ?>
+    <div x-data="initSwatch" class="swatch-options flex flex-col justify-start items-start gap-5">
+        <form class="mt-10">
+            <?php $jsonConfig = json_decode($block->getJsonConfig(), true); ?>
+            <?php $jsonSwatchConfig = json_decode($block->getJsonSwatchConfig(), true); ?>
+            <?php foreach ($attributes as $attribute): ?>
+                <?php $attributeId = $attribute->getAttributeId(); ?>
+                <?php $productAttribute = $attribute->getProductAttribute(); ?>
+                <?php if ($swatchBlock->isSwatchAttr($productAttribute->getAttributeCode())): ?>
+                    <?php $options = $productAttribute->getOptions(); ?>
+                    <div class="block w-full">
+                        <p class="text-base font-semibold text-gray-900">
+                            <?= $escaper->escapeHtml($productAttribute->getStoreLabel()) ?>
+                        </p>
+                        <fieldset class="mt-2" id="group-<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>-<?= (int) $productId ?>">
+                            <legend class="sr-only"><?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?></legend>
+                            <div class="gap-3 configurable-swatches swatch-<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?> flex items-center flex-wrap " role="radiogroup" aria-label="<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>">
+                                <?php foreach ($jsonConfig['attributes'][(int) $attributeId]['options'] as $item): ?>
+                                    <label tabindex="0"
+                                    title="<?= $escaper->escapeHtmlAttr($jsonSwatchConfig[(int) $attributeId][$item['id']]['label']) ?>"
+                                    for="attribute-option-<?= (int) $productId ?>-<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>-<?= $escaper->escapeHtmlAttr($item['id']) ?>"
+                                    class="group relative flex items-center justify-center text-sm font-medium uppercase rounded hover:bg-gray-50 focus:outline-none cursor-pointer text-gray-900 focus:ring-2 focus:ring-offset-2 focus:ring-primary <?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'color') ? 'w-7 h-7 ring-offset-2' : 'min-w-[50px]  border border-gray-300 col-span-2 h-7' ?> <?= ($jsonSwatchConfig[(int) $attributeId][$item['id']]['value'] == '#ffffff') ? 'border-2 border-gray-200' : '' ?>"
+                                    x-bind:class="(attrArrays !== null && attrArrays['<?= $escaper->escapeHtmlAttr($attributeId) ?>'] !== undefined) ? ((attrArrays['<?= $escaper->escapeHtmlAttr($attributeId) ?>'] == <?= $escaper->escapeHtmlAttr($item['id']) ?>) ? 'ring-2 ring-offset-2 ring-primary' : 'ring-0 ring-transparent') : ''"
+                                    style="<?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'color') ? 'background-color:' . $escaper->escapeHtmlAttr($jsonSwatchConfig[(int) $attributeId][$item['id']]['value']) : '' ?> <?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'image') ? "background: #ffffff url('" . $escaper->escapeHtmlAttr($jsonSwatchConfig[(int) $attributeId][$item['id']]['value']) . "') no-repeat center" : '' ?>">
+                                        <input type="radio" tabindex="-1" name="super_attribute[<?= $escaper->escapeHtmlAttr((int) $attributeId) ?>]" attr_id="<?= $escaper->escapeHtmlAttr((int) $attributeId) ?>"  aria-label="<?= $escaper->escapeHtmlAttr($jsonSwatchConfig[(int) $attributeId][$item['id']]['label']) ?>" aria-describedby="group-<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>-<?= (int) $productId ?>" x-on:change="changeRadio" attr_code="<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>" class="sr-only spr-attr spr-attribute-<?= $escaper->escapeHtmlAttr((int) $attributeId) ?>" aria-labelledby="<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>-choice-2-label"
+                                        x-bind:checked="(attrArrays !== null && attrArrays['<?= $escaper->escapeHtmlAttr($attributeId) ?>'] !== undefined && attrArrays['<?= $escaper->escapeHtmlAttr($attributeId) ?>'] == <?= $escaper->escapeHtmlAttr($item['id']) ?>) ? true : null"
+                                        value="<?= $escaper->escapeHtmlAttr($item['id']) ?>" id="attribute-option-<?= (int) $productId ?>-<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>-<?= $escaper->escapeHtmlAttr($item['id']) ?>">
+
+                                        <span tabindex="-1" id="<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>-choice-2-label"><?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'color') ? '' : $escaper->escapeHtmlAttr($item['label']) ?></span>
+                                        <span tabindex="-1" aria-hidden="true" class="rounded-md <?= ($jsonConfig['attributes'][(int) $attributeId]['code'] == 'color') ? 'pointer-events-none absolute -inset-px' : '' ?>"></span>
+                                    </label>
+                                <?php endforeach; ?>
+                            </div>
+                        </fieldset>
+                    </div>
+                <?php else: ?>
+                    <div class="block">
+                        <h3 class="text-base font-semibold text-gray-900">
+                            <?= $escaper->escapeHtml($productAttribute->getStoreLabel()) ?>
+                        </h3>
+                        <fieldset class="mt-2">
+                            <legend class="sr-only"></legend>
+                            <div class="flex items-center flex-wrap gap-x-3">
+                                <select id="attribute<?= $escaper->escapeHtmlAttr($attribute->getAttributeId()) ?>" name="super_attribute[<?= $escaper->escapeHtmlAttr($attribute->getAttributeId()) ?>]" class="form-select super-attribute-select" required="required" x-on:change="changeRadio" attr_id="<?= (int) $attributeId ?>" attr_code="<?= $escaper->escapeHtmlAttr($jsonConfig['attributes'][(int) $attributeId]['code']) ?>">
+                                    <option value=""><?= $escaper->escapeHtml(__('Choose an Option...')) ?></option>
+                                    <?php foreach ($jsonConfig['attributes'][(int) $attributeId]['options'] as $item): ?>
+                                        <option value="<?= $escaper->escapeHtmlAttr($item['id']) ?>"
+                                        x-bind:selected="(attrArrays !== null && attrArrays['<?= $escaper->escapeHtmlAttr($attributeId) ?>'] == <?= $escaper->escapeHtmlAttr($item['id']) ?>) ? true : null" >
+                                            <?= $escaper->escapeHtmlAttr($item['label']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </fieldset>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var preSelectedSwatches = document.getElementById("product_addtocart_form");
+            if (preSelectedSwatches) {
+                /* Get all input elements of type 'radio' within the form */
+                var radioSwatches = preSelectedSwatches.querySelectorAll('input[type="radio"]:checked');
+                /* Loop through the checked radio inputs */
+                radioSwatches.forEach(function(radio) {
+                    var name = radio.name;
+                    var value = radio.value;
+                    let wishlistForm = document.getElementById('<?= $escaper->escapeHtmlAttr($wishlistFormId) ?>');
+                    if (wishlistForm && value) {
+                        let wishlistQtyElement = wishlistForm.querySelector("input[name='" + name + "']");
+                        if (wishlistQtyElement) {
+                            wishlistQtyElement.value = value;
+                        } else {
+                            let newWishlistQtyElement = document.createElement("input");
+                            newWishlistQtyElement.type = "hidden";
+                            newWishlistQtyElement.name = name;
+                            newWishlistQtyElement.value = value;
+                            wishlistForm.appendChild(newWishlistQtyElement);
+                        }
+                    }
+                });
+            }
+        });
+
+        function initSwatch() {
+            return {
+                productOptions: '',
+                selectedSwatch: [],
+                selectedImages: [],
+                jsonConfig: Object.assign(
+                    <?= /* @noEscape */ $block->getJsonConfig() ?>,
+                    <?= /* @noEscape */ $block->getJsonSwatchConfig() ?>
+                ),
+                attrArrays: [],
+                init() {
+                    const currentUrl = window.location.href;
+                    const urlObject = new URL(currentUrl);
+                    const pathname = urlObject.pathname;
+                    const pathParts = pathname.split('/').filter(part => part !== '');
+                    const basename = pathParts.pop();
+                    let decodedString = 'null';
+                    const base64String = basename.replace(/[-_.]/g, m => ({ '-': '+', '_': '/', '.': '=' }[m]));
+
+                    if (!basename.endsWith('.html') && currentUrl.includes('/attr/')) {
+                        decodedString = atob(base64String);
+                    }
+
+                    if (decodedString !== "null" && pathParts.includes('attr')) {
+                        this.attrArrays = JSON.parse(decodedString);
+                        const parsedData = JSON.parse(decodedString);
+                        this.selectedSwatch = parsedData;
+                        this.productOptions = this.updateProductOptions(parsedData);
+                        this.updatePriceAndTierInfo();
+                        this.selectedImages = this.jsonConfig.images[this.productOptions];
+                        this.$dispatch('set-gallery', { images: this.selectedImages });
+                    }
+
+                    this.$watch('selectedImages', value => this.$dispatch('set-gallery', { images: value }));
+                },
+                changeRadio(e) {
+                    const attrId = e.target.attributes.attr_id.value;
+                    const attrValue = e.target.value;
+                    this.updateRadioClasses(attrId, attrValue);
+                    this.selectedSwatch[attrId] = attrValue;
+                    this.productOptions = this.updateProductOptions(this.selectedSwatch);
+                    this.updatePriceAndTierInfo();
+
+                    const attrOptionVal = this.jsonConfig.attributes[attrId].options.find(option => option.id === attrValue);
+                    this.selectedImages = this.jsonConfig.images[this.productOptions];
+                    this.fetchAndUpdateOptions(attrId, attrOptionVal.id);
+
+                    this.updateWishlist(attrId, attrValue);
+                },
+                updateRadioClasses(attrId, attrValue) {
+                    const radioButtons = document.querySelectorAll(`.spr-attribute-${attrId}`);
+                    radioButtons.forEach(radioButton => {
+                        if (radioButton.checked) {
+                            radioButton.parentNode.classList.add('ring-2', 'ring-offset-2', 'ring-primary');
+                            radioButton.parentNode.classList.remove('ring-0', 'ring-transparent');
+                        } else {
+                            radioButton.parentNode.classList.remove('ring-2', 'ring-offset2', 'ring-primary');
+                            radioButton.parentNode.classList.add('ring-0', 'ring-transparent');
+                        }
+                    });
+                },
+                updateProductOptions(selectedSwatch) {
+                    let preSelectIds = Object.keys(this.jsonConfig.index);
+                    Object.keys(this.jsonConfig.attributes).forEach(attribute => {
+                        const productsAttr = selectedSwatch[attribute]
+                            ? preSelectIds.filter(productIndex => this.jsonConfig.index[productIndex][attribute] === selectedSwatch[attribute])
+                            : [];
+                        preSelectIds = productsAttr.length ? productsAttr : preSelectIds;
+                    });
+                    return preSelectIds[0];
+                },
+                updatePriceAndTierInfo() {
+                    const priceValue = this.productOptions ? this.jsonConfig.optionPrices[this.productOptions] : this.jsonConfig.prices;
+                    const finalPrice = priceValue.finalPrice.amount;
+                    const baseOldPrice = priceValue.baseOldPrice.amount;
+                    const tierPrices = priceValue.tierPrices;
+                    const storeLocale = '<?= /* @noEscape */ $swatchBlock->getStoreLocale() ?>'.replace("_", "-");
+                    const currentCurrencyCode = '<?= /* @noEscape */ $swatchBlock->getCurrentCurrencyCode() ?>';
+
+                    const slyoldprice = document.querySelector('.sly-old-price');
+                    if (slyoldprice) {
+                        slyoldprice.classList.toggle('invisible', finalPrice >= baseOldPrice);
+                    }
+
+                    const productTier = document.getElementById('config-product-tier');
+                    if (productTier) {
+                        if (tierPrices.length) {
+                            productTier.classList.remove('invisible');
+                            productTier.innerHTML = this.createTierPriceList(tierPrices, storeLocale, currentCurrencyCode);
+                        } else {
+                            productTier.classList.add('invisible');
+                        }
+                    }
+
+                    const pr = document.getElementById('product-price-<?= /* @noEscape */ $productId ?>');
+                    const configurableSwatches = document.querySelectorAll('.configurable-swatches');
+                    const priceLabel = document.querySelector('.price-label');
+                    if (configurableSwatches.length === Object.keys(this.selectedSwatch).filter(Boolean).length && priceLabel) {
+                        priceLabel.classList.add('invisible');
+                    }
+
+                    const spr = pr.querySelector("span");
+                    spr.innerHTML = finalPrice.toLocaleString(storeLocale, {
+                        style: 'currency',
+                        currency: currentCurrencyCode
+                    });
+                },
+                createTierPriceList(tierPrices, storeLocale, currentCurrencyCode) {
+                    const ul = document.createElement('ul');
+                    ul.classList.add("prices-tier", "items");
+
+                    tierPrices.forEach(tier => {
+                        const li = document.createElement('li');
+                        li.classList.add("item");
+                        const price = tier.price.toLocaleString(storeLocale, {
+                            style: 'currency',
+                            currency: currentCurrencyCode
+                        });
+                        li.textContent = `Buy ${tier.qty} for ${price} each and save ${tier.percentage}%`;
+                        ul.appendChild(li);
+                    });
+
+                    return ul.outerHTML;
+                },
+                fetchAndUpdateOptions(attrId, optionId) {
+                    const BASE_URL = '<?= /* @noEscape */ $block->getBaseUrl() ?>';
+                    let childProductIds = Object.keys(this.jsonConfig.index);
+                    fetch(`${BASE_URL}viraxpressswatches/product/options?id=<?= /* @noEscape */ $productId ?>&child=${childProductIds}&code=${attrId}&opid=${optionId}`)
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error('Failed to load options');
+                            }
+                        })
+                        .then(data => {
+                            Object.keys(data).forEach(x => {
+                                const disableElem = value => {
+                                    const element = document.querySelector(`[value="${value}"]`);
+                                    if (element) {
+                                        element.setAttribute('disabled', '');
+                                        element.parentNode.classList.add('opacity-25', 'cursor-not-allowed');
+                                    }
+                                };
+                                if (attrId === x) {
+                                    disableElem(data[x]);
+                                } else if (attrId === data[x]) {
+                                    disableElem(x);
+                                } else if (document.querySelector('[disabled]')) {
+                                    const element = document.querySelector('[disabled]');
+                                    element.parentNode.classList.remove('opacity-25', 'cursor-not-allowed');
+                                    element.disabled = false;
+                                }
+                                document.querySelectorAll('.spr-attr').forEach(input => {
+                                    if (input.checked && (input.value === x || input.value === data[x])) {
+                                        disableElem(data[x]);
+                                    }
+                                });
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                },
+                updateWishlist(attrId, attrValue) {
+                    const wishlistFormId = '<?= /* @noEscape */ preg_replace("/[^a-zA-Z0-9]/", "", base64_encode($productId . "-product_view_wishlist_form")) ?>';
+                    const form = document.getElementById("<?= $escaper->escapeHtmlAttr($wishlistFormId) ?>");
+                    let inputElement = form.querySelector(`input[name='super_attribute[${attrId}]']`);
+
+                    if (inputElement) {
+                        inputElement.value = attrValue;
+                    } else {
+                        inputElement = document.createElement("input");
+                        inputElement.type = "hidden";
+                        inputElement.name = `super_attribute[${attrId}]`;
+                        inputElement.value = attrValue;
+                        form.appendChild(inputElement);
+                    }
+                }
+            };
+        }
+    </script>
+<?php endif; ?>

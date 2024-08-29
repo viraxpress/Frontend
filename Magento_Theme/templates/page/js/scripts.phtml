@@ -1,0 +1,112 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\Framework\Escaper;
+
+/**
+ * @var SecureHtmlRenderer $secureRenderer
+ * @var \Magento\Framework\View\Element\BlockInterface $block
+ * @var Escaper $escaper
+ */
+
+// Ensure these objects are properly initialized
+$baseUrl = $block->getBaseUrl();
+$customPath = 'vx/ViraXpress/frontend/web/';
+$mediaUrl = $baseUrl . $customPath;
+$script = 'js/alpine.min.js';
+
+$attributes = [
+    'type' => 'text/javascript',
+    'src' => $mediaUrl . $script
+];
+if ($script === 'js/alpine.min.js') {
+    $attributes['defer'] = 'defer';
+} ?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', $attributes); ?>
+
+<?php
+$customPathJs = '';
+$coreAttributes = [
+    'type' => 'text/javascript',
+    'src' => $block->getViewFileUrl('core-js/core.min.js')
+];
+
+$scriptString = '
+    document.addEventListener("DOMContentLoaded", () => {
+        const columns = document.querySelectorAll(".pagebuilder-column");
+        const productCard = document.querySelectorAll(".product-item");        
+        const cutOutReveal = document.querySelectorAll(".cutout-reveal-content");
+
+
+        // Callback function for Intersection Observer
+        const observerCallback = (entries, observer) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                      entry.target.classList.add("slide-up");
+                      entry.target.classList.add("activate");
+                    }, index * 350); // Incremental delay of 250ms per element
+                    
+                    // Optionally, unobserve the element after animation
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        // Cutout callback function for Intersection Observer
+        const cutoutObserverCallback = (entries, observer) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("cutout-activate");                
+                    // Optionally, unobserve the element after animation
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+
+
+        // Options for the observer
+        const observerOptions = {
+            threshold: 0.05
+        };
+
+        // Create an Intersection Observer
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Create an Cutout Intersection Observer
+        const cutoutObserver = new IntersectionObserver(cutoutObserverCallback, observerOptions);
+
+        // Observe each element
+        columns.forEach(column => observer.observe(column));
+        productCard.forEach(product => observer.observe(product));
+
+        // Observe each cutout element
+        cutOutReveal.forEach(cutout => cutoutObserver.observe(cutout));
+
+    });
+';
+?>
+
+<?= /* @noEscape */ $secureRenderer->renderTag('script', $coreAttributes); ?>
+
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false); ?>

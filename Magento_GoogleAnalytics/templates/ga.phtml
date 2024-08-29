@@ -1,0 +1,104 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+<?php /** @var $block \Magento\GoogleAnalytics\Block\Ga */ ?>
+<?php $accountId = $block->getConfig(\Magento\GoogleAnalytics\Helper\Data::XML_PATH_ACCOUNT) ?>
+<?php /* BEGIN CORE GOOGLE ANALYTICS CODE */ ?>
+<?php
+$escapedCookieName = preg_quote(\Magento\Cookie\Helper\Cookie::IS_USER_ALLOWED_SAVE_COOKIE, '/');
+?>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var config = {
+            isCookieRestrictionModeEnabled: <?= (int)$block->isCookieRestrictionModeEnabled() ?>,
+            currentWebsite: <?= (int)$block->getCurrentWebsiteId() ?>,
+            cookieName: '<?= /* @noEscape */ \Magento\Cookie\Helper\Cookie::IS_USER_ALLOWED_SAVE_COOKIE ?>',
+            ordersTrackingData: <?= /* @noEscape */ json_encode($block->getOrdersTrackingData()) ?>,
+            pageTrackingData: <?= /* @noEscape */ json_encode($block->getPageTrackingData($accountId)) ?>
+        };
+
+        var allowServices = false,
+            allowedCookies,
+            allowedWebsites;
+
+        if (config.isCookieRestrictionModeEnabled) {
+            allowedCookies = document.cookie.replace(/(?:(?:^|.*;\s*)<?= $escaper->escapeHtmlAttr($escapedCookieName) ?>\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+            if (allowedCookies !== null) {
+                allowedWebsites = JSON.parse(allowedCookies);
+
+                if (allowedWebsites[config.currentWebsite] === 1) {
+                    allowServices = true;
+                }
+            }
+        } else {
+            allowServices = true;
+        }
+
+        if (allowServices) {
+            (function (i, s, o, g, r, a, m) {
+                i.GoogleAnalyticsObject = r;
+                i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+            // Process page info
+            ga('create', config.pageTrackingData.accountId, 'auto');
+
+            if (config.pageTrackingData.isAnonymizedIpActive) {
+                ga('set', 'anonymizeIp', true);
+            }
+
+            // Process orders data
+            if (config.ordersTrackingData.hasOwnProperty('currency')) {
+                ga('require', 'ec', 'ec.js');
+
+                ga('set', 'currencyCode', config.ordersTrackingData.currency);
+
+                // Collect product data for GA
+                if (config.ordersTrackingData.products) {
+                    config.ordersTrackingData.products.forEach(function (value) {
+                        ga('ec:addProduct', value);
+                    });
+                }
+
+                // Collect orders data for GA
+                if (config.ordersTrackingData.orders) {
+                    config.ordersTrackingData.orders.forEach(function (value) {
+                        ga('ec:setAction', 'purchase', value);
+                    });
+                }
+
+                ga('send', 'pageview');
+            } else {
+                // Process Data if not orders
+                ga('send', 'pageview' + config.pageTrackingData.optPageUrl);
+            }
+        }
+    });
+</script>
+<?php /* END CORE GOOGLE ANALYTICS CODE */ ?>

@@ -1,0 +1,172 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/**
+ * Last ordered items sidebar
+ *
+ * @var $block \Magento\Sales\Block\Reorder\Sidebar
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<div class="block block-reorder" x-data="lastOrderedItems()">
+    <template x-if="lastOrderItemsLength != 0">
+        <div class="mt-8">
+            <div class="block-title mb-5 flex justify-between items-center gap-x-2"> 
+                <div id="block-reorder-heading" class="text-base xl:text-lg font-semibold flex justify-start items-center gap-x-2" role="heading" aria-level="2">
+                    <?= $escaper->escapeHtml(__('Recently Ordered')) ?>
+                </div>
+                <div class="secondary">
+                    <a class="action view text-primary text-sm hover:underline"
+                        href="<?= $escaper->escapeUrl($block->getUrl('customer/account')) ?>#my-orders-table">
+                        <span class="font-medium"><?= $escaper->escapeHtml(__('View All')) ?></span>
+                    </a>
+                </div>
+            </div>
+            <div class="block-content"
+                 aria-labelledby="block-reorder-heading">
+                <form class="form reorder" id="reorder-validate-detail">
+                    <strong class="subtitle sr-only"><?= $escaper->escapeHtml(__('Last Ordered Items')) ?></strong>
+                    <ol id="cart-sidebar-reorder" class="product-items product-items-names space-y-3">
+                        <template x-for="items in lastOrderItems" :key="items.id">
+                            <li class="product-item flex gap-x-3 items-start leading-[18px]">
+                                <div class="field item choice">
+                                    <div class="control">
+                                        <input type="checkbox" 
+                                               name="order_items[]" 
+                                               class="checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary" 
+                                               :value="items.id" 
+                                               :disabled="!items.is_saleable"
+                                               :title="items.is_saleable ? '<?= $escaper->escapeHtml(__('Add to Cart')) ?>' : '<?= $escaper->escapeHtml(__('Product is not salable.')) ?>'"  />
+                                    </div>
+                                </div>
+                                <label class="label">
+                                    <a :href="items.url" class="product-item-link text-sm leading-6 font-medium hover:underline break-words"  x-text="items.name"></a>
+                                </label> 
+                            </li>
+                        </template>
+                    </ol>
+                    <div id="cart-sidebar-reorder-advice-container"></div>
+                    <div class="actions-toolbar mt-5">
+                        <div class="primary flex justify-end">
+                            <button type="button" x-on:click="addCheckedItemsToCart()" title="<?= $escaper->escapeHtml(__('Add to Cart')) ?>"
+                                    class="action tocart primary primary-btn">
+                                <span>
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
+                                    </svg>
+                                </span>
+                                <span><?= $escaper->escapeHtml(__('Add to Cart')) ?></span>
+                            </button>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+        </div>
+    </template>
+</div>
+<script>
+    function lastOrderedItems() {
+        return {
+            lastOrderItems: [],
+            lastOrderItemsLength: 0,
+            customerDetails: [],
+            customerDetailsLastOrderItems: [],
+
+            init() {
+                this.loadLastOrderedItems();
+                this.setupCustomerDetailsWatcher();
+            },
+
+            async loadLastOrderedItems() {
+                const items = customerData.get('last-ordered-items').items;
+                if (items) {
+                    this.lastOrderItems = items;
+                    this.lastOrderItemsLength = items.length;
+                }
+            },
+
+            setupCustomerDetailsWatcher() {
+                this.$watch('customerDetails', (value) => this.$dispatch('set-cart', value));
+            },
+
+            handleSubmit(event) {
+                event.preventDefault();
+                this.addCheckedItemsToCart();
+            },
+
+            gatherCheckedItems() {
+                this.customerDetailsLastOrderItems = this.lastOrderItems.map(item => item['id']);
+            },
+
+            async fetchData(url, options) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error(`Error: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    throw error;
+                }
+            },
+
+            async addCheckedItemsToCart() {
+                this.gatherCheckedItems();
+                const form = document.getElementById('reorder-validate-detail');
+                const formData = new FormData(form);
+                formData.append('form_key', getFormKeyCookie());
+
+                try {
+                    const response = await this.fetchData(BASE_URL + "checkout/cart/addgroup", {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'include'
+                    });
+
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else {
+                        await this.loadCustomerDetails();
+                    }
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                }
+            },
+
+            async loadCustomerDetails() {
+                try {
+                    const response = await this.fetchData(BASE_URL + 'customer/section/load');
+                    const data = await response.json();
+                    this.customerDetails = data.cart;
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                }
+            },
+
+            attachFormSubmitListener() {
+                const form = document.getElementById("reorder-validate-detail");
+                form.addEventListener('submit', (event) => this.handleSubmit(event));
+            }
+        }
+    }
+</script>

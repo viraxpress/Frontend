@@ -1,0 +1,442 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+?>
+<?php /** @var $block Magento\Bundle\Block\Catalog\Product\View\Type\Bundle */ ?>
+<?php
+$product = $block->getProduct();
+$helper = $this->helper(Magento\Catalog\Helper\Output::class);
+$stripSelection = $product->getConfigureMode() ? true : false;
+$options = $block->decorateArray($block->getOptions($stripSelection));
+$customBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\Swatch::class);
+$wishlistFormId = base64_encode($product->getId() . "-product_view_wishlist_form");
+$wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
+?>
+<?php if ($product->isSaleable()): ?>
+    <?php if (count($options)): ?>
+        <fieldset class="fieldset fieldset-bundle-options">
+            <legend id="customizeTitle" class="legend title flex justify-start items-center gap-5 text-lg font-semibold capitalize text-black mb-10">
+                <?= $block->getChildHtml('product_info_bundle_options_top') ?>
+                <span><?= $escaper->escapeHtml(__('Customize %1', $helper->productAttribute($product, $product->getName(), 'name'))) ?></span>
+            </legend>
+            <div class="space-y-8">
+                <?php foreach ($options as $option): ?>
+                    <?php
+                    if (!$option->getSelections()) {
+                        continue;
+                    } else {
+                        echo $block->getOptionHtml($option);
+                    }
+                    ?>
+                <?php endforeach; ?>
+            </div>
+        </fieldset>
+    <?php else: ?>
+        <p class="empty">
+            <?= $escaper->escapeHtml(__('No options of this product are available.')) ?>
+        </p>
+    <?php endif; ?>
+<?php endif; ?>
+<script>
+    function initBundleOption(){
+        var bundleProductPriceElement = document.getElementById('product-price-<?= /* @noEscape */ $product->getId() ?>');
+        var bundleProductPriceSpan =  bundleProductPriceElement.querySelector("span");
+        return {
+            jsonBundleConfig: <?= /* @noEscape */ $block->getJsonConfig() ?>,
+            summaryDetails: [],
+            storeLocale: '<?= /* @noEscape */ $customBlock->getStoreLocale() ?>',
+            currentCurrencyCode: '<?= /* @noEscape */ $customBlock->getCurrentCurrencyCode() ?>',
+            bundleProductPrice: null,
+            bundleSpr: null,
+            finalcheckboxRadioValueArray: [],
+
+            init() {
+                this.bundleProductPrice = document.getElementById('product-price-<?= /* @noEscape */ $product->getId() ?>');
+                this.bundleSpr = this.bundleProductPrice.querySelector("span");
+                this.summaryOnChange(null, 'on_change');
+                const selectedValues = this.jsonBundleConfig.selected;
+                const form = document.getElementById("<?= $escaper->escapeHtml($wishlistFormId) ?>");
+                for (const key in selectedValues) {
+                    if (Array.isArray(selectedValues[key])) {
+                        selectedValues[key].forEach(value => {
+                            let fieldElement = document.getElementById("bundle-option-" + key);
+                            if (!fieldElement) {
+                                fieldElement = document.getElementById("bundle-option-" + key + "-" + value);
+                            } else if (fieldElement.value === '') {
+                                fieldElement = document.getElementById("bundle-option-" + key + "-" + value);
+                            }
+                            if (fieldElement && fieldElement.classList.contains("multiselect")) {
+                                const existingElements = form.querySelectorAll("input[name='bundle_option[" + key + "][" + value + "]']");
+                                existingElements.forEach(existingElement => existingElement.remove());
+
+                                const selectedOptions = Array.from(fieldElement.selectedOptions).map(option => option.value);
+                                selectedOptions.forEach(selectedValue => {
+                                    const inputElement = document.createElement("input");
+                                    inputElement.type = "hidden";
+                                    inputElement.name = "bundle_option[" + key + "][" + value + "]";
+                                    inputElement.id = "bundle_option[" + key + "][" + value + "]";
+                                    inputElement.value = selectedValue;
+                                    form.appendChild(inputElement);
+                                });
+                            } else {
+                                const elements = form.querySelector("input[name='bundle_option[" + key + "][" + value + "]']");
+                                if (elements) {
+                                    if (fieldElement.type === "checkbox" && !fieldElement.checked) {
+                                        elements.remove();
+                                    } else {
+                                        elements.value = fieldElement.value;
+                                    }
+                                } else {
+                                    const inputElement = document.createElement("input");
+                                    inputElement.type = "hidden";
+                                    inputElement.name = fieldElement.name;
+                                    inputElement.value = fieldElement.value;
+                                    form.appendChild(inputElement);
+                                }
+                            }
+                        });
+                    }
+                }
+            },
+
+            initialOnLoad(jsonBundleConfig, selectedOptions) {
+                const totalPrice = [];
+                let index = 0;
+
+                for (const key in selectedOptions) {
+                    const value = selectedOptions[key];
+
+                    if (Array.isArray(value)) {
+                        this.summaryDetails[index] = {
+                            "title": jsonBundleConfig.options[key].title,
+                            "options": []
+                        };
+
+                        value.forEach(val => {
+                            const optionValue = jsonBundleConfig.options[key].selections[val];
+                            if (optionValue) {
+                                this.summaryDetails[index].options.push({
+                                    "value": optionValue
+                                });
+                                const currentPrice = parseFloat(optionValue.prices.finalPrice.amount * optionValue.qty);
+                                totalPrice.push(currentPrice);
+                            }
+                        });
+                    } else {
+                        const optionValue = jsonBundleConfig.options[key].selections[value];
+                        if (optionValue) {
+                            this.summaryDetails[index] = {
+                                "title": jsonBundleConfig.options[key].title,
+                                "options": [{
+                                    "value": optionValue
+                                }]
+                            };
+                            const currentPrice = parseFloat(optionValue.prices.finalPrice.amount * optionValue.qty);
+                            totalPrice.push(currentPrice);
+                        }
+                    }
+                    index++;
+                }
+
+                const total = totalPrice.reduce((acc, currentValue) => acc + currentValue, 0);
+                this.bundleSpr.innerHTML = total.toLocaleString(this.storeLocale.replace("_", "-"), {
+                    style: 'currency',
+                    currency: this.currentCurrencyCode
+                });
+            },
+
+            changeBundleOption(event) {
+                const type = "option_change";
+                const currentTargetId = event.target.id.split('-');
+                const form = document.getElementById("<?= $escaper->escapeHtml($wishlistFormId) ?>");
+
+                if (event.target.value === '') {
+                    const currentQtyField = currentTargetId.join('-') + '-qty-input';
+                    const currentQtyElement = document.getElementById(currentQtyField);
+                    if (currentQtyElement) {
+                        currentQtyElement.disabled = true;
+                        currentQtyElement.value = 0;
+                        const previousButton = currentQtyElement.previousElementSibling;
+                        const nextButton = currentQtyElement.nextElementSibling;
+
+                        if (previousButton && previousButton.tagName === 'BUTTON') {
+                            previousButton.classList.add('invisible');
+                        }
+
+                        if (nextButton && nextButton.tagName === 'BUTTON') {
+                            nextButton.classList.add('invisible');
+                        }
+                    }
+                } else {
+                    let defaultData;
+                    if (event.target.type === 'radio') {
+                        defaultData = this.jsonBundleConfig.options[currentTargetId[2]].selections[currentTargetId[3]];
+                        currentTargetId.pop();
+                    } else {
+                        defaultData = this.jsonBundleConfig.options[currentTargetId[2]].selections[event.target.value];
+                    }
+                    const currentQtyField = currentTargetId.join('-') + '-qty-input';
+                    const currentQtyElement = document.getElementById(currentQtyField);
+                    if (currentQtyElement) {
+                        currentQtyElement.disabled = false;
+                        const previousButton = currentQtyElement.previousElementSibling;
+                        const nextButton = currentQtyElement.nextElementSibling;
+                        if (previousButton && previousButton.tagName === 'BUTTON') {
+                            previousButton.classList.remove('invisible');
+                        }
+
+                        if (nextButton && nextButton.tagName === 'BUTTON') {
+                            nextButton.classList.remove('invisible');
+                        }
+                        if (defaultData.customQty === 0) {
+                            currentQtyElement.disabled = true;
+                            if (previousButton && previousButton.tagName === 'BUTTON') {
+                                previousButton.classList.add('invisible');
+                            }
+
+                            if (nextButton && nextButton.tagName === 'BUTTON') {
+                                nextButton.classList.add('invisible');
+                            }
+                        }
+                        currentQtyElement.value = defaultData.qty;
+                    }
+                }
+
+                this.summaryOnChange(event, type);
+
+                const eventId = event.target.id.split('-');
+                let fieldElement = document.getElementById("bundle-option-" + eventId[2]);
+                if (!fieldElement) {
+                    fieldElement = document.getElementById("bundle-option-" + eventId[2] + "-" + event.target.value);
+                }
+                if (fieldElement.classList.contains("multiselect")) {
+                    const options = event.target.options;
+                    Array.from(options).forEach(option => {
+                        const existingElements = form.querySelectorAll("input[name='bundle_option[" + eventId[2] + "][" + option.value + "]']");
+                        existingElements.forEach(existingElement => existingElement.remove());
+                    });
+                    const selectedOptions = Array.from(event.target.selectedOptions).map(option => option.value);
+                    selectedOptions.forEach(selectedValue => {
+                        const inputElement = document.createElement("input");
+                        inputElement.type = "hidden";
+                        inputElement.name = "bundle_option[" + eventId[2] + "][" + selectedValue + "]";
+                        inputElement.id = "bundle_option[" + eventId[2] + "][" + selectedValue + "]";
+                        inputElement.value = selectedValue;
+                        form.appendChild(inputElement);
+                    });
+                } else {
+                    const elements = form.querySelector("input[name='" + event.target.name + "']");
+                    if (elements) {
+                        if (event.target.type === "checkbox" && !event.target.checked) {
+                            elements.remove();
+                        } else {
+                            elements.value = event.target.value;
+                        }
+                    } else {
+                        const inputElement = document.createElement("input");
+                        inputElement.type = "hidden";
+                        inputElement.name = event.target.name;
+                        inputElement.value = event.target.value;
+                        form.appendChild(inputElement);
+                    }
+                }
+
+                if (fieldElement.type === 'radio' || fieldElement.type === 'select-one') {
+                    const wishlistQtyElements = form.querySelector("input[name='bundle_option_qty[" + eventId[2] + "]']");
+                    const qtyElement = document.getElementById("bundle-option-" + eventId[2] + "-qty-input");
+                    if (wishlistQtyElements) {
+                        wishlistQtyElements.value = qtyElement.value;
+                    } else {
+                        const inputElement = document.createElement("input");
+                        inputElement.type = "hidden";
+                        inputElement.name = qtyElement.name;
+                        inputElement.value = qtyElement.value;
+                        form.appendChild(inputElement);
+                    }
+                }
+            },
+
+            changeBundleOptionQty(event) {
+                const type = "qty_change";
+                this.summaryOnChange(event, type);
+
+                const selectedQtyField = document.getElementById(event.target.id);
+                const decimalPattern = /^\d*\.?\d*$/;
+                if (decimalPattern.test(selectedQtyField.value)) {
+                    const roundedQuantity = Math.round(parseFloat(selectedQtyField.value));
+                    selectedQtyField.value = roundedQuantity;
+                }
+
+                if (isNaN(selectedQtyField.value) || selectedQtyField.value === '' || Number(selectedQtyField.value) <= 0) {
+                    selectedQtyField.value = 1;
+                }
+
+                this.summaryOnChange(event, type);
+                const form = document.getElementById("<?= $escaper->escapeHtml($wishlistFormId) ?>");
+                const elements = form.querySelector("input[name='" + event.target.name + "']");
+                if (elements) {
+                    elements.value = event.target.value;
+                } else {
+                    const inputElement = document.createElement("input");
+                    inputElement.type = "hidden";
+                    inputElement.name = event.target.name;
+                    inputElement.value = event.target.value;
+                    form.appendChild(inputElement);
+                }
+            },
+
+            handleBundleOptionQtyIncrement(id) {
+                const qtyElement = document.getElementById(id);
+                if (qtyElement) {
+                    qtyElement.value = parseInt(qtyElement.value) + 1;
+                    qtyElement.dispatchEvent(new Event('change'));
+                }
+            },
+
+            handleBundleOptionQtyDecrement(id) {
+                const qtyElement = document.getElementById(id);
+                if (qtyElement) {
+                    if (qtyElement.value <= 1) {
+                        qtyElement.value = 1;
+                    } else {
+                        qtyElement.value = parseInt(qtyElement.value) - 1;
+                    }
+                    qtyElement.dispatchEvent(new Event('change'));
+                }
+            },
+
+            getBundleSelectedValues(id, config) {
+                const optionsBox = document.getElementById(id);
+                let selectedValues = '';
+                if (optionsBox.checked && config.options[id.split("-")[2]].selections[id.split("-")[3]]) {
+                    const preSelectedId = id.split('-');
+                    preSelectedId.pop();
+                    const preSelectedQtyId = preSelectedId.join('-') + '-qty-input';
+                    const preSelectedQty = document.getElementById(preSelectedQtyId);
+                    const amount = preSelectedQty ? parseFloat(config.options[id.split("-")[2]].selections[id.split("-")[3]].prices.finalPrice.amount) * preSelectedQty.value
+                        : parseFloat(config.options[id.split("-")[2]].selections[id.split("-")[3]].prices.finalPrice.amount);
+                    selectedValues = amount.toString();
+                }
+                return selectedValues;
+            },
+
+            getSingleSelectValues(id, config) {
+                const singleSelect = document.getElementById(id);
+                if (singleSelect && singleSelect.selectedIndex !== 0) {
+                    const preSelectedId = id.split('-');
+                    const preSelectedQtyId = preSelectedId.join('-') + '-qty-input';
+                    const preSelectedQty = document.getElementById(preSelectedQtyId);
+                    const amount = preSelectedQty ? parseFloat(config.options[id.split("-")[2]].selections[singleSelect.options[singleSelect.selectedIndex].value].prices.finalPrice.amount) * preSelectedQty.value
+                        : parseFloat(config.options[id.split("-")[2]].selections[singleSelect.options[singleSelect.selectedIndex].value].prices.finalPrice.amount);
+                    return amount.toString();
+                }
+            },
+
+            getMultipleSelectValues(id, config) {
+                const multipleSelect = document.getElementById(id);
+                const selectedValues = Array.from(multipleSelect.options)
+                    .filter(option => option.selected)
+                    .map(option => parseFloat(config.options[id.split("-")[2]].selections[option.value].prices.finalPrice.amount));
+                return selectedValues;
+            },
+
+            summaryOnChange(event, type) {
+                var divElement = document.getElementById("product-options-wrapper");
+                var selectedRadio = divElement.getElementsByClassName("bundle-radio-checkbox");
+                var selectedRadioValues = [];
+
+                for (var i = 0; i < selectedRadio.length; i++) {
+                    if (selectedRadio[i].checked) {
+                        var splittedRadioId = selectedRadio[i].id.split('-');
+                        if (selectedRadio[i].type == 'checkbox') {
+                            if (!selectedRadioValues[splittedRadioId[2]]) {
+                                selectedRadioValues[splittedRadioId[2]] = [];
+                            }
+                            selectedRadioValues[splittedRadioId[2]].push(selectedRadio[i].value);
+                        } else {
+                            selectedRadioValues[splittedRadioId[2]] = splittedRadioId[3];
+                        }
+                    }
+                }
+
+                var selectTags = divElement.getElementsByTagName("select");
+                var selectedSelectValues = {};
+                var singleSelectValues = [];
+
+                if (selectTags.length) {
+                    for (var i = 0; i < selectTags.length; i++) {
+                        var splittedSelectId = selectTags[i].id.split('-');
+
+                        if (selectTags[i].classList.contains("multiselect")) {
+                            var multipleSelect = document.getElementById(selectTags[i].id);
+                            var selectedValues = [];
+
+                            for (var j = 0; j < multipleSelect.options.length; j++) {
+                                if (multipleSelect.options[j].selected) {
+                                    if (!selectedSelectValues[splittedSelectId[2]]) {
+                                        selectedSelectValues[splittedSelectId[2]] = [];
+                                    }
+                                    selectedSelectValues[splittedSelectId[2]].push(multipleSelect.options[j].value);
+                                }
+                            }
+                        } else {
+                            var singleSelect = document.getElementById(selectTags[i].id);
+                            singleSelectValues[splittedSelectId[2]] = singleSelect.value;
+                        }
+                    }
+                }
+
+                var totalSelectedValues = Object.assign(selectedRadioValues, selectedSelectValues, singleSelectValues);
+                var cleanedSelectedValues = Object.fromEntries(
+                    Object.entries(totalSelectedValues).map(([key, value]) => [key, this.filterEmptyStrings(value)])
+                );
+
+                for (var key in cleanedSelectedValues) {
+                    if (!Array.isArray(cleanedSelectedValues[key])) {
+                        var fieldIds = 'bundle-option-'+key;
+                        if (type == "qty_change") {
+                            var currentTarget = event.target.id.split('-');
+                            var qtyField = document.getElementById('bundle-option-'+currentTarget[2]+'-qty-input');
+                            if (qtyField && fieldIds == 'bundle-option-'+currentTarget[2]) {
+                                this.jsonBundleConfig.options[key].selections[cleanedSelectedValues[key]].qty = qtyField.value;
+                            }
+                        }
+                        if (type == "on_load") {
+                            var qtyField = document.getElementById('bundle-option-'+key+'-qty-input');
+                            if (qtyField) {
+                                this.jsonBundleConfig.options[key].selections[cleanedSelectedValues[key]].qty = qtyField.value;
+                            }
+                        }
+                    } 
+                }
+
+                console.log(cleanedSelectedValues)
+
+                this.initialOnLoad(this.jsonBundleConfig, cleanedSelectedValues);
+            },
+
+            filterEmptyStrings(value) {
+                return Array.isArray(value) ? value.filter(item => item !== '') : value;
+            }
+        }
+    }
+</script>

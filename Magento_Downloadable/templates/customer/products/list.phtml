@@ -1,0 +1,105 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+use Magento\Downloadable\Model\Link\Purchased\Item;
+
+/**
+ * @var $block \Magento\Downloadable\Block\Customer\Products\ListProducts
+ * @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer
+ */
+?>
+<?php $_items = $block->getItems(); ?>
+<div class="w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6">
+    <?php if (count($_items)): ?>
+        <div class="table-wrapper downloadable-products">
+            <table id="my-downloadable-products-table" class="data table table-downloadable-products w-full mb-5">
+                <caption class="table-caption hidden"><?= $escaper->escapeHtml(__('Downloadable Products')) ?></caption>
+                <thead class="border-b border-gray-200 hidden md:table-header-group">
+                    <tr>
+                        <th scope="col" class="col p-2 py-3 font-semibold text-left id"><?= $escaper->escapeHtml(__('Order #')) ?></th>
+                        <th scope="col" class="col p-2 py-3 font-semibold date"><?= $escaper->escapeHtml(__('Date')) ?></th>
+                        <th scope="col" class="col p-2 py-3 font-semibold title"><?= $escaper->escapeHtml(__('Title')) ?></th>
+                        <th scope="col" class="col p-2 py-3 font-semibold status"><?= $escaper->escapeHtml(__('Status')) ?></th>
+                        <th scope="col" class="col p-2 py-3 font-semibold remaining"><?= $escaper->escapeHtml(__('Remaining Downloads')) ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($_items as $_item): ?>
+                        <tr class="border-b border-gray-200 last:border-b-0">
+                            <td data-th="<?= $escaper->escapeHtmlAttr(__('Order #')) ?>" class="col p-2 py-3 text-left id before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[50%] md:pl-2">
+                                <a class="hover:underline" href="<?= $escaper->escapeUrl($block->getOrderViewUrl($_item->getPurchased()->getOrderId())) ?>" title="<?= $escaper->escapeHtml(__('View Order')) ?>">
+                                    <?= $escaper->escapeHtml($_item->getPurchased()->getOrderIncrementId()) ?>
+                                </a>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtmlAttr(__('Date')) ?>" class="col p-2 py-3 text-left md:text-center date before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[50%] md:pl-2">
+                                <?= $escaper->escapeHtml($block->formatDate($_item->getPurchased()->getCreatedAt())) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtmlAttr(__('Title')) ?>" class="col p-2 py-3 text-left md:text-center title before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[50%] md:pl-2">
+                                <strong class="product-name">
+                                    <?= $escaper->escapeHtml($_item->getPurchased()->getProductName()) ?>
+                                </strong>
+                                <?php if ($_item->getStatus() == Item::LINK_STATUS_AVAILABLE): ?>
+                                    <a href="<?= $escaper->escapeUrl($block->getDownloadUrl($_item)) ?>" id="download_<?= /* @noEscape */ $_item->getPurchased()->getProductId() ?>" title="<?= $escaper->escapeHtmlAttr(__('Start Download')) ?>" class="action download text-primary underline">
+                                        <?= $escaper->escapeHtml($_item->getLinkTitle()) ?>
+                                    </a>
+                                    <?php if ($block->getIsOpenInNewWindow()): ?>
+                                        <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+                                            'onclick',
+                                            "this.target='_blank'",
+                                            'a#download_' . $_item->getPurchased()->getProductId()
+                                        ) ?>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtmlAttr(__('Status')) ?>" class="col p-2 py-3 text-left md:text-center status before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[50%] md:pl-2">
+                                <?= $escaper->escapeHtml(__(ucfirst($_item->getStatus()))) ?>
+                            </td>
+                            <td data-th="<?= $escaper->escapeHtmlAttr(__('Remaining Downloads')) ?>" class="col p-2 pb-10 sm:pb-3 py-3 text-left md:text-center remaining before:absolute before:left-0 before:font-semibold before:whitespace-normal before:word-breaks before:max-w-[50%] before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[50%] md:pl-2">
+                                <?= $escaper->escapeHtml($block->getRemainingDownloads($_item)) ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php if ($block->getChildHtml('pager')): ?>
+            <div class="toolbar downloadable-products-toolbar bottom flex flex-col sm:flex-row flex-wrap justify-end items-center md:items-start gap-5 mt-5 pt-5 border-t border-gray-200">
+                <?= $block->getChildHtml('pager') ?>
+            </div>
+        <?php endif; ?>
+    <?php else: ?>
+        <div class="w-full mb-4">
+            <div class="message info empty">
+                <span><?= $escaper->escapeHtml(__('You have not purchased any downloadable products yet.')) ?></span>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="actions-toolbar">
+        <div class="secondary mt-4">
+            <a href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>" class="action back inline-flex items-center gap-2 hover:underline">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+                <span><?= $escaper->escapeHtml(__('Back')) ?></span>
+            </a>
+        </div>
+    </div>
+</div>

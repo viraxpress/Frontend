@@ -1,0 +1,196 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+?>
+
+<div class="gift-options-cart-item w-full pt-6" x-data="giftOptionsOrder()" x-cloak x-show="isOrderLevelEnabled">
+    <button type="button" title="Send your message" class="inline-flex justify-start items-center gap-x-1 text-md text-primary underline" @click="isGiftMessageOpened=!isGiftMessageOpened"> 
+        <?= $escaper->escapeHtml(__('Gift options')) ?>
+        <span class="transition-all" :class="isGiftMessageOpened == true ? 'rotate-180' :'rotate-0'">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+        </span>
+    </button>
+
+    <form class="my-10 space-y-5" x-bind:id="'gift-options-cart-' + itemId" x-cloak x-show="isGiftMessageOpened && isOrderHasMessage && isOrderLevelEnabled">
+        <div>
+            <h4 class="text-base font-semibold text-gray-900"><?= $escaper->escapeHtml(__('Gift Message (optional)')) ?></h4>
+            <p class="text-sm leading-6 m-0 mt-1 text-gray-600"><?= $escaper->escapeHtml(__('Use a permanent address where you can receive mail.')) ?></p>
+        </div>
+        <div class="col-span-full">
+            <label :for="'gift-message-whole-to-' + index" class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('To:')) ?></label>
+            <div class="mt-2">
+                <input type="text" name="to" :id="'gift-message-whole-to-' + index" x-model="giftMessage.to" autocomplete="given-name" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+            </div>
+        </div>
+        <div class="col-span-full">
+            <label :for="'gift-message-whole-from-' + index " class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('From:')) ?></label>
+            <div class="mt-2">
+                <input type="text" :id="'gift-message-whole-from-' + index" name="from" x-model="giftMessage.from" autocomplete="family-name" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+            </div>
+        </div>
+        <div class="col-span-full">
+            <label :for="'gift-message-whole-message-' + index" class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Message:')) ?></label>
+            <div class="mt-2">
+                <textarea name="message" :id="'gift-message-whole-message-' + index" x-model="giftMessage.message" rows="3" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"></textarea>
+            </div>
+        </div>
+
+        <div class="col-span-full flex justify-end items-center gap-5 pt-5">
+            <button type="button" @click="giftOptionOrdercancelButton" class="inline-block"><?= $escaper->escapeHtml(__('Cancel')) ?></button>
+            <button type="button" x-on:click="giftOptionsOrderFormSubmit($event)" class="primary-btn">
+                <span><?= $escaper->escapeHtml(__('Update')) ?></span>
+                <span id="form-spinner" role="status" x-show="addSpinner">
+                    <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-400 animate-spin fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"></path>
+                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"></path>
+                    </svg>
+                    <span class="sr-only"><?= $escaper->escapeHtml(__('Loading...')) ?></span>
+                </span>
+            </button>
+        </div>
+    </form>
+    <div class="gift-summary bg-[#FDF0D5] rounded mt-5 p-4 flex flex-col md:flex-row justify-between items-center gap-4 " x-cloak x-show="isGiftMessageOpened && !isOrderHasMessage">
+        <div class="gift-message-summary font-medium">
+            <?= $escaper->escapeHtml(__('Message: ')) ?>
+            <span class="font-regular" x-text="giftMessage.message"></span>
+        </div>
+        <div class="actions-toolbar">
+            <div class="secondary inline-flex items-center gap-2">
+                <button type="button" x-on:click="editGiftOptionOrderMessage" class="action action-edit text-green-600 p-2 inline-block cursor-pointer" title="Edit">
+                    <span class="sr-only"><?= $escaper->escapeHtml(__('Edit')) ?></span>
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </span>
+                </button>
+                <button class="action action-delete text-red-600 inline-block p-2 cursor-pointer" x-on:click="deleteOrderGiftMessage" title="Delete">
+                    <span class="sr-only"><?= $escaper->escapeHtml(__('Delete')) ?></span>
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m19 7-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    window.giftOptionsConfig = <?= /* @noEscape */ $block->getGiftOptionsConfigJson() ?>;
+
+    function giftOptionsOrder() {
+        return {
+            isGiftMessageOpened: false,
+            itemId: 'orderLevel',
+            index: 'giftOptionsCart',
+            isOrderLevelEnabled: window.giftOptionsConfig.isOrderLevelGiftOptionsEnabled,
+            orderLevelMessage: window.giftOptionsConfig.giftMessage.orderLevel,
+            isOrderHasMessage: '',
+            giftMessage: {
+                to: '',
+                from: '',
+                message: '',
+            },
+            addSpinner: false,
+
+            init() {
+                if (this.orderLevelMessage == true) {
+                    this.isOrderHasMessage = true;
+                } else {
+                    this.isOrderHasMessage = false;
+                    if (this.isOrderLevelEnabled == true) {
+                        this.giftMessage.to = this.orderLevelMessage.recipient;
+                        this.giftMessage.from = this.orderLevelMessage.sender;
+                        this.giftMessage.message = this.orderLevelMessage.message;
+                        this.isGiftMessageOpened = true;
+                    }
+                }
+            },
+
+            giftOptionsOrderFormSubmit(event) {
+                this.addSpinner = true;
+                var form = document.getElementById("gift-options-cart-orderLevel");
+                const formData = new FormData(form);
+                formDataArray = [];
+                for (const [key, value] of formData.entries()) {
+                    formDataArray[`${key}`] = `${value}`;
+                }
+                this.submitGiftOptionsOrder(formDataArray['to'], formDataArray['from'], formDataArray['message']);
+            },
+
+            getOrderFormSubmissionUrl() {
+                const baseUrl = BASE_URL + 'rest/' + window.checkoutConfig.storeCode + '/V1/';
+                return window.giftOptionsConfig.isCustomerLoggedIn ?
+                    baseUrl + 'carts/mine/gift-message/' :
+                    baseUrl + 'guest-carts/' + window.checkoutConfig.quoteData.entity_id + '/gift-message/';
+            },
+
+            editGiftOptionOrderMessage() {
+                this.isGiftMessageOpened = true;
+                this.isOrderHasMessage = true;
+            },
+
+            giftOptionOrdercancelButton() {
+                this.isGiftMessageOpened = !this.isGiftMessageOpened;
+                this.isOrderHasMessage = true;
+                if (this.giftMessage.message && this.orderLevelMessage.recipient) {
+                    this.isGiftMessageOpened = true;
+                    this.isOrderHasMessage = false;
+                }
+            },
+
+            deleteOrderGiftMessage() {
+                this.submitGiftOptionsOrder(null, null, null);
+            },
+
+            submitGiftOptionsOrder(to, from, message) {
+                fetch(this.getOrderFormSubmissionUrl(), {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        gift_message: {
+                            recipient: to,
+                            sender: from,
+                            message: message,
+                        }
+                    }),
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = window.location.href;
+                    } else {
+                        console.error('Error:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
+            }
+        }
+    }
+</script>
