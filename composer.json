@@ -2,7 +2,7 @@
     "name": "viraxpress/frontend",
     "description": "Energize your E-commerce with ViraXpress's blazing fast Magento New Front End + Elegant Theme + >95% SEO score + Open Source",
     "type": "magento2-theme",
-    "license": "Apache License 2.0",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "VX Frontend",
