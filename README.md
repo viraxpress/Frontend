@@ -72,6 +72,15 @@ Join us at ViraXpress and experience the future of Magento themes with VX Fronte
 - Avoid using smaller-dimension images. Ensure the image dimensions are approximately 100-125% of the actual image container.
 - Back up the website before installation.
 
+### Google PageSpeed Score
+<p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-PageSpeed.png"></p>
+
+https://pagespeed.web.dev/analysis/https-demo-viraxpress-com/pcuz6zgnaw?form_factor=mobile
+
+https://pagespeed.web.dev/analysis/https-demo-viraxpress-com-women-html/3sx9prxazm?form_factor=mobile
+
+https://pagespeed.web.dev/analysis/https-demo-viraxpress-com-ajax-full-zip-sweatshirt-html/x26kphqptt?form_factor=mobile
+
 ### Demo Server Specs
 - High performance is achieved on the shared 2GB RAM AWS Lightsail instance &#x1F4AF;, but this configuration is not advisable for a production environment to handle traffic.
 <p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-Lightsail.png"></p>
