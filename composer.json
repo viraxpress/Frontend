@@ -11,6 +11,7 @@
     ],
     "version": "1.0.0-alpha",
     "minimum-stability": "stable",
+    "prefer-stable": true,
     "require": {
         "php": "~8.1.0||~8.2.0",
         "viraxpress/catalog": "1.0.0-alpha",
