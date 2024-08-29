@@ -1,6 +1,6 @@
 ![Logo](https://viraxpress.com/web/image/website/1/logo/Viraxpress?unique=8139c25)
 
-## Welcome to ViraXpress (VX) - Alpha Release
+## Welcome to ViraXpress (VX)
 
 Energize your E-commerce with ViraXpress's blazing fast Magento New Front End + Elegant Theme + >95% SEO score + Open Source.
 
