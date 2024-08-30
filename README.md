@@ -32,27 +32,39 @@ Before applying our theme package, we strongly recommend implementing it on a de
 #### Install the theme package using the composer command given below:
 
 ```bash
-  composer require viraxpress/frontend=1.0.0
-  php bin/magento setup:upgrade
-  php bin/magento setup:di:compile
-  php bin/magento setup:static-content:deploy -f
-  php bin/magento c:c
-  php bin/magento c:f
+  composer require viraxpress/frontend=1.0.1
 ```
-
-#### Install the theme package using zip file
-
-- Download all the zip files from the required repositories, extract it contents, and upload them into the app/code directory of your Magento 2 installation.
-
-- Run the following commands in the Magento 2 root folder:
+Manually edit the composer.json file in the Magento root directory and include the entries under the psr-4 section, as shown in the example below.
+<p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-psr-4.png"></p>
 
 ```bash
+"ViraXpress\\Catalog\\": "vendor/viraxpress/catalog/",
+"ViraXpress\\Cms\\": "vendor/viraxpress/cms/",
+"ViraXpress\\Checkout\\": "vendor/viraxpress/checkout/",
+"ViraXpress\\ConfigurableProduct\\": "vendor/viraxpress/configurable-product/",
+"ViraXpress\\Configuration\\": "vendor/viraxpress/configuration/",
+"ViraXpress\\Customer\\": "vendor/viraxpress/customer/",
+"ViraXpress\\Framework\\": "vendor/viraxpress/framework/",
+"ViraXpress\\Newsletter\\": "vendor/viraxpress/newsletter/",
+"ViraXpress\\Sales\\": "vendor/viraxpress/sales/",
+"ViraXpress\\Store\\": "vendor/viraxpress/store/",
+"ViraXpress\\Swatches\\": "vendor/viraxpress/swatches/",
+"ViraXpress\\Theme\\": "vendor/viraxpress/theme/",
+"ViraXpress\\Widget\\": "vendor/viraxpress/widget/",
+"ViraXpress\\Wishlist\\": "vendor/viraxpress/wishlist/"
+```
+
+
+Run the below magento commands
+
+```bash
+  composer clearcache
+  composer dumpautoload
   php bin/magento setup:upgrade
   php bin/magento setup:di:compile
   php bin/magento setup:static-content:deploy -f
   php bin/magento c:c
   php bin/magento c:f
-
 ```
 
 - Assign ViraXpress as your frontend theme for your website or store from the admin panel.
@@ -74,10 +86,14 @@ Join us at ViraXpress and experience the future of Magento themes with VX Fronte
 
 ### Important Notes:
 
+- We have tested our theme frontend on Magento 2.4.5-px and 2.4.6-px versions, running on both PHP 8.1 and 8.2. For other versions, any future developments or updates will be announced here as new releases.
+- This package is intended for developers who are already familiar with Magento 2 development. Since it is free and open source, we do not provide support for setup-related queries, except for addressing genuine bugs.
+- Ensure that your server specifications and cache settings are properly adjusted according to your requirements to achieve the desired optimization in performance and speed.
 - The images provided with this theme's frontend are for display purposes only and should not be used on the website for any commercial purposes.
 - To maintain the performance score, use web-optimized images.
 - Avoid using smaller-dimension images. Ensure the image dimensions are approximately 100-125% of the actual image container.
 - Back up the website before installation.
+
 
 
 ### Demo Server Specs
