@@ -32,7 +32,7 @@ Before applying our theme package, we strongly recommend implementing it on a de
 #### Install the theme package using the composer command given below:
 
 ```bash
-  composer require viraxpress/frontend=1.0.1
+  composer require viraxpress/frontend=1.0.2
 ```
 Manually edit the composer.json file in the Magento root directory and include the entries under the psr-4 section, as shown in the example below.
 <p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-psr-4.png"></p>
