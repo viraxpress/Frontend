@@ -7,6 +7,10 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   content: [
+    "../../../../../../app/code/**/*.phtml",
+    "../../../../../../app/code/**/*.xml",
+    "../../../../../../app/design/**/*.phtml",
+    "../../../../../../app/design/**/*.xml",
     "../../../../../../vendor/viraxpress/**/*.phtml",
     "../../../../../../vendor/viraxpress/**/*.xml",
     "../../../../../../vendor/viraxpress/**/core-js/core.min.js",
