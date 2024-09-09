@@ -25,11 +25,21 @@
         <link src="core-js/form-validations.min.js" />
     </head>
     <body>
-    <referenceContainer name="main.content" htmlClass="page-main relative" />
+        <referenceBlock name="page.main.title">
+            <arguments>
+                <argument name="css_class" xsi:type="string">text-xl text-gray-900 text-center my-5 font-medium</argument>
+            </arguments>
+        </referenceBlock>
+
+        <!-- Rearranging the element position -->
+        <move element="page.main.title" destination="contact.form.container" before="contactForm" />
+
         <referenceContainer name="content">
-            <block class="Magento\Contact\Block\ContactForm" name="contactForm" template="Magento_Contact::form.phtml">
-                <container name="form.additional.info" label="Form Additional Info"/>
-            </block>            
+            <container name="contact.form.container" htmlTag="div" htmlClass="contact-container my-20 mx-auto max-w-md w-full p-5 border border-gray-200 shadow-md rounded-lg">
+                <block class="Magento\Contact\Block\ContactForm" name="contactForm" template="Magento_Contact::form.phtml">
+                    <container name="form.additional.info" label="Form Additional Info"/>
+                </block>
+            </container>      
         </referenceContainer>
     </body>
 </page>
