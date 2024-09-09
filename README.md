@@ -32,7 +32,7 @@ Before applying our theme package, we strongly recommend implementing it on a de
 #### Install the theme package using the composer command given below:
 
 ```bash
-  composer require viraxpress/frontend=1.0.2
+  composer require viraxpress/frontend=1.0.3
 ```
 Manually edit the composer.json file in the Magento root directory and include the entries under the psr-4 section, as shown in the example below.
 <p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-psr-4.png"></p>
@@ -78,6 +78,7 @@ Run the below magento commands
 - **Splide:** https://github.com/Splidejs/splide
 - **MagestyApps:** https://github.com/MagestyApps/module-web-images
 - **GLightbox:** https://github.com/biati-digital/glightbox
+- **Vanilla JS Datepicker:** https://mymth.github.io/vanillajs-datepicker/
 
 
 ### Explore VX Frontend Today
