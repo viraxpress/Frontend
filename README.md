@@ -78,6 +78,7 @@ Run the below magento commands
 - **Splide:** https://github.com/Splidejs/splide
 - **MagestyApps:** https://github.com/MagestyApps/module-web-images
 - **GLightbox:** https://github.com/biati-digital/glightbox
+- **Vanilla JS Datepicker:** https://mymth.github.io/vanillajs-datepicker/
 
 
 ### Explore VX Frontend Today
@@ -97,7 +98,7 @@ Join us at ViraXpress and experience the future of Magento themes with VX Fronte
 
 
 ### Demo Server Specs
-- High performance is achieved on the shared 2GB RAM AWS Lightsail instance &#x1F4AF;, but this configuration is not advisable for a production environment to handle traffic.
-<p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-Lightsail.png"></p>
+- High performance is achieved on the shared 4GB RAM AWS Lightsail instance &#x1F4AF;, but this configuration is not advisable for a production environment to handle traffic.
+<p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-Lightsail-4GB.png"></p>
 
 **🚀 Contributions are always welcome! 🙌**
