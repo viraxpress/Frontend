@@ -25,7 +25,14 @@
         <title>Popular Search Terms</title>
     </head>
     <body>
+        <referenceContainer name="main" htmlClass="column main w-full min-h-96" />
+
         <referenceContainer name="content">
+            <referenceBlock name="page.main.title">
+                <arguments>
+                    <argument name="title_wrapper_css_class" xsi:type="string">my-5</argument>
+                </arguments>
+            </referenceBlock>
             <block class="Magento\Search\Block\Term" name="seo.searchterm" template="Magento_Search::term.phtml" cacheable="false"/>
         </referenceContainer>
     </body>
