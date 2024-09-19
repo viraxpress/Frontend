@@ -1,7 +1,22 @@
 <?php
 /**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
  */
 use Magento\Framework\App\Action\Action;
 
@@ -143,7 +158,7 @@ use Magento\Framework\App\Action\Action;
     </div>
 
     <script>
-        (function(){
+        (function() {
             const lazyImages = document.querySelectorAll("img.lazy");
             const observer = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -151,7 +166,15 @@ use Magento\Framework\App\Action\Action;
                         const img = entry.target;
                         img.src = img.dataset.src;
                         img.classList.remove("lazy");
-                        setTimeout(()=>{img.nextElementSibling.remove();}, 100)
+
+                        // Check if the next sibling element exists before removing it
+                        setTimeout(() => {
+                            const nextSibling = img.nextElementSibling;
+                            if (nextSibling) {
+                                nextSibling.remove();
+                            }
+                        }, 100);
+
                         observer.unobserve(img);
                     }
                 });
