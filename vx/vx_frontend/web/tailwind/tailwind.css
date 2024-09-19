@@ -54,17 +54,16 @@ html body .page-wrapper {
         opacity: 1;
     }
 }
-.product-items .product-item,
+body:not(.account) .product-items .product-item,
 .pagebuilder-column-line .pagebuilder-column {
   transform: translateY(4rem);
   opacity: 0;
 }
 
-.product-items .product-item.slide-up.activate,
+body:not(.account) .product-items .product-item.slide-up.activate,
 .pagebuilder-column-line .pagebuilder-column.slide-up.activate {
   animation: slideUp .6s cubic-bezier(0,0,.3,1) forwards;
 }
-
 @keyframes slideUp {
     from {
         transform: translateY(4rem);

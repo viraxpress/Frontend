@@ -53,7 +53,7 @@ $coreAttributes = [
 $scriptString = '
     document.addEventListener("DOMContentLoaded", () => {
         const columns = document.querySelectorAll(".pagebuilder-column");
-        const productCard = document.querySelectorAll(".product-item");        
+        const productCard = document.querySelectorAll("body:not(.account) .product-item");        
         const cutOutReveal = document.querySelectorAll(".cutout-reveal-content");
 
 

@@ -8,11 +8,11 @@
 <layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_layout.xsd">
     <update handle="1column"/>
     <referenceContainer name="columns" htmlClass="columns flex justify-start items-start flex-col md:gap-5 lg:flex-row lg:gap-10 py-10">
-        <container name="div.sidebar.main.container" htmlTag="div" htmlClass="sidebar sidebar-main-container lg:space-y-10 w-full max-w-80" before="main">
-            <container name="div.sidebar.main" htmlTag="div" htmlClass="sidebar sidebar-main" before="-">
+        <container name="div.sidebar.main.container" htmlTag="div" htmlClass="sidebar sidebar-main-container lg:space-y-10 w-full lg:max-w-80" before="main">
+            <container name="div.sidebar.main" htmlTag="div" htmlClass="sidebar sidebar-main mb-5 lg:mb-0" before="-">
                 <container name="sidebar.main" as="sidebar_main" label="Sidebar Main"/>
             </container>
-            <container name="div.sidebar.additional" htmlTag="div" htmlClass="sidebar sidebar-additional space-y-10" after="div.sidebar.main">
+            <container name="div.sidebar.additional" htmlTag="div" htmlClass="sidebar sidebar-additional space-y-10 hidden lg:block" after="div.sidebar.main">
                 <container name="sidebar.additional" as="sidebar_additional" label="Sidebar Additional"/>
             </container> 
         </container>

@@ -320,11 +320,14 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
 
     <div class="actions-toolbar col-span-2">
         <div class="primary text-center">
-            <button type="submit" class="action submit primary primary-btn" title="<?= $escaper->escapeHtmlAttr(__('Create an Account')) ?>" <?= $createAccountButtonViewModel->disabled() ? 'disabled="disabled"' : '' ?>>
-                <template x-if="displayLoading">
-                    <span class="w-6 h-6 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
-                </template>
-                <span><?= $escaper->escapeHtml(__('Create An Account')) ?></span>
+            <button type="submit"
+                    class="action submit primary primary primary-btn"
+                    title="<?= $escaper->escapeHtmlAttr(__('Create an Account')) ?>"
+                    id="send2"
+                <?php if ($block->getButtonLockManager()->isDisabled('customer_create_form_submit')): ?>
+                    disabled="disabled"
+                <?php endif; ?>>
+                <span><?= $escaper->escapeHtml(__('Create an Account')) ?></span>
             </button>
         </div>
     </div>

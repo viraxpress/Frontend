@@ -88,13 +88,13 @@ $count = count($_orders);
                                 <td data-th="<?= $escaper->escapeHtml(__('Ship To')) ?>" class="col shipping p-2 py-3 text-md text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
                                     <?= $_order->getShippingAddress() ? $escaper->escapeHtml($_order->getShippingAddress()->getName()) : "&nbsp;" ?>
                                 </td>
-                                <td data-th="<?= $escaper->escapeHtml(__('Order Total')) ?>" class="col total text-center p-2 py-3 text-md text-gray-900 align-middle font-medium before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <td data-th="<?= $escaper->escapeHtml(__('Order Total')) ?>" class="col total text-left p-2 py-3 text-md text-gray-900 align-middle font-medium before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:text-center md:pl-2">
                                     <?= /* @noEscape */ $_order->formatPrice($_order->getGrandTotal()) ?>
                                 </td>
-                                <td data-th="<?= $escaper->escapeHtml(__('Status')) ?>" class="col status text-center p-2 py-3 text-md text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                                <td data-th="<?= $escaper->escapeHtml(__('Status')) ?>" class="col status text-left p-2 py-3 text-md text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:text-center md:pl-2">
                                     <?= $escaper->escapeHtml($_order->getStatusLabel()) ?>
                                 </td>
-                                <td data-th="<?= $escaper->escapeHtml(__('Actions')) ?>" class="col actions text-center p-2 py-3 text-md text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none relative pl-[45%] md:pl-2">
+                                <td data-th="<?= $escaper->escapeHtml(__('Actions')) ?>" class="col actions text-left p-2 py-3 text-md text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:text-center md:pl-2">
                                     <div class="inline-flex items-center gap-4">
                                         <a href="<?= $escaper->escapeUrl($block->getViewUrl($_order)) ?>" class="inline-block p-2 rounded-full text-primary transition-all duration-200 ease-in-out hover:bg-primary/5">
                                             <span>

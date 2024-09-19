@@ -21,7 +21,7 @@
 
 // phpcs:disable Magento2.Templates.ThisInTemplate
 ?>
-<div class="actions flex justify-between items-center gap-5" x-data="orderReorder()">
+<div class="actions flex justify-end items-center gap-5" x-data="orderReorder()">
     <?php $_order = $block->getOrder() ?>
     <?php if ($this->helper(\Magento\Sales\Helper\Reorder::class)->canReorder($_order->getEntityId())): ?>
         <button type="button" @click="reorder(event)" data-post='<?=/* @noEscape */ $this->helper(\Magento\Framework\Data\Helper\PostHelper::class)->getPostData($block->getReorderUrl($_order)) ?>' class="action order">
