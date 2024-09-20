@@ -9,12 +9,12 @@
             "email": "vira@viraxpress.com"
         }
     ],
-    "version": "1.0.3",
+    "version": "1.0.4",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": "~8.1.0||~8.2.0",
-        "viraxpress/catalog": "1.0.0",
+        "viraxpress/catalog": "1.0.1",
         "viraxpress/checkout": "1.0.0",
         "viraxpress/cms": "1.0.1",
         "viraxpress/configurable-product": "1.0.0",
