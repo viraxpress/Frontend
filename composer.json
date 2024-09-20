@@ -9,14 +9,14 @@
             "email": "vira@viraxpress.com"
         }
     ],
-    "version": "1.0.1-2.4.7",
+    "version": "1.0.1.2.4.7",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": "~8.1.0||~8.2.0",
         "viraxpress/catalog": "1.0.1",
         "viraxpress/checkout": "1.0.0",
-        "viraxpress/cms": "1.0.1-2.4.7",
+        "viraxpress/cms": "1.0.1.2.4.7",
         "viraxpress/configurable-product": "1.0.0",
         "viraxpress/configuration": "1.0.0",
         "viraxpress/customer": "1.0.0",
@@ -25,7 +25,7 @@
         "viraxpress/sales": "1.0.0",
         "viraxpress/store": "1.0.0",
         "viraxpress/swatches": "1.0.0",
-        "viraxpress/theme": "1.0.1-2.4.7",
+        "viraxpress/theme": "1.0.1.2.4.7",
         "viraxpress/widget": "1.0.0",
         "viraxpress/wishlist": "1.0.0",
         "magestyapps/module-web-images": "1.1.7"
