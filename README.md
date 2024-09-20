@@ -9,16 +9,10 @@ Energize your E-commerce with ViraXpress's blazing fast Magento New Front End + 
 ### Google PageSpeed Score
 <p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-PageSpeed.png"></p>
 
-https://pagespeed.web.dev/analysis/https-demo-viraxpress-com/pcuz6zgnaw?form_factor=mobile
-
-https://pagespeed.web.dev/analysis/https-demo-viraxpress-com-women-html/3sx9prxazm?form_factor=mobile
-
-https://pagespeed.web.dev/analysis/https-demo-viraxpress-com-ajax-full-zip-sweatshirt-html/x26kphqptt?form_factor=mobile
-
 
 ## Theme Requirements
 
-- Magento >= 2.4.5 (CE)
+- Magento(CE) 2.4.6, 2.4.7
 - Node Version >= 20.x
 - Redis
 - Varnish
@@ -31,9 +25,19 @@ Before applying our theme package, we strongly recommend implementing it on a de
 
 #### Install the theme package using the composer command given below:
 
+### M2.4.6
 ```bash
-  composer require viraxpress/frontend=1.0.2
+  composer require viraxpress/frontend=1.0.5
 ```
+### M2.4.7
+```bash
+  composer require viraxpress/frontend=2.0.1
+```
+### Composer Update
+```bash
+  composer require viraxpress/frontend=x.x.x -W
+```
+
 Manually edit the composer.json file in the Magento root directory and include the entries under the psr-4 section, as shown in the example below.
 <p><img src="https://demo.viraxpress.com/vx/ViraXpress/frontend/web/wysiwyg/VX-psr-4.png"></p>
 
@@ -80,6 +84,8 @@ Run the below magento commands
 - **GLightbox:** https://github.com/biati-digital/glightbox
 - **Vanilla JS Datepicker:** https://mymth.github.io/vanillajs-datepicker/
 
+### Community:
+Join for discussions: https://discord.gg/JKczyhWvzy
 
 ### Explore VX Frontend Today
 Join us at ViraXpress and experience the future of Magento themes with VX Frontend. For consulting, development, and support services, contact us at vira@viraxpress.com. Let’s build something extraordinary together.
@@ -87,9 +93,10 @@ Join us at ViraXpress and experience the future of Magento themes with VX Fronte
 
 ### Important Notes:
 
-- We have tested our theme frontend on Magento 2.4.5-px and 2.4.6-px versions, running on both PHP 8.1 and 8.2. For other versions, any future developments or updates will be announced here as new releases.
+- We have tested our theme frontend on Magento 2.4.6-px and 2.4.7-px versions, running on both PHP 8.1 and 8.2. For other versions, any future developments or updates will be announced here as new releases.
 - This package is intended for developers who are already familiar with Magento 2 development. Since it is free and open source, we do not provide support for setup-related queries, except for addressing genuine bugs.
 - Ensure that your server specifications and cache settings are properly adjusted according to your requirements to achieve the desired optimization in performance and speed.
+- While using third-party tracking tools, the score may gradually decrease. Please ensure that you are optimizing them as well.
 - The images provided with this theme's frontend are for display purposes only and should not be used on the website for any commercial purposes.
 - To maintain the performance score, use web-optimized images.
 - Avoid using smaller-dimension images. Ensure the image dimensions are approximately 100-125% of the actual image container.
