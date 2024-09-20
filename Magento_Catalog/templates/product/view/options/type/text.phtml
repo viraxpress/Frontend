@@ -51,7 +51,7 @@ $class = ($_option->getIsRequire()) ? ' required' : '';
             <input type="text"
                    id="options_<?= $escaper->escapeHtmlAttr($_option->getId()) ?>_text"
                    class="input-text product-custom-option"
-                   hx-on:change="changeCustomizableOption(event)" <?= /* @noEscape */ $class ?>
+                   x-on:change="changeCustomizableOption(event)" <?= /* @noEscape */ $class ?>
                 <?php if (!empty($_textValidate)) {?>
                     data-validate="<?= $escaper->escapeHtml(json_encode($_textValidate)) ?>"
                 <?php } ?>
@@ -70,7 +70,7 @@ $class = ($_option->getIsRequire()) ? ' required' : '';
             ?>
             <textarea id="options_<?= $escaper->escapeHtmlAttr($_option->getId()) ?>_text"
                       class="product-custom-option" <?= /* @noEscape */ $class ?>
-                      hx-on:change="changeCustomizableOption(event)"
+                      x-on:change="changeCustomizableOption(event)"
                     <?php if (!empty($_textAreaValidate)) {?>
                         data-validate="<?= $escaper->escapeHtml(json_encode($_textAreaValidate)) ?>"
                     <?php } ?>
