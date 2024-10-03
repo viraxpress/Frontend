@@ -44,8 +44,8 @@ function miniCart() {
         deleteItemConfirm: false,
         isQuantityError: "",
         quantityChangeProduct: "",
+        checkAgain: true,
 
-        
         async init() {
             try {
                 const cacheKey = 'vira-mage-cache-storage';
@@ -55,6 +55,13 @@ function miniCart() {
                     if (parsedData.cart.summary_count >= 1) {
                         let cartSections = await getCustomerDataSections("cart");
                         this.cartData = cartSections.cart;
+                    } else {
+                        if (this.checkAgain) {
+                            this.checkAgain = false;
+                            setTimeout(() => {
+                                this.init();
+                            }, 1000);
+                        }
                     }
                 }
 

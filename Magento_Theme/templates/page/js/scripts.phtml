@@ -30,6 +30,12 @@ use Magento\Framework\Escaper;
 
 // Ensure these objects are properly initialized
 $baseUrl = $block->getBaseUrl();
+$blockObj= $block->getLayout()->createBlock('ViraXpress\Theme\Block\Config');
+$storeCodeUrls = $blockObj->getConfig('web/url/use_store');
+if ($storeCodeUrls) {
+    $parsedUrl = parse_url($baseUrl);
+    $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . '/';
+}
 $customPath = 'vx/ViraXpress/frontend/web/';
 $mediaUrl = $baseUrl . $customPath;
 $script = 'js/alpine.min.js';
