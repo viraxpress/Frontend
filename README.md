@@ -48,7 +48,7 @@ Manually edit the composer.json file in the Magento root directory and include t
 "ViraXpress\\ConfigurableProduct\\": "vendor/viraxpress/configurable-product/",
 "ViraXpress\\Configuration\\": "vendor/viraxpress/configuration/",
 "ViraXpress\\Customer\\": "vendor/viraxpress/customer/",
-"ViraXpress\\Csp\\": "vendor/viraxpress/csp/",
+"ViraXpress\\CSP\\": "vendor/viraxpress/csp/",
 "ViraXpress\\Framework\\": "vendor/viraxpress/framework/",
 "ViraXpress\\Newsletter\\": "vendor/viraxpress/newsletter/",
 "ViraXpress\\Sales\\": "vendor/viraxpress/sales/",
