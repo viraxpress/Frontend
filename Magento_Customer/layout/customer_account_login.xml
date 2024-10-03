@@ -39,7 +39,14 @@
         <move element="page.main.title" destination="customer.login.container" before="customer_form_login" />
 
         <referenceContainer name="content">
-            <referenceContainer name="customer.login.container" htmlClass="login-container my-20 mx-auto max-w-md w-full p-5 border border-gray-200 shadow-md rounded-lg" />
+            <referenceContainer name="customer.login.container" htmlClass="login-container my-20 mx-auto max-w-md w-full p-5 border border-gray-200 shadow-md rounded-lg" >
+                <block class="Magento\Customer\Block\Form\Login" name="customer_form_login" template="Magento_Customer::form/login.phtml">
+                    <container name="form.additional.info" as="form_additional_info"/>
+                    <arguments>
+                        <argument name="button_lock_manager" xsi:type="object">Magento\Framework\View\Element\ButtonLockManager</argument>
+                    </arguments>
+                </block>
+            </referenceContainer>
         </referenceContainer>
     </body>
 </page>

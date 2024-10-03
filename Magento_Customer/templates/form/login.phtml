@@ -18,7 +18,6 @@
  * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
  * @license     https://www.viraxpress.com/license
  */
-$loginButtonViewModel = $block->getData('login_button_view_model');
 ?>
 
 <div class="block block-customer-login">
@@ -52,7 +51,7 @@ $loginButtonViewModel = $block->getData('login_button_view_model');
 
             <div class="actions-toolbar">
                 <div class="primary mt-8">
-                  <button type="submit" class="action login primary primary-btn flex w-full mb-3" <?= $loginButtonViewModel->disabled() ? 'disabled="disabled"' : '' ?>>
+                  <button type="submit" class="action login primary primary-btn flex w-full mb-3" <?php if ($block->getButtonLockManager()->isDisabled('customer_login_form_submit')): ?> disabled="disabled" <?php endif; ?>>
                     <template x-if="displayLoading">
                         <span class="w-6 h-6 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
                     </template>
