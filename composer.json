@@ -20,6 +20,7 @@
         "viraxpress/configurable-product": "1.0.0",
         "viraxpress/configuration": "1.0.2",
         "viraxpress/customer": "1.0.0",
+        "viraxpress/csp": "1.0.0",
         "viraxpress/framework": "1.0.0",
         "viraxpress/newsletter": "1.0.0",
         "viraxpress/sales": "1.0.0",
