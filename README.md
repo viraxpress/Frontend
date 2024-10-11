@@ -31,7 +31,7 @@ Before applying our theme package, we strongly recommend implementing it on a de
 ```
 ### M2.4.7
 ```bash
-  composer require viraxpress/frontend=2.0.2
+  composer require viraxpress/frontend=2.0.3
 ```
 ### Composer Update
 ```bash
@@ -81,7 +81,6 @@ Run the below magento commands
 - **Tailwind CSS:** https://github.com/tailwindlabs/tailwindcss
 - **Alpine.js:** https://github.com/alpinejs/alpine
 - **Splide:** https://github.com/Splidejs/splide
-- **MagestyApps:** https://github.com/MagestyApps/module-web-images
 - **GLightbox:** https://github.com/biati-digital/glightbox
 - **Vanilla JS Datepicker:** https://mymth.github.io/vanillajs-datepicker/
 
