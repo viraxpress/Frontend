@@ -31,6 +31,12 @@ use Magento\Framework\View\Element\BlockInterface;
  * @var Escaper $escaper
  * @var BlockInterface $block
  */
+$baseUrl = $escaper->escapeUrl($block->getBaseUrl());
+$storeCodeUrls = $block->getConfig('web/url/use_store');
+if ($storeCodeUrls) {
+    $parsedUrl = parse_url($baseUrl);
+    $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . '/';
+}
 
 $scriptString = '
     var LOCALE = \'' . /* @noEscape */ $escaper->escapeJs($localeFormatter->getLocaleJs()) .'\';
@@ -44,16 +50,16 @@ $scriptString = '
 $styleString = '
     <style type="text/css">
         .background-image-66c42eb86db9a {
-            background-image: url(' . $block->getBaseUrl() .'media/wysiwyg/main_banner_VX_1.webp);
+            background-image: url(' . $baseUrl .'media/wysiwyg/main_banner_VX_1.webp);
         }
         @media only screen and (max-width: 768px) and (min-width: 640px) {
             .background-image-66c42eb86db9a {
-                background-image: url(' . $block->getBaseUrl() .'media/wysiwyg/main_banner_VX-mobile.webp);
+                background-image: url(' . $baseUrl .'media/wysiwyg/main_banner_VX-mobile.webp);
             }
         }
         @media only screen and (max-width: 640px) {
             .background-image-66c42eb86db9a {
-                background-image: url(' . $block->getBaseUrl() .'media/wysiwyg/main_banner_VX-mobile.webp);
+                background-image: url(' . $baseUrl .'media/wysiwyg/main_banner_VX-mobile.webp);
             }
         }
     </style>';
@@ -127,10 +133,11 @@ $staticAssets = [
     <?= /* @noEscape */ $secureRenderer->renderTag(
         'link',
         [
-            'rel' => 'stylesheet',
+            'rel' => 'stylesheet preload',
             'type' => 'text/css',
             'media' => 'all',
-            'href' => $escaper->escapeUrl($mediaUrl . $escaper->escapeHtmlAttr($stylesheet))
+            'as' => 'style',
+            'href' => $escaper->escapeUrl($mediaUrl . $escaper->escapeHtmlAttr($stylesheet) . '?' . time())
         ]
     ); ?>
 <?php endforeach; ?>

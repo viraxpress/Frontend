@@ -42,6 +42,7 @@ $script = 'js/alpine.min.js';
 
 $attributes = [
     'type' => 'text/javascript',
+    'crossorigin' => 'anonymous',
     'src' => $mediaUrl . $script
 ];
 if ($script === 'js/alpine.min.js') {
@@ -53,6 +54,7 @@ if ($script === 'js/alpine.min.js') {
 $customPathJs = '';
 $coreAttributes = [
     'type' => 'text/javascript',
+    'crossorigin' => 'anonymous',
     'src' => $block->getViewFileUrl('core-js/core.min.js')
 ];
 
