@@ -72,6 +72,12 @@ $styleString = '
 $themePath = $block->checkThemePath();
 
 // Construct media URL
+$baseUrl = $escaper->escapeUrl($block->getBaseUrl());
+$storeCodeUrls = $block->getConfig('web/url/use_store');
+if ($storeCodeUrls) {
+    $parsedUrl = parse_url($baseUrl);
+    $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . '/';
+}
 $customPath = 'vx/'.$themePath.'/web/';
 $mediaUrl = $baseUrl . $escaper->escapeUrl($customPath);
 
