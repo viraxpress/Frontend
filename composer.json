@@ -9,7 +9,7 @@
             "email": "vira@viraxpress.com"
         }
     ],
-    "version": "1.0.6",
+    "version": "1.0.7",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
@@ -26,7 +26,7 @@
         "viraxpress/sales": "1.0.0",
         "viraxpress/store": "1.0.0",
         "viraxpress/swatches": "1.0.0",
-        "viraxpress/theme": "1.0.2",
+        "viraxpress/theme": "1.0.3",
         "viraxpress/widget": "1.0.0",
         "viraxpress/wishlist": "1.0.0",
         "magestyapps/module-web-images": "1.1.7"
