@@ -127,9 +127,10 @@ $staticAssets = [
     <?= /* @noEscape */ $secureRenderer->renderTag(
         'link',
         [
-            'rel' => 'stylesheet',
+            'rel' => 'stylesheet preload',
             'type' => 'text/css',
             'media' => 'all',
+            'as' => 'style',
             'href' => $escaper->escapeUrl($mediaUrl . $escaper->escapeHtmlAttr($stylesheet) . '?' . time())
         ]
     ); ?>
