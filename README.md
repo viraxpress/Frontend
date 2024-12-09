@@ -45,7 +45,7 @@ Manually edit the composer.json file in the Magento root directory and include t
 "ViraXpress\\Catalog\\": "vendor/viraxpress/catalog/",
 "ViraXpress\\Cms\\": "vendor/viraxpress/cms/",
 "ViraXpress\\Checkout\\": "vendor/viraxpress/checkout/",
-"ViraXpress\\CheckoutOptimization\\": "vendor/viraxpress/checkout-optimization/",
+"ViraXpress\\CheckoutOptimization\\": "vendor/viraxpress/checkoutoptimization/",
 "ViraXpress\\ConfigurableProduct\\": "vendor/viraxpress/configurable-product/",
 "ViraXpress\\Configuration\\": "vendor/viraxpress/configuration/",
 "ViraXpress\\Customer\\": "vendor/viraxpress/customer/",
