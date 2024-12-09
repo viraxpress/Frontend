@@ -313,7 +313,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
 
     <?php if (!empty($additionalInfoHtml)): ?>
         <fieldset class="fieldset additional_info">
-            <?= $escaper->escapeHtml($additionalInfoHtml) ?>
+            <?= $additionalInfoHtml ?>
         </fieldset>
     <?php endif; ?>
 
