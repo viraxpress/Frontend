@@ -27,11 +27,11 @@ Before applying our theme package, we strongly recommend implementing it on a de
 
 ### M2.4.6
 ```bash
-  composer require viraxpress/frontend=1.0.7
+  composer require viraxpress/frontend=1.0.8
 ```
 ### M2.4.7
 ```bash
-  composer require viraxpress/frontend=2.0.4
+  composer require viraxpress/frontend=2.0.5
 ```
 ### Composer Update
 ```bash
@@ -45,6 +45,7 @@ Manually edit the composer.json file in the Magento root directory and include t
 "ViraXpress\\Catalog\\": "vendor/viraxpress/catalog/",
 "ViraXpress\\Cms\\": "vendor/viraxpress/cms/",
 "ViraXpress\\Checkout\\": "vendor/viraxpress/checkout/",
+"ViraXpress\\CheckoutOptimization\\": "vendor/viraxpress/checkout-optimization/",
 "ViraXpress\\ConfigurableProduct\\": "vendor/viraxpress/configurable-product/",
 "ViraXpress\\Configuration\\": "vendor/viraxpress/configuration/",
 "ViraXpress\\Customer\\": "vendor/viraxpress/customer/",
