@@ -62,7 +62,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
         <?php if ($block->isNewsletterEnabled()): ?>
             <div class="field choice newsletter flex justify-start items-center gap-x-3">
                 <input id="newsletter-sign-up" name="is_subscribed" type="checkbox" class="checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary" value="1" <?= $formData->getIsSubscribed() ? 'checked="checked"' : ''?>>
-                <label for="newsletter-sign-up" class="label cursor-pointer text-sm font-medium text-gray-900">
+                <label for="newsletter-sign-up" class="label cursor-pointer text-sm text-gray-900">
                     <span><?= $escaper->escapeHtml(__('Sign Up for Newsletter')) ?></span>
                 </label>
             </div>
@@ -99,7 +99,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
             <label for="email" class="label block text-sm leading-6 text-gray-900">
                 <?= $escaper->escapeHtml(__('Email')) ?><span class="text-required ml-1">*</span>
             </label>
-            <div class="control mt-2 relative">
+            <div class="control mt-1 relative">
                 <input id="email" name="email" type="email" required autocomplete="email" value="<?= $escaper->escapeHtmlAttr(isset($guestInfo['email']) ? $guestInfo['email'] : '') ?>" title="<?= $escaper->escapeHtmlAttr(__('Email')) ?>" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" x-on:input.debounce="onChange">
             </div>
         </div>
@@ -107,7 +107,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
             <label for="password" class="label block text-sm leading-6 text-gray-900">
                 <?= $escaper->escapeHtml(__('Password')) ?><span class="text-required ml-1">*</span>
             </label>
-            <div class="control mt-2 relative">
+            <div class="control mt-1 relative">
                 <input id="password" name="password" :type="showPassword ? 'text' : 'password'" required title="<?= $escaper->escapeHtmlAttr(__('Password')) ?>" autocomplete="off" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 pr-8" x-on:input.debounce="onChange">
                             
                 <div class="absolute top-1/2 right-4 z-10 cursor-pointer -translate-y-1/2">
@@ -125,7 +125,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
             <label for="password_confirmation" class="label block text-sm leading-6 text-gray-900">
                 <span><?= $escaper->escapeHtml(__('Confirm Password')) ?></span><span class="text-required ml-1">*</span>
             </label>
-            <div class="control mt-2 relative">
+            <div class="control mt-1 relative">
                <input id="password_confirmation" name="password_confirmation" :type="showConfirmPassword ? 'text' : 'password'" required title="<?= $escaper->escapeHtmlAttr(__('Confirm Password')) ?>" autocomplete="off" class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 pr-8" x-on:input.debounce="onChange">
                 <div class="absolute top-1/2 right-4 z-10 cursor-pointer -translate-y-1/2">
                     <svg x-cloak x-show="showConfirmPassword" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" @click="showConfirmPassword = !showConfirmPassword">
@@ -177,7 +177,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
                     <label for="street_1" class="block text-sm leading-6 text-gray-900">
                         <span><?= $escaper->escapeHtml(__('Street Address')) ?><span class="text-required ml-1">*</span></label></span>
                     </label>
-                    <div class="mt-2 control">
+                    <div class="mt-1 control">
                         <input type="text" name="street[0]" value="<?= $escaper->escapeHtmlAttr($formData->getStreet(0)) ?>" title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('street') ?>" id="street_1" x-on:input.debounce="onChange" required class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_streetValidationClass) ?>">
                     </div>
                 </div>
@@ -188,7 +188,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
                 ?>
                 <?php for ($_i = 2, $_n = $streetLines; $_i <= $_n; $_i++): ?>
                     <div class="field additional">
-                        <div class="mt-2 control">
+                        <div class="mt-1 control">
                             <input type="text" name="street[<?= /* @noEscape */ $_i ?>]" value="<?= $escaper->escapeHtml($formData->getStreetLine($_i - 1)) ?>" title="<?= $escaper->escapeHtmlAttr(__('Street Address %1', $_i)) ?>" id="street_<?= /* @noEscape */ $_i ?>" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_streetValidationClass) ?>">
                         </div>
                     </div>
@@ -201,7 +201,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
                     <label class="block text-sm leading-6 text-gray-900" for="vat_id">
                         <span><?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('vat_id') ?></span>
                     </label>
-                    <div class="mt-2 control">
+                    <div class="mt-1 control">
                         <input type="text" name="vat_id" value="<?= $escaper->escapeHtmlAttr($formData->getVatId()) ?>" title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('vat_id') ?>" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($_vatidValidationClass) ?>" id="vat_id">
                     </div>
                 </div>
@@ -210,7 +210,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
             <div x-data="customerRegister" class="space-y-6 col-span-6">
                 <div class="field country">
                     <label for="country" class="block text-sm leading-6 text-gray-900">Country <span class="text-required ml-1">*</span></label>
-                    <div class="mt-2 control">
+                    <div class="mt-1 control">
                         <select id="country"
                             @change="onCountryChange(event)"
                             x-on:input.debounce="onChange"
@@ -229,7 +229,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
                 </div>
                 <div class="field state col-span-6">
                     <label for="region_id" class="block text-sm leading-6 text-gray-900">State/Province <span class="text-required ml-1">*</span></label>
-                    <div class="mt-2 control" id="field_region_id">
+                    <div class="mt-1 control" id="field_region_id">
                         <template x-if="isRegionAvailable">
                             <select id="region_id" title="State/Province" name="region_id" required="" x-on:input.debounce="onChange" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 region_id validate-select">
                                 <option value="">Please select a region, state or province.</option>
@@ -279,7 +279,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
                         <label for="city" class="block text-sm leading-6 text-gray-900">
                             <span><?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('city') ?> <span class="text-required ml-1">*</span></label></span>
                         </label>
-                        <div class="mt-2 control">
+                        <div class="mt-1 control">
                             <input type="text" name="city" value="<?= $escaper->escapeHtmlAttr($formData->getCity()) ?>" x-on:input.debounce="onChange" required title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('city') ?>" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $escaper->escapeHtmlAttr($cityValidationClass) ?>" id="city">
                         </div>
                     </div>
@@ -289,7 +289,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
                         <label for="zip" class="block text-sm leading-6 text-gray-900">
                             <span><?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('postcode') ?><span class="text-required ml-1">*</span></span>
                         </label>
-                        <div class="mt-2 control">
+                        <div class="mt-1 control">
                             <input type="text" name="postcode" value="<?= $escaper->escapeHtmlAttr($formData->getPostcode()) ?>" title="<?= /* @noEscape */ $block->getAttributeData()->getFrontendLabel('postcode') ?>" id="zip" x-on:input.debounce="onChange" required  class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 validate-zip-international
                             <?= $escaper->escapeHtmlAttr($postcodeValidationClass) ?>">
                         </div>

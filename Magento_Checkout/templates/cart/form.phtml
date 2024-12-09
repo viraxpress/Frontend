@@ -113,13 +113,11 @@
             formData.append('form_key', getFormKeyCookie());
 
             if (event.currentTarget.value === 'update_qty') {
-                console.log('Updating quantity with URL:', updateQtyUrl);
-                await fetchWithRetry(updateQtyUrl, formData);
+                var qtyValidation = await fetchWithRetry(updateQtyUrl, formData , true);
 
-                console.log('Updating cart with URL:', updatePostUrl);
-                await fetchWithRetry(updatePostUrl, formData);
-
-                console.log('Reloading page');
+                if (qtyValidation) {
+                    await fetchWithRetry(updatePostUrl, formData, false);
+                }
                 window.location.reload();
             }
         } catch (error) {
@@ -127,7 +125,7 @@
         }
     }
 
-    async function fetchWithRetry(url, formData) {
+    async function fetchWithRetry(url, formData, checkValidation) {
         const response = await fetch(url, {
             method: "POST",
             headers: {
@@ -138,6 +136,17 @@
         if (!response.ok) {
             console.error(`Request to ${url} failed with status: ${response.status}`);
             throw new Error(`Error: ${response.status}`);
+        }
+        if (checkValidation) {
+            const data = await response.json();
+            if (!data['success']) {
+                var errorMessage = JSON.parse(data['error_message']);
+                errorMessage.forEach(item => {
+                    const messages = [{ type: 'error', text: item.error }];
+                    displayMessages(messages);
+                });
+                return data['success'];
+            }
         }
         return response;
     }

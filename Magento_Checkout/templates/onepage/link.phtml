@@ -28,9 +28,7 @@ use Magento\Framework\Escaper;
  */
 ?>
 <?php if ($block->isPossibleOnepageCheckout()): ?>
-    <div class="mt-6">
-        <a href="<?= $escaper->escapeUrl($block->getCheckoutUrl()) ?>" data-role="proceed-to-checkout" class="primary-btn w-full px-6 py-3 text-base" title="<?= $escaper->escapeHtmlAttr(__('Proceed to Checkout')) ?>" <?php if ($block->isDisabled()): ?> disabled="disabled" <?php endif; ?>>
+        <a href="<?= $escaper->escapeUrl($block->getCheckoutUrl()) ?>" data-role="proceed-to-checkout" class="mt-6 primary-btn w-full px-6 py-3 text-base" title="<?= $escaper->escapeHtmlAttr(__('Proceed to Checkout')) ?>" <?php if ($block->isDisabled()): ?> disabled="disabled" <?php endif; ?>>
             <span class="text-center"><?= $escaper->escapeHtml(__('Proceed to Checkout')) ?></span>
         </a>
-    </div>
 <?php endif?>

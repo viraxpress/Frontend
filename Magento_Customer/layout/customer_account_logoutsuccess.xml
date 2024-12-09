@@ -26,8 +26,11 @@
             <action method="setPageTitle">
                 <argument name="title" translate="true" xsi:type="string">You are signed out</argument>
             </action>
+            <arguments>
+                <argument name="css_class" xsi:type="string">py-5</argument>
+            </arguments>
         </referenceBlock>
-        <referenceContainer name="main.content" htmlClass="w-full" />
+        <referenceContainer name="main.content" htmlClass="page-main container w-full customer-logout-page" />
         <referenceContainer name="content">
             <block class="Magento\Framework\View\Element\Template" name="customer_logout" template="Magento_Customer::logout.phtml"/>
         </referenceContainer>

@@ -31,7 +31,7 @@
     </label>
     <div class="mt-2">
         <?php
-        $_validationClass = $escaper->escapeHtmlAttr($block->helper(\Magento\Customer\Helper\Address::class)->getAttributeValidationClass('fax'));
+        $_validationClass = $escaper->escapeHtmlAttr($this->helper(\Magento\Customer\Helper\Address::class)->getAttributeValidationClass('fax'));
         ?>
         <input type="text" name="fax" id="fax" x-on:input.debounce="onChange" <?php if ($block->isRequired()): ?>required<?php endif; ?> value="<?= $escaper->escapeHtmlAttr($block->getFax()) ?>" title="<?= $escaper->escapeHtmlAttr(__('Fax')) ?>" class="block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 <?= $_validationClass ?: '' ?>">
     </div>

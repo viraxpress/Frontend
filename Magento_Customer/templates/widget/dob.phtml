@@ -26,7 +26,7 @@ $translatedCalendarConfigJson = $block->getTranslatedCalendarConfigJson();
 $fieldCssClass = 'field date field-' . $block->getHtmlId();
 $fieldCssClass .= $block->isRequired() ? ' required' : '';
 $viewModel = $block->getView();
-$dobDate = $block->getValue();
+$dobDate = !empty($block->getValue()) ? $block->getValue() : '';
 ?>
 
 <div class="col-span-12 sm:col-span-6 <?= $escaper->escapeHtmlAttr($fieldCssClass) ?>">
@@ -44,3 +44,28 @@ $dobDate = $block->getValue();
         <?php endif; ?>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var datepickerInputs = document.querySelectorAll('.datePicker');
+        if (datepickerInputs.length) {
+            datepickerInputs.forEach(function(elem) {
+                var config = JSON.parse(elem.dataset.post);
+                new Datepicker(elem, {
+                    buttonImage: config.getImage,
+                    dateFormat: config.getDateFormat,
+                    minDate: new Date(config.yearStart, 0, 1),
+                    maxDate: new Date(config.yearEnd, 11, 31),
+                    firstDay: config.getFirstDay,
+                    yearRange: config.yearStart + ':' + config.yearEnd,
+                    changeMonth: config.change_month === 'true',
+                    changeYear: config.change_year === 'true',
+                    showOn: config.show_on
+                });
+                var newValue = config.getValue;
+                if(newValue) {
+                    elem.value = newValue;
+                }
+            });
+        }
+    });
+</script>

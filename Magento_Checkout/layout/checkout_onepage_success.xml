@@ -34,7 +34,7 @@
             </action>
 
             <arguments>
-                <argument name="title_wrapper_css_class" xsi:type="string">mt-5 flex justify-between items-center gap-5</argument>
+                <argument name="title_wrapper_css_class" xsi:type="string">mt-5 flex justify-between flex-wrap items-center gap-5 </argument>
             </arguments>
         </referenceBlock>
 

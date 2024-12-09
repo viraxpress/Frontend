@@ -25,7 +25,7 @@
 <?php $productType = $_product->getTypeId(); ?>
 <?php $buttonTitle = __('Add to Cart'); ?>
 <?php if ($_product->isSaleable()): ?>
-    <div class="box-to-cart flex justify-start items-end gap-5">
+    <div class="box-to-cart flex justify-start flex-wrap items-end gap-5">
         <?php if ($block->shouldRenderQuantity() && $productType != 'downloadable'): ?>
             <div class="inline-block quantity-field">
                 <label for="product_quantity" class="block text-base font-semibold leading-6 text-gray-900">
@@ -46,8 +46,8 @@
                 </div>
             </div>
         <?php endif; ?>
-        <div class="block w-full">
-            <button type="button" x-on:click="cartAddFormHandler('product_addtocart_form', '<?= $escaper->escapeUrl($block->getSubmitUrl($_product)) ?>')" role="button" title="<?= $escaper->escapeHtml(__('Add to Cart')) ?>" class="w-1/2 sm:w-full xl:w-1/2 primary-btn inline-flex justify-center items-center gap-x-2">
+        <div class="block flex-1">
+            <button type="button" x-on:click="cartAddFormHandler('product_addtocart_form', '<?= $escaper->escapeUrl($block->getSubmitUrl($_product)) ?>')" role="button" title="<?= $escaper->escapeHtml(__('Add to Cart')) ?>" class="w-full primary-btn inline-flex justify-center items-center gap-x-2">
                 <span class="inline-block relative">
                     <template x-if="addToCartLoader == '<?= $escaper->escapeHtmlAttr($_product->getId()) ?>'">
                         <span class="bg-primary absolute inline-flex justify-center items-center w-full left-0 top-0 z-10 h-full">
@@ -61,7 +61,9 @@
                 <span class="sr-only sm:not-sr-only"><?= $escaper->escapeHtml(__('Add to Cart')) ?></span>
             </button>
         </div>
-        <?= $block->getChildHtml('', true) ?>
+        <div class="w-full flex justify-start items-center gap-5 flex-wrap">
+            <?= $block->getChildHtml('', true) ?>
+        </div>
     </div>
 <?php endif; ?>
 <script>

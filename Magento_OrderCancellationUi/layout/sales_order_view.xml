@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock  name="sales.order.info.buttons">
+            <block class="Magento\Sales\Block\Order\Info\Buttons" name="sales.order.info.button.cancel"  as="cancel_order" template="Magento_OrderCancellationUi::order/info/buttons.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Magento\OrderCancellationUi\ViewModel\Config</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

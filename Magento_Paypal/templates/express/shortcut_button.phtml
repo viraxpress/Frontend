@@ -18,16 +18,12 @@
  * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
  * @license     https://www.viraxpress.com/license
  */
-?>
-<?php
-/** @var $block \Magento\Checkout\Block\Cart */
-?>
-<?php
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
 /**
  * @var \Magento\Paypal\Block\Express\InContext\SmartButton $block
  */
-$blockObj= $block->getLayout()->createBlock(\Magento\Paypal\Block\Express\InContext\SmartButton::class);
-$widget = $this->helper(\Magento\Framework\Json\Helper\Data::class)->jsonDecode($blockObj->getJsInitParams());
+$widget = $this->helper(\Magento\Framework\Json\Helper\Data::class)->jsonDecode($block->getJsInitParams());
 $widgetConfig = $this->helper(\Magento\Framework\Json\Helper\Data::class)->jsonEncode(
     $widget['Magento_Paypal/js/in-context/product-express-checkout']
 );
@@ -36,20 +32,12 @@ $attributes = [
 ]; ?>
 
 <?= /* @noEscape */ $secureRenderer->renderTag('script', $attributes); ?>
-<?php if (!$block->hasError()): ?>
-    <?php $methods = $block->getMethods('methods') ?: $block->getMethods('top_methods') ?>
-    <ul class="checkout methods items checkout-methods-items space-y-5">
-        <?php foreach ($methods as $method): ?>
-            <?php $methodHtml = $block->getMethodHtml($method); ?>
-            <?php if (trim($methodHtml) !== ''): ?>
-                <li class="item flex justify-center items-center gap-5">
-                    <?= /* @noEscape */ $methodHtml ?>
-                </li>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    </ul>
-<?php endif; ?>
+<div x-data="initializePayPalButton" data-widget='<?= /* @noEscape */ $widgetConfig ?>'>
+    <div id="paypal-smart-button"></div>
+</div>
+
 <script>
+    // Helper function to fetch token
     async function fetchPaymentToken(getTokenUrl, formKey, button) {
         const params = new URLSearchParams({
             form_key: formKey,
@@ -115,10 +103,11 @@ $attributes = [
         }
     }
 
-    function initializePayPalButtonCart() {
+    // PayPal Button Initialization
+    function initializePayPalButton() {
         return {
             async init() {
-                const widgetElement = document.querySelector('[x-data="initializePayPalButtonCart"]');
+                const widgetElement = document.querySelector('[x-data="initializePayPalButton"]');
                 const widgetConfig = JSON.parse(widgetElement.getAttribute('data-widget'));
 
                 paypal.Buttons({

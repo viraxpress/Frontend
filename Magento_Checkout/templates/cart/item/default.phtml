@@ -175,10 +175,10 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
         if (isNaN(quantity) || quantity < 1) {
             event.target.value = 1;
         } else {
-            var decimalPattern = /^\d*\.?\d*$/;
-            if (decimalPattern.test(quantity)) {
-                var roundedQuantity = Math.round(parseFloat(quantity));
-                event.target.value = roundedQuantity;
+            if (quantity % 1 !== 0) {
+                event.target.value = Math.round(parseFloat(quantity));
+            } else {
+                event.target.value = parseInt(quantity);
             }
         }
     }

@@ -32,6 +32,7 @@ $product = $block->getProduct();
 $productId = $product->getId();
 $attributes = $block->decorateArray($block->getAllowAttributes());
 $swatchBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\Swatch::class);
+$enableAjaxWishlist = $swatchBlock->getConfigValue('viraxpress_wishlist/ajax_wishlist/status');
 ?>
 <?php
 $wishlistFormId = base64_encode($productId . "-product_view_wishlist_form");
@@ -133,6 +134,8 @@ $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
                     <?= /* @noEscape */ $block->getJsonSwatchConfig() ?>
                 ),
                 attrArrays: [],
+                productId: '<?= /* @noEscape */ $productId ?>',
+                isAjaxWishlistEnabled: '<?= /* @noEscape */ $enableAjaxWishlist ?>',
                 init() {
                     const currentUrl = window.location.href;
                     const urlObject = new URL(currentUrl);
@@ -301,6 +304,49 @@ $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
                         inputElement.value = attrValue;
                         form.appendChild(inputElement);
                     }
+
+                    if (this.isAjaxWishlistEnabled) {
+                        const superAttributes = {};
+                        const superAttributeInputs = form.querySelectorAll('input[name^="super_attribute["]');
+                        superAttributeInputs.forEach(input => {
+                            const key = input.name.match(/\[([^\]]+)\]/)[1];
+                            superAttributes[key] = input.value;
+                        });
+                        const superAttributesArray = Object.entries(superAttributes);
+                        var storageKey = 'vira-mage-cache-storage';
+                        var viraxpressLocalStorage = JSON.parse(localStorage.getItem(storageKey));
+                        const isProductInWishlist = viraxpressLocalStorage.wishlist.items.some(item => {
+                            const extractedAttributes = this.extractAttributes(item.product_url);
+                            if (item.product_id === this.productId) {
+                                const areAttributesSame = superAttributesArray.length === Object.entries(extractedAttributes).length &&
+                                    superAttributesArray.every(([key, value]) => {
+                                        return extractedAttributes[key] === value;
+                                    });
+
+                                if (areAttributesSame) {
+                                    this.$dispatch('set-wishlist', true);
+                                    return true;
+                                }
+                            }
+                            this.$dispatch('set-wishlist', false);
+                            return false;
+                        });
+                    }
+                },
+
+                extractAttributes(url) {
+                    const attributes = {};
+                    const hashIndex = url.indexOf("#");
+                    if (hashIndex !== -1) {
+                        const params = url.slice(hashIndex + 1).split("&");
+                        params.forEach(param => {
+                            const [key, value] = param.split("=");
+                            if (key && value) {
+                                attributes[key] = value;
+                            }
+                        });
+                    }
+                    return attributes;
                 }
             };
         }

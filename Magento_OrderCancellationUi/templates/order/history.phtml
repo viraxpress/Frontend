@@ -1,0 +1,224 @@
+<?php
+/**
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Sales\Block\Order\History $block */
+/** @var $viewModel \Magento\OrderCancellationUi\ViewModel\Config */
+$viewModel = $block->getViewModel();
+?>
+
+
+<?php $_orders = $block->getOrders(); ?>
+<?= $block->getChildHtml('info') ?>
+
+<?php if ($_orders && count($_orders)) : ?>
+    <div class="w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6" x-data="orderHistory()">
+        <div class="block overflow-x-auto">
+            <table class="min-w-full table border-collapse" id="my-orders-table">
+                <tr class="border-b border-gray-200 hidden md:table-row">
+                    <td class="col id w-[115px]">
+                        <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                            <?= $block->escapeHtml(__('Order #')) ?>
+                        </div>
+                    </td>
+                    <td class="col date w-[115px]">
+                        <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                            <?= $block->escapeHtml(__('Date')) ?>
+                        </div>
+                    </td>
+                    <?= $block->getChildHtml('extra.column.header') ?>
+                    <td class="col total w-[115px]">
+                        <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                            <?= $block->escapeHtml(__('Order Total')) ?>
+                        </div>
+                    </td>
+                    <td class="col status w-[115px]">
+                        <div class="p-2 text-left text-sm font-semibold text-gray-800">
+                            <?= $block->escapeHtml(__('Status')) ?>
+                        </div>
+                    </td>
+                    <td class="col actions w-[115px]">
+                        <div class="p-2 text-center text-sm font-semibold text-gray-800">
+                            <?= $block->escapeHtml(__('Action')) ?>
+                        </div>
+                    </td>
+                </tr>
+                <tbody>
+                <?php foreach ($_orders as $_order) : ?>
+                    <tr class="border-b border-gray-200 pb-4 mb-4 block md:table-row last:border-b-0">
+                        <td data-th="<?= $block->escapeHtml(__('Order #')) ?>" class="col id p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                            <?= $block->escapeHtml($_order->getRealOrderId()) ?>
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Date')) ?>" class="col date p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                            <?= /* @noEscape */ $block->formatDate($_order->getCreatedAt()) ?>
+                        </td>
+                        <?php $extra = $block->getChildBlock('extra.container'); ?>
+                        <?php if ($extra) : ?>
+                            <?php $extra->setOrder($_order); ?>
+                            <?= $extra->getChildHtml() ?>
+                        <?php endif; ?>
+                        <td data-th="<?= $block->escapeHtml(__('Order Total')) ?>" class="col total p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                            <?= /* @noEscape */ $_order->formatPrice($_order->getGrandTotal()) ?>
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Status')) ?>" class="col status p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                            <?= $block->escapeHtml($_order->getStatusLabel()) ?>
+                        </td>
+                        <td data-th="<?= $block->escapeHtml(__('Actions')) ?>" class="col actions p-2 py-3 text-sm text-gray-900 align-middle before:absolute before:left-0 before:font-semibold before:content-[attr(data-th)] md:before:content-none block md:table-cell relative pl-[45%] md:pl-2">
+                            <div class="flex justify-start md:justify-center items-center gap-5">
+                                <?php if ($_order->getStatus() != 'received'): ?>
+                                    <a href="<?= $block->escapeUrl($block->getViewUrl($_order)) ?>" class="inline-block text-primary">
+                                        <span class="sr-only"><?= $block->escapeHtml(__('View Order')) ?></span>
+                                        <span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                        </span>
+                                    </a>
+                                    <?php if ($this->helper(\Magento\Sales\Helper\Reorder::class)->canReorder($_order->getEntityId())) : 
+                                        $postParams = json_decode($this->helper(\Magento\Framework\Data\Helper\PostHelper::class)
+                                            ->getPostData($block->getReorderUrl($_order)), true);
+                                        $formId = base64_encode($_order->getId() . "-myorder_view_reorder");
+                                        $formId = preg_replace("/[^a-zA-Z0-9]/", "", $formId);
+                                    ?>
+                                        <span>|</span>
+                                        <form id="<?= $block->escapeHtmlAttr($formId) ?>" class="m-0">
+                                            <input type="hidden" name="uenc" value="<?= $block->escapeHtmlAttr($postParams['data']['uenc']) ?>">
+                                            <button type="button" x-on:click="reorderMyOrder('<?= $block->escapeHtmlAttr($formId) ?>', '<?= $block->escapeHtmlAttr($postParams['action'])?>')" class="inline-block">
+                                                <span class="hover:underline"><?= $block->escapeHtml(__('Reorder')) ?></span>
+                                            </button>
+                                        </form>
+                                    <?php endif ?>
+                                    <?php if ($viewModel->canCancel($_order->getEntityId())): ?>
+                                        <span>|</span>
+                                        <button type="button" data-increment-id="<?=/* @noEscape */ $_order->getIncrementId() ?>" @click="cancelOrder(<?=/* @noEscape */ $_order->getId() ?>, $event)" class="cancel-order inline-block"
+                                           id="cancel-order-<?=/* @noEscape */ $_order->getId() ?>" >
+                                            <span class="hover:underline"><?= $block->escapeHtml(__('Cancel Order')) ?></span>
+                                        </button>
+                                        <?= $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")
+                                            ->setOrder($_order)
+                                            ->setReasons($viewModel->getCancellationReasons($_order->getEntityId()))
+                                            ->setTemplate("Magento_OrderCancellationUi::cancel-order-modal.phtml")->toHtml()
+                                        ?>
+                                    <?php endif ?>
+                                <?php endif ?>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <?php if ($block->getPagerHtml()) : ?>
+        <div class="order-products-toolbar toolbar bottom flex-wrap gap-2 bottom flex">
+            <?= $block->getPagerHtml() ?>
+        </div>
+    <?php endif ?>
+<?php else : ?>
+    <div class="message info empty">
+        <span><?= $block->escapeHtml($block->getEmptyOrdersMessage()) ?></span>
+    </div>
+<?php endif ?>
+<script>
+    function orderHistory() {
+        return {
+            showConfirmation: false,
+            orderId: '',
+            realOrderId: '',
+
+            reorderMyOrder(formId, url) {
+                var form = document.getElementById(formId);
+                form.addEventListener("submit", function (event) { event.preventDefault(); });
+                const formData = new FormData(form);
+                formData.append('form_key', getFormKeyCookie());
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        if (window.location.href != response.url) {
+                            window.location.href = response.url;
+                        } else {
+                            getCookie('mage-messages');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                });
+            },
+
+            cancelOrder(orderId, event) {
+                this.showConfirmation = true;
+                this.orderId = orderId;
+                var button = document.getElementById('cancel-order-'+this.orderId);
+                this.realOrderId = button.getAttribute('data-increment-id');
+            },
+
+            closePopup() {
+                this.showConfirmation = false;
+            },
+
+            handleCancelOrder() {
+                const reasonSelect = document.getElementById('cancel-order-reason-'+ this.orderId);
+                const selectedReason = reasonSelect.value;
+                let mutation = `
+mutation cancelOrder($order_id: ID!, $reason: String!) {
+  cancelOrder(input: {order_id: $order_id, reason: $reason}) {
+    error
+    order {
+      status
+    }
+  }
+}`;
+                const mutationQuery = {
+                    query: mutation,
+                    variables: {
+                        'order_id': this.orderId,
+                        'reason': selectedReason
+                    }
+                };
+
+                fetch(BASE_URL + 'graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(mutationQuery)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let type = 'success',
+                        message;
+
+                    if (data.data.cancelOrder.error !== null) {
+                        message = data.data.cancelOrder.error;
+                        type = 'error';
+                    } else {
+                        message = data.data.cancelOrder.order.status;
+                        location.reload();
+                    }
+
+                    setTimeout(() => {
+                        customerData.set('messages', {
+                            messages: [{
+                                text: message,
+                                type: type
+                            }]
+                        });
+                    }, 1000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+            }
+        }
+    }
+</script>

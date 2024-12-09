@@ -22,20 +22,20 @@
 <?php /** @var $block \Magento\Sales\Block\Order\Info */ ?>
 <?php $_order = $block->getOrder() ?>
 <div class="block block-order-details-view w-full shadow-sm border border-gray-200 rounded-lg p-4 bg-white mb-6 print:rounded-none print:shadow-none">
-    <div class="block-title mb-5 pb-2 border-b border-gray-200 text-base text-gray-800">
-        <strong><?= $escaper->escapeHtml(__('Order Information')) ?></strong>
+    <div class="block-title mb-5 pb-2 border-b border-gray-100 text-base text-gray-800">
+        <strong class="text-lg text-gray-800 font-semibold"><?= $escaper->escapeHtml(__('Order Information')) ?></strong>
     </div>
     <div class="block-content grid grid-cols-12 gap-5">
         <?php if (!$_order->getIsVirtual()): ?>
             <div class="box box-order-shipping-address col-span-12 md:col-span-6 py-2 md:py-0">
-                <strong class="box-title"><span><?= $escaper->escapeHtml(__('Shipping Address')) ?></span></strong>
+                <strong class="box-title font-medium mb-2"><span><?= $escaper->escapeHtml(__('Shipping Address')) ?></span></strong>
                 <div class="box-content">
                     <address class="not-italic text-md"><?= /* @noEscape */ $block->getFormattedAddress($_order->getShippingAddress()) ?></address>
                 </div>
             </div>
 
             <div class="box box-order-shipping-method col-span-12 md:col-span-6 py-2 md:py-0">
-                <strong class="box-title">
+                <strong class="box-title font-medium mb-2">
                     <span><?= $escaper->escapeHtml(__('Shipping Method')) ?></span>
                 </strong>
                 <div class="box-content">
@@ -49,7 +49,7 @@
         <?php endif; ?>
 
         <div class="box box-order-billing-address col-span-12 md:col-span-6 py-2 md:py-0">
-            <strong class="box-title">
+            <strong class="box-title font-medium mb-2">
                 <span><?= $escaper->escapeHtml(__('Billing Address')) ?></span>
             </strong>
             <div class="box-content">
@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="box box-order-billing-method col-span-12 md:col-span-6 py-2 md:py-0">
-            <strong class="box-title">
+            <strong class="box-title font-medium mb-2">
                 <span><?= $escaper->escapeHtml(__('Payment Method')) ?></span>
             </strong>
             <div class="box-content">

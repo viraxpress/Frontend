@@ -37,14 +37,16 @@
     <?php if ($this->helper(\Magento\GiftMessage\Helper\Message::class)->isMessagesAllowed('order', $_order)
         && $_order->getGiftMessageId()): ?>
         <div class="block block-order-details-gift-message w-full shadow-sm border border-gray-100 rounded-lg my-4 p-4 bg-white">
-            <div class="block-title border-b border-gray-200 pb-1 mb-2"><strong><?= $escaper->escapeHtml(__('Gift Message for This Order')) ?></strong></div>
+            <div class="block-title mb-5 pb-2 border-b border-gray-100">
+                <strong class="text-lg text-gray-800 font-semibold"><?= $escaper->escapeHtml(__('Gift Message for This Order')) ?></strong>
+            </div>
             <?php
             $_giftMessage = $this->helper(\Magento\GiftMessage\Helper\Message::class)->getGiftMessageForEntity($_order);
             ?>
             <div class="block-content">
                 <dl class="item-options">
-                    <dt class="item-sender"><strong class="label pr-2"><?= $escaper->escapeHtml(__('From')) ?></strong><?= $escaper->escapeHtml($_giftMessage->getSender()) ?></dt>
-                    <dt class="item-recipient"><strong class="label pr-2"><?= $escaper->escapeHtml(__('To')) ?></strong><?= $escaper->escapeHtml($_giftMessage->getRecipient()) ?></dt>
+                    <dt class="item-sender"><strong class="label pr-2 font-semibold"><?= $escaper->escapeHtml(__('From')) ?></strong><?= $escaper->escapeHtml($_giftMessage->getSender()) ?></dt>
+                    <dt class="item-recipient"><strong class="label pr-2 font-semibold"><?= $escaper->escapeHtml(__('To')) ?></strong><?= $escaper->escapeHtml($_giftMessage->getRecipient()) ?></dt>
                     <dd class="item-message py-2">
                         <?= /* @noEscape */ $this->helper(\Magento\GiftMessage\Helper\Message::class)->getEscapedGiftMessage($_order) ?>
                     </dd>

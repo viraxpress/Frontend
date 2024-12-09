@@ -1,0 +1,45 @@
+<?php
+/**
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
+ */
+?>
+<?php
+/** @var $escaper Magento\Framework\Escaper */
+?>
+<div class="relative z-50" role="dialog" aria-modal="true" x-cloak x-show="showConfirmation">
+    <div class="fixed inset-0 bg-black/50 bg-opacity-25 transition-opacity" x-cloak x-show="showConfirmation" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto p-4 sm:p-6 md:p-20" x-cloak x-show="showConfirmation" >
+        <div class="mx-auto max-w-md transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all" x-cloak x-show="showConfirmation" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
+            <div class="relative">
+                <div class="p-5 space-y-5">
+                    <h3><?= $escaper->escapeHtml(__('Cancel order')) ?>
+                        <span class="cancel-order-id" x-text="realOrderId"></span>
+                    </h3>
+                    <div>
+                        <p class="text-sm leading-6 m-0 mt-1 text-gray-800">
+                            <?= $escaper->escapeHtml(__('Provide a cancellation reason:')) ?>
+                        </p>
+                    </div>
+                </div>
+                <select id="cancel-order-reason-<?=/* @noEscape */ $block->getOrder()->getId() ?>"
+                    class="cancel-order-reason" name="reason">
+                    <?php foreach ($block->getReasons() as $key => $description): ?>
+                        <option value="<?= $escaper->escapeHtml(__($description)) ?>">
+                            <?= $escaper->escapeHtml(__($description)) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <div class="flex justify-end items-center gap-5 p-4">
+                    <button type="button" @click="closePopup" class="inline-block text-sm leading-6 font-medium">
+                        <?= $escaper->escapeHtml(__('Cancel')) ?>
+                    </button>
+                    <button type="button" @click="handleCancelOrder" class="inline-block text-sm leading-6 font-medium">
+                        <?= $escaper->escapeHtml(__('Cancel Order')) ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

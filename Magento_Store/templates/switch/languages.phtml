@@ -27,8 +27,8 @@
 <div class="relative w-full lg:w-max <?= $block->getNameInLayout() ?>" x-data="initializeLanguageSwitcher()">
     <?php if (count($block->getStores())): ?>
         <?php if (count($block->getStores()) == 1): ?>
-            <div class="w-full mt-0.5 relative font-medium rounded px-5 py-3 lg:text-sm lg:py-0 lg:px-3 text-left text-gray-900 lg:text-white sm:leading-6">
-                <span class="min-h-[20px] inline-block" x-text="selectedLanguage"></span>
+            <div class="w-full mt-0.5 min-h-[30px] flex justify-center items-center relative font-medium rounded px-5 py-3 lg:text-sm lg:py-0 lg:px-3 text-left text-gray-900 lg:text-white sm:leading-6">
+                <span class="inline-block" x-text="selectedLanguage"></span>
             </div>
         <?php else: ?>
             <button type="button" @click="isLanguageSwitcher = !isLanguageSwitcher" class="w-full relative cursor-pointer rounded pl-5 py-3 lg:text-sm lg:py-0 lg:pl-3 pr-10 min-h-[30px] text-left text-gray-900 lg:text-white sm:leading-6" :aria-haspopup="isLanguageSwitcher" :aria-expanded="isLanguageSwitcher" aria-labelledby="listbox-label">
