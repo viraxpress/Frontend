@@ -19,13 +19,4 @@
  * @license     https://www.viraxpress.com/license
  */
 ?>
-<?= /* @noEscape */ $block->getMiscellaneousHtml();?>
-<script>
-    (events => {
-        const dispatchUserInteractionEvent = () => {
-            events.forEach(type => window.removeEventListener(type, dispatchUserInteractionEvent))
-            window.dispatchEvent(new Event('init-external-scripts'))
-        };
-        events.forEach(type => window.addEventListener(type, dispatchUserInteractionEvent, {once: true, passive: true}))
-    })(['touchstart', 'mouseover', 'wheel', 'scroll', 'keydown'])
-</script>
+<?= /* @noEscape */ $block->getMiscellaneousHtml();
