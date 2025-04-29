@@ -108,7 +108,6 @@ $hasCouponCode = $block->getCouponCode() !== null && strlen($block->getCouponCod
                         const fieldContainer = inputElement.closest('.field');
                         this.displayValidationError(fieldContainer);
                         isValid = false;
-                        this.isLoader = false;
                     } else {
                         const fieldContainer = inputElement.closest('.field');
                         this.removeValidationError(fieldContainer);

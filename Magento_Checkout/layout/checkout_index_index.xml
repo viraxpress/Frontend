@@ -20,13 +20,14 @@
  * @license     https://www.viraxpress.com/license
  */
 -->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="checkout" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <title>Popular Search Terms</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/> 
+        <remove src="css/styles-l.css" />
+        <remove src="css/styles-m.css" />
+        <remove src="mage/calendar.css" />
+        <remove src="requirejs/require.js" />
+        <remove src="requirejs-config.js" />
+        <remove src="Magento_Csp::js/sri.js"/>
     </head>
-    <body>
-        <referenceContainer name="content">
-            <block class="Magento\Search\Block\Term" name="seo.searchterm" template="Magento_Search::term.phtml" cacheable="false"/>
-        </referenceContainer>
-    </body>
 </page>

@@ -52,8 +52,10 @@ function miniCart() {
                 const cachedData = localStorage.getItem(cacheKey);
                 if (cachedData) {
                     const parsedData = JSON.parse(cachedData);
-                    let cartSections = await getCustomerDataSections("cart");
-                    this.cartData = cartSections.cart;
+                    if (parsedData.cart.summary_count >= 1) {
+                        let cartSections = await getCustomerDataSections("cart");
+                        this.cartData = cartSections.cart;
+                    }
                 }
 
                 this.$watch("cartData", (newData) => {

@@ -27,8 +27,8 @@
 <div class="relative w-full lg:w-max <?= $block->getNameInLayout() ?>" x-data="initializeLanguageSwitcher()">
     <?php if (count($block->getStores())): ?>
         <?php if (count($block->getStores()) == 1): ?>
-            <div class="w-full mt-0.5 min-h-[30px] flex justify-center items-center relative font-medium rounded px-5 py-3 lg:text-sm lg:py-0 lg:px-3 text-left text-gray-900 lg:text-white sm:leading-6">
-                <span class="inline-block" x-text="selectedLanguage"></span>
+            <div class="w-full mt-0.5 relative font-medium rounded px-5 py-3 lg:text-sm lg:py-0 lg:px-3 text-left text-gray-900 lg:text-white sm:leading-6">
+                <span class="min-h-[20px] inline-block" x-text="selectedLanguage"></span>
             </div>
         <?php else: ?>
             <button type="button" @click="isLanguageSwitcher = !isLanguageSwitcher" class="w-full relative cursor-pointer rounded pl-5 py-3 lg:text-sm lg:py-0 lg:pl-3 pr-10 min-h-[30px] text-left text-gray-900 lg:text-white sm:leading-6" :aria-haspopup="isLanguageSwitcher" :aria-expanded="isLanguageSwitcher" aria-labelledby="listbox-label">
@@ -51,6 +51,13 @@
         <?php endif; ?>
     </ul>
 </div>
+
+<a href="#" title="<?= $escaper->escapeHtmlAttr(__('Visit Enterprise Edition')) ?>" class="flex w-max mx-auto mt-5 lg:m-0 items-center gap-2 relative cursor-pointer rounded lg:text-sm px-4 py-2 lg:py-1 leading-none bg-primary text-white lg:bg-white lg:text-primary text-center text-gray-900 sm:leading-6 group">
+    <span class="inline-block"><?= $escaper->escapeHtml(__('Visit Enterprise Edition')) ?></span>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 relative left-0 inline-block transition-all duration-300 ease-in-out group-hover:left-1">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+    </svg>
+</a>
 
 
 <script>

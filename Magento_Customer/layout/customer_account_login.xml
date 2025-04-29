@@ -28,25 +28,19 @@
     <body>
         <referenceBlock name="page.main.title">
             <arguments>
-                <argument name="css_class" xsi:type="string">text-xl text-gray-900 text-center my-5 mb-10 font-medium</argument>
+                <argument name="css_class" xsi:type="string">text-xl text-gray-900 text-center my-5 mb-5 font-medium</argument>
             </arguments>
         </referenceBlock>
-
 
         <referenceBlock name="require-cookie" remove="true" />
 
         <!-- Rearranging the element position -->
         <move element="page.main.title" destination="customer.login.container" before="customer_form_login" />
+        <move element="customer_login_info" destination="customer.login.container" after="page.main.title" />
 
         <referenceContainer name="content">
-            <referenceContainer name="customer.login.container" htmlClass="login-container my-20 mx-auto max-w-md w-full p-5 border border-gray-200 shadow-md rounded-lg" >
-                <block class="Magento\Customer\Block\Form\Login" name="customer_form_login" template="Magento_Customer::form/login.phtml">
-                    <container name="form.additional.info" as="form_additional_info"/>
-                    <arguments>
-                        <argument name="button_lock_manager" xsi:type="object">Magento\Framework\View\Element\ButtonLockManager</argument>
-                    </arguments>
-                </block>
-            </referenceContainer>
+            <block class="Magento\Framework\View\Element\Template" name="customer_login_info" template="Magento_Customer::form/customer_info.phtml" />
+            <referenceContainer name="customer.login.container" htmlClass="login-container my-20 mx-auto max-w-md w-full p-5 border border-gray-200 shadow-md rounded-lg" />
         </referenceContainer>
     </body>
 </page>

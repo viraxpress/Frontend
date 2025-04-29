@@ -59,11 +59,16 @@
             },
 
             searchSubmit(term = null) {
-                term = term || this.searchQuery;
-                if (term.length < this.searchMinimumLength) {
+                if (term) {
+                    this.searchQuery = term; 
+                }
+                
+                if (this.searchQuery.length < this.searchMinimumLength) {
                     this.showErrorMessage = true;
                 } else {
-                    this.$refs.form.submit();
+                    setTimeout(() => {
+                        this.$refs.form.submit();
+                    }, 50);
                 }
             },
 

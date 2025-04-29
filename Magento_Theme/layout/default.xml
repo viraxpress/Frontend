@@ -40,7 +40,7 @@
                         </arguments>
                     </block>
                     <block class="ViraXpress\Cms\Block\Block" name="cms_announcement" before="-" template="Magento_Cms::header/block.phtml" />
-                    <container name="desktop-store-settings" label="Desktop Store Settings" as="desktop-store-settings" htmlTag="div" htmlClass="desktop-store-settings hidden ml-auto w-max lg:flex">
+                    <container name="desktop-store-settings" label="Desktop Store Settings" as="desktop-store-settings" htmlTag="div" htmlClass="desktop-store-settings hidden ml-auto w-full lg:flex lg:gap-5 lg:justify-end">
                         <block class="Magento\Store\Block\Switcher" name="store_language" as="store_language" template="Magento_Store::switch/languages.phtml">
                             <arguments>
                                 <argument name="css_class" xsi:type="string">hidden xl:inline-block</argument>
@@ -123,7 +123,7 @@
             <block class="Magento\Framework\View\Element\Template" name="page-slider-script" template="Magento_Theme::page/js/slider.phtml"/>
             <block class="Magento\Framework\View\Element\Template" name="page-sticky-script" ifconfig="viraxpress_config/header/enable_sticky_header" template="Magento_Theme::page/js/sticky.phtml"/>
         </referenceContainer>
-        <referenceContainer name="footer-container" htmlClass="page-footer bg-slate-50">
+        <referenceContainer name="footer-container" htmlClass="page-footer bg-slate-50 mt-auto">
             <container name="footer" as="footer" label="Page Footer" htmlTag="div" htmlClass="footer content mx-auto container px-6 py-10 space-y-8 lg:px-8">
                 <container name="footer.cms.block" htmlTag="div" htmlClass="space-y-8 lg:space-y-0 lg:grid lg:grid-cols-6 lg:gap-8">
                     <container name="footer.cms.block.left" htmlTag="div" htmlClass="lg:col-span-2" before="-">
