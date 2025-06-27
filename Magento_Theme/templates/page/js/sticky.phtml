@@ -71,6 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('scroll', onScroll);
-    panelClose.addEventListener("click", onPanelClose);
+    if (panelClose) panelClose.addEventListener("click", onPanelClose);
 });
 </script>
