@@ -20,7 +20,7 @@
  */
 
 /** @var \ViraXpress\Cms\Block\Block $block */
-$blockId = $block->getConfig('viraxpress_config/footer/block_id');
+$blockId = $block->getConfigByStoreId('viraxpress_config/footer/block_id');
 if (!empty($blockId)) {
     echo $block->getLayout()->createBlock(\Magento\Cms\Block\Block::class)->setBlockId($blockId)->toHtml();
 }

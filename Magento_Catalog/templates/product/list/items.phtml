@@ -288,7 +288,7 @@
 </div>
 
 <script>
-    (function(){
+    (function() {
         const lazyImages = document.querySelectorAll("img.lazy");
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -296,7 +296,15 @@
                     const img = entry.target;
                     img.src = img.dataset.src;
                     img.classList.remove("lazy");
-                    setTimeout(()=>{img.nextElementSibling.remove();}, 100)
+
+                    // Check if the next sibling element exists before removing it
+                    setTimeout(() => {
+                        const nextSibling = img.nextElementSibling;
+                        if (nextSibling) {
+                            nextSibling.remove();
+                        }
+                    }, 100);
+
                     observer.unobserve(img);
                 }
             });

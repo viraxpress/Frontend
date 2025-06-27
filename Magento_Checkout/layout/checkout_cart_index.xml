@@ -64,11 +64,13 @@
                                     <argument name="css_class" xsi:type="string">summary title text-lg font-medium mb-3 text-gray-900</argument>
                                 </arguments>
                             </block>
-                            <block class="Magento\Checkout\Block\Cart\Shipping" name="checkout.cart.shipping" as="shipping" template="Magento_Checkout::cart/shipping.phtml" after="checkout.cart.summary.title">
+                            <block class="Magento\Framework\View\Element\Template" name="additional.summary.info" template="Magento_Checkout::cart/additional/summaryInfo.phtml" after="checkout.cart.summary.title"/>
+                            <block class="Magento\Checkout\Block\Cart\Shipping" name="checkout.cart.shipping" as="shipping" template="Magento_Checkout::cart/shipping.phtml">
                                 <arguments>
                                     <argument name="post_code_config" xsi:type="object">Magento\Customer\Block\DataProviders\PostCodesPatternsAttributeData</argument>
                                 </arguments>
                             </block>
+                            
                             <container name="checkout.cart.totals.container" as="totals" label="Shopping Cart Totals">
                                 <block class="Magento\Checkout\Block\Cart\Totals" name="checkout.cart.totals" template="Magento_Checkout::cart/totals.phtml">
                                     <arguments>

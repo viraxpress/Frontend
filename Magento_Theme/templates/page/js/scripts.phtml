@@ -30,12 +30,19 @@ use Magento\Framework\Escaper;
 
 // Ensure these objects are properly initialized
 $baseUrl = $block->getBaseUrl();
+$blockObj= $block->getLayout()->createBlock('ViraXpress\Theme\Block\Config');
+$storeCodeUrls = $blockObj->getConfig('web/url/use_store');
+if ($storeCodeUrls) {
+    $parsedUrl = parse_url($baseUrl);
+    $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'] . '/';
+}
 $customPath = 'vx/ViraXpress/frontend/web/';
 $mediaUrl = $baseUrl . $customPath;
 $script = 'js/alpine.min.js';
 
 $attributes = [
     'type' => 'text/javascript',
+    'crossorigin' => 'anonymous',
     'src' => $mediaUrl . $script
 ];
 if ($script === 'js/alpine.min.js') {
@@ -47,13 +54,14 @@ if ($script === 'js/alpine.min.js') {
 $customPathJs = '';
 $coreAttributes = [
     'type' => 'text/javascript',
+    'crossorigin' => 'anonymous',
     'src' => $block->getViewFileUrl('core-js/core.min.js')
 ];
 
 $scriptString = '
     document.addEventListener("DOMContentLoaded", () => {
         const columns = document.querySelectorAll(".pagebuilder-column");
-        const productCard = document.querySelectorAll(".product-item");        
+        const productCard = document.querySelectorAll("body:not(.account) .product-item");        
         const cutOutReveal = document.querySelectorAll(".cutout-reveal-content");
 
 

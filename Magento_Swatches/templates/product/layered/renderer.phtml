@@ -41,7 +41,7 @@
                     <?php switch ($swatchData['swatches'][$option]['type']) {
                         case '3':
                             ?>
-                            <span class="swatch-option inline-flex w-7 h-7 shadow-sm justify-center items-center bg-gray-200 rounded text-sm <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?>  text <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
+                            <span class="swatch-option inline-flex min-w-7 p-1 h-7 shadow-sm justify-center items-center bg-gray-200 rounded text-sm <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?>  text <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
                                  tabindex="-1"
                                  data-option-type="3"
                                  data-option-id="<?= $escaper->escapeHtmlAttr($option) ?>"
@@ -59,7 +59,7 @@
                             );
                             $escapedUrl = $escaper->escapeUrl($swatchImagePath);
                             ?>
-                            <span class="swatch-option swatch-images-options w-7 h-7 shadow-sm rounded image <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?> <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
+                            <span class="swatch-option swatch-images-options min-w-7 p-1 h-7 shadow-sm rounded image <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?> <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
                                  tabindex="-1"
                                  data-option-type="2"
                                  data-option-id="<?= $escaper->escapeHtmlAttr($option) ?>"
@@ -76,7 +76,7 @@
                                 str_replace('\'', '\\\'', $swatchData['swatches'][$option]['value'])
                             ) : '';
                             ?>
-                            <span class="swatch-option swatch-colors-options inline-block w-7 h-7 shadow-sm rounded <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?> color <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
+                            <span class="swatch-option swatch-colors-options inline-block min-w-7 p-1 h-7 shadow-sm rounded <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?> color <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
                                  tabindex="-1"
                                  data-option-type="1"
                                  data-option-id="<?= $escaper->escapeHtmlAttr($option) ?>"
@@ -91,7 +91,7 @@
                         case '0':
                         default:
                             ?>
-                            <span class="swatch-option inline-flex w-7 h-7 shadow-sm justify-center items-center bg-gray-200 rounded text-sm <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?>  text <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
+                            <span class="swatch-option inline-flex min-w-7 p-1 h-7 shadow-sm justify-center items-center bg-gray-200 rounded text-sm <?= ($escaper->escapeHtmlAttr($label['label']) == 'White') ? 'border-2 border-gray-400' : '' ?>  text <?= $escaper->escapeHtmlAttr($label['custom_style']) ?>"
                                  tabindex="-1"
                                  data-option-type="0"
                                  data-option-id="<?= $escaper->escapeHtmlAttr($option) ?>"

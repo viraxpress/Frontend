@@ -1,0 +1,103 @@
+<?php
+/**
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
+ */
+// phpcs:disable Magento2.Templates.ThisInTemplate
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Sales\Block\Order\Info\Buttons $block */
+/** @var $viewModel \Magento\OrderCancellationUi\ViewModel\Config */
+$viewModel = $block->getViewModel();
+?>
+<div class="order-cancellation" x-data="orderCancellation()">
+    <div class="actions">
+        <?php $_order = $block->getOrder() ?>
+        <?php if ($viewModel->canCancel($_order->getEntityId())): ?>
+            <button @click="cancelOrder" data-increment-id="<?=/* @noEscape */ $_order->getIncrementId() ?>" class="cancel-order"
+                id="cancel-order-<?=/* @noEscape */ $_order->getId() ?>" >
+                <span><?= $block->escapeHtml(__('Cancel Order')) ?></span>
+            </button>
+        <?php endif ?>
+        <?= $block->getChildHtml() ?>
+    </div>
+
+    <?php if ($viewModel->canCancel($_order->getEntityId())): ?>
+        <?= $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")->setOrder($_order)
+            ->setReasons($viewModel->getCancellationReasons($_order->getEntityId()))
+            ->setTemplate("Magento_OrderCancellationUi::cancel-order-modal.phtml")->toHtml() ?>
+    <?php endif ?>
+</div>
+<script>
+    function orderCancellation() {
+        return {
+            orderId: <?=/* @noEscape */ $block->getOrder()->getId() ?>,
+            showConfirmation: false,
+            realOrderId: '',
+
+            cancelOrder() {
+                this.showConfirmation = true;
+                var button = document.getElementById('cancel-order-'+this.orderId);
+                this.realOrderId = button.getAttribute('data-increment-id');
+            },
+
+            closePopup() {
+                this.showConfirmation = false;
+            },
+
+            handleCancelOrder() {
+                const reasonSelect = document.getElementById('cancel-order-reason-<?=/* @noEscape */ $block->getOrder()->getId() ?>');
+                const selectedReason = reasonSelect.value;
+                let mutation = `
+mutation cancelOrder($order_id: ID!, $reason: String!) {
+  cancelOrder(input: {order_id: $order_id, reason: $reason}) {
+    error
+    order {
+      status
+    }
+  }
+}`;
+                const mutationQuery = {
+                    query: mutation,
+                    variables: {
+                        'order_id': this.orderId,
+                        'reason': selectedReason
+                    }
+                };
+
+                fetch(BASE_URL + 'graphql', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(mutationQuery)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    let type = 'success',
+                        message;
+
+                    if (data.data.cancelOrder.error !== null) {
+                        message = data.data.cancelOrder.error;
+                        type = 'error';
+                    } else {
+                        message = data.data.cancelOrder.order.status;
+                        location.reload();
+                    }
+
+                    setTimeout(() => {
+                        customerData.set('messages', {
+                            messages: [{
+                                text: message,
+                                type: type
+                            }]
+                        });
+                    }, 1000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+            }
+        }
+    }
+</script>

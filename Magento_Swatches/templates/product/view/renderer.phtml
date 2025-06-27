@@ -32,6 +32,7 @@ $product = $block->getProduct();
 $productId = $product->getId();
 $attributes = $block->decorateArray($block->getAllowAttributes());
 $swatchBlock = $block->getLayout()->createBlock(\ViraXpress\Swatches\Block\Swatch::class);
+$enableAjaxWishlist = $swatchBlock->getConfigValue('viraxpress_wishlist/ajax_wishlist/status');
 ?>
 <?php
 $wishlistFormId = base64_encode($productId . "-product_view_wishlist_form");
@@ -168,7 +169,7 @@ $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
 
                     const attrOptionVal = this.jsonConfig.attributes[attrId].options.find(option => option.id === attrValue);
                     this.selectedImages = this.jsonConfig.images[this.productOptions];
-                    this.fetchAndUpdateOptions(attrId, attrOptionVal.id);
+                    this.fetchAndUpdateOptions(attrId, attrOptionVal.id, attrValue);
 
                     this.updateWishlist(attrId, attrValue);
                 },
@@ -202,9 +203,18 @@ $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
                     const storeLocale = '<?= /* @noEscape */ $swatchBlock->getStoreLocale() ?>'.replace("_", "-");
                     const currentCurrencyCode = '<?= /* @noEscape */ $swatchBlock->getCurrentCurrencyCode() ?>';
 
+                    document.querySelectorAll("[id^='old-price-']").forEach(oldPriceElement => {
+                        oldPriceElement.setAttribute("data-price-amount", baseOldPrice);
+                        oldPriceElement.querySelector(".price").textContent = `$${baseOldPrice.toFixed(2)}`;
+                    });
+
                     const slyoldprice = document.querySelector('.sly-old-price');
                     if (slyoldprice) {
                         slyoldprice.classList.toggle('invisible', finalPrice >= baseOldPrice);
+
+                        const oldPriceElement = document.querySelector('[data-price-type="oldPrice"]');
+                        // const oldPrice = oldPriceElement ? oldPriceElement.getAttribute('data-price-amount') : null;
+                        // slyoldprice.classList.toggle('invisible', finalPrice >= oldPrice);
                     }
 
                     const productTier = document.getElementById('config-product-tier');
@@ -247,7 +257,7 @@ $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
 
                     return ul.outerHTML;
                 },
-                fetchAndUpdateOptions(attrId, optionId) {
+                fetchAndUpdateOptions(attrId, optionId, attrValue) {
                     const BASE_URL = '<?= /* @noEscape */ $block->getBaseUrl() ?>';
                     let childProductIds = Object.keys(this.jsonConfig.index);
                     fetch(`${BASE_URL}viraxpressswatches/product/options?id=<?= /* @noEscape */ $productId ?>&child=${childProductIds}&code=${attrId}&opid=${optionId}`)
@@ -259,27 +269,47 @@ $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
                             }
                         })
                         .then(data => {
-                            Object.keys(data).forEach(x => {
-                                const disableElem = value => {
-                                    const element = document.querySelector(`[value="${value}"]`);
-                                    if (element) {
-                                        element.setAttribute('disabled', '');
-                                        element.parentNode.classList.add('opacity-25', 'cursor-not-allowed');
-                                    }
-                                };
-                                if (attrId === x) {
-                                    disableElem(data[x]);
-                                } else if (attrId === data[x]) {
-                                    disableElem(x);
-                                } else if (document.querySelector('[disabled]')) {
-                                    const element = document.querySelector('[disabled]');
+                            document.querySelectorAll('[name^="super_attribute["]').forEach(element => {
+                                if (element.hasAttribute('disabled')) {
                                     element.parentNode.classList.remove('opacity-25', 'cursor-not-allowed');
                                     element.disabled = false;
                                 }
-                                document.querySelectorAll('.spr-attr').forEach(input => {
-                                    if (input.checked && (input.value === x || input.value === data[x])) {
-                                        disableElem(data[x]);
-                                    }
+                            });
+
+                            let selectElements = document.querySelectorAll(".super-attribute-select");
+                            selectElements.forEach(select => {
+                                let options = select.querySelectorAll("option");
+                                options.forEach(option => {
+                                    option.removeAttribute("disabled");
+                                });
+                            });
+
+                            data.forEach(obj => {
+                                Object.keys(obj).forEach(x => {
+                                    const disableElem = value => {
+                                        const element = document.querySelector(`[value="${value}"]`);
+                                        if (element.type === 'radio') {
+                                            element.setAttribute('disabled', '');
+                                            element.parentNode.classList.add('opacity-25', 'cursor-not-allowed');
+                                        } else {
+                                            element.setAttribute('disabled', '');
+                                        }
+                                    };
+
+                                    document.querySelectorAll('.spr-attr').forEach(input => {
+                                        if (input.checked && (input.value === x || input.value === obj[x])) {
+                                            disableElem(obj[x]);
+                                        }
+                                    });
+
+                                    document.querySelectorAll(".super-attribute-select").forEach(select => {
+                                        let options = select.querySelectorAll("option");
+                                        options.forEach(option => {
+                                            if (option.selected && (option.value === x || option.value === obj[x])) {
+                                                disableElem(obj[x]);
+                                            }
+                                        });
+                                    });
                                 });
                             });
                         })

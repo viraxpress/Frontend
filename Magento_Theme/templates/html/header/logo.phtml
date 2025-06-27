@@ -40,7 +40,7 @@ class="inline-block p-[0.2em] lg:hidden print:hidden" title="Mobile Menu" >
     </svg>
 </button>
 <a href="<?= $escaper->escapeUrl($block->getUrl('')) ?>" title="<?= $escaper->escapeHtmlAttr($storeName) ?>"
-    class="logo inline-block min-h-[56.4px] lg:p-[0.2em] print:mt-2 print:mb-6" aria-label="Header Logo">
+    class="logo inline-flex items-center min-h-[56.4px] lg:p-[0.2em] print:mt-2 print:mb-6" aria-label="Header Logo">
     <img src="<?= $escaper->escapeUrl($block->getLogoSrc()) ?>" 
         title="<?= $escaper->escapeHtmlAttr($block->getLogoAlt()) ?>" 
         alt="<?= $escaper->escapeHtmlAttr($block->getLogoAlt()) ?> on Footer" 

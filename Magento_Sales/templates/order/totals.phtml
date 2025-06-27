@@ -28,17 +28,17 @@
     <?php if ($_total->getBlockName()): ?>
         <?= $block->getChildHtml($_total->getBlockName(), false) ?>
     <?php else:?>
-    <tr class="<?= $escaper->escapeHtmlAttr($_code) ?>">
+    <tr class="<?= $escaper->escapeHtmlAttr($_code) ?> grid grid-cols-2 gap-x-2 md:table-row ">
         <th <?= /* @noEscape */ $block->getLabelProperties() ?> scope="row">
             <?php if ($_total->getStrong()): ?>
-                <strong><?= $escaper->escapeHtml($_total->getLabel()) ?></strong>
+                <strong class="font-semibold"><?= $escaper->escapeHtml($_total->getLabel()) ?></strong>
             <?php else: ?>
                 <?= $escaper->escapeHtml($_total->getLabel()) ?>
             <?php endif ?>
         </th>
-        <td <?= /* @noEscape */ $block->getValueProperties() ?> data-th="<?= $escaper->escapeHtmlAttr($_total->getLabel()) ?>">
+        <td <?= /* @noEscape */ $block->getValueProperties() ?> data-th="<?= $escaper->escapeHtmlAttr($_total->getLabel()) ?>"> 
             <?php if ($_total->getStrong()): ?>
-                <strong><?= /* @noEscape */ $block->formatValue($_total) ?></strong>
+                <strong class="font-semibold"><?= /* @noEscape */ $block->formatValue($_total) ?></strong>
             <?php else: ?>
                 <?= /* @noEscape */ $block->formatValue($_total) ?>
             <?php endif?>

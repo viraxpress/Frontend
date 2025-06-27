@@ -63,7 +63,12 @@ $quickSearchUrl = $allowedSuggestion ? $escaper->escapeUrl($helper->getSuggestUr
                             <ul role="list" class="divide-y divide-gray-100 p-3" id="catalog-search-result">
                                 <li>
                                     <template x-for="(searchSuggest, index) in searchSuggestionList">
-                                        <a href="#" :id="'suggestion-' + index" class="flex justify-between p-2 bg-container-lighter even:bg-container mb-1 cursor-pointer border border-container hover:bg-container-darker" x-on:click="searchSubmit(searchSuggest.title)" x-on:keydown.enter="searchSubmit(searchSuggest.title)" :class="{ 'bg-gray-200': selectedIndex === index }">
+                                        <a href="#" 
+                                           :id="'suggestion-' + index" 
+                                           class="flex justify-between p-2 bg-container-lighter even:bg-container mb-1 cursor-pointer border border-container hover:bg-container-darker" 
+                                           x-on:click.prevent="searchSubmit(searchSuggest.title)" 
+                                           x-on:keydown.enter="searchSubmit(searchSuggest.title)" 
+                                           :class="{ 'bg-gray-200': selectedIndex === index }">
                                             <span x-text="searchSuggest.title"></span>
                                             <span x-text="searchSuggest.num_results"></span>
                                         </a>

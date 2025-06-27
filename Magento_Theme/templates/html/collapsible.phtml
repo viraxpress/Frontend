@@ -21,9 +21,9 @@
 ?>
 <div x-data="{ isVisible: false, contentHeight: 0 }" x-init="contentHeight = $refs.collapsibleContent.scrollHeight">
     <div class="<?= $escaper->escapeHtmlAttr($block->getBlockCss()) ?> 
-        block w-full shadow-sm border border-gray-100 rounded-lg py-2 lg:py-0 bg-white overflow-hidden lg:mb-6">
+        block w-full shadow-xs border border-gray-100 rounded-lg divide-y divide-gray-100 bg-white overflow-hidden lg:mb-6">
         <div @click="isVisible = !isVisible" 
-            class="dropdown-title block-collapsible-nav-title text-lg flex justify-between items-center px-4 py-2 lg:hidden">
+            class="dropdown-title block-collapsible-nav-title text-lg flex justify-between items-center p-4 lg:hidden">
             <strong><?= $escaper->escapeHtml(__('My Account')) ?></strong>
             <span class="transition-all" :class="{ 'rotate-180': isVisible, 'rotate-0': !isVisible }">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -31,11 +31,11 @@
                 </svg>
             </span>
         </div>
-        <div class="dropdown-content <?= $escaper->escapeHtmlAttr($block->getBlockCss()) ?>-content flex grow flex-col gap-y-5 overflow-y-auto transition-all duration-500 ease-in-out max-h-0 bg-white border-t border-gray-200 lg:border-none lg:!max-h-[fit-content]" 
+        <div class="dropdown-content <?= $escaper->escapeHtmlAttr($block->getBlockCss()) ?>-content flex grow flex-col gap-y-5 overflow-y-auto transition-all duration-500 ease-in-out max-h-0 bg-white lg:!max-h-[fit-content]" 
             id="<?= $escaper->escapeHtmlAttr($block->getBlockCss()) ?>"
             x-ref="collapsibleContent"
             x-bind:style="isVisible ? `max-height: ${contentHeight}px` : 'max-height: 0'">
-            <nav class="flex flex-1 flex-col py-3 px-4 mt-2 lg:mt-0">
+            <nav class="flex flex-1 flex-col py-3 px-4">
                 <?= $block->getChildHtml() ?>
             </nav>
         </div>

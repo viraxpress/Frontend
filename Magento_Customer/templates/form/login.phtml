@@ -18,16 +18,14 @@
  * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
  * @license     https://www.viraxpress.com/license
  */
-$loginButtonViewModel = $block->getData('login_button_view_model');
 ?>
-
 <div class="block block-customer-login">
-    <form class="form form-login" x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->escapeUrl($block->getPostActionUrl()) ?>'))" @submit="onSubmit" id="login-form" x-init="initializeLoginEmail()">
-        <fieldset class="fieldset login space-y-6">
-            <div class="field note text-sm text-gray-500"><?= $escaper->escapeHtml(__('If you have an account, sign in with your email address.')) ?></div>
-            <div class="field email">
-                <label class="label block text-sm leading-6 text-gray-900" for="email"><span><?= $escaper->escapeHtml(__('Email')) ?></span><span class="text-required ml-1">*</span></label>
-                <div class="control mt-2">
+  <form class="form form-login" x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->escapeUrl($block->getPostActionUrl()) ?>'))" @submit="onSubmit" id="login-form" x-init="initializeLoginEmail()">
+    <fieldset class="fieldset login space-y-6">
+      <div class="field note text-sm text-gray-500"><?= $escaper->escapeHtml(__('If you have an account, sign in with your email address.')) ?></div>
+      <div class="field email">
+        <label class="label block text-sm leading-6 text-gray-900" for="email"><span><?= $escaper->escapeHtml(__('Email')) ?></span><span class="text-required ml-1">*</span></label>
+        <div class="control mt-2">
                      <input id="email" name="login[username]" x-model="loginEmail" type="email" autofocus <?= $block->isAutocompleteDisabled() ? 'autocomplete="off"' : '' ?> value="<?= $escaper->escapeHtmlAttr($block->getUsername()) ?>" x-on:input.debounce="onChange" required class="input-text block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6" />
                 </div>
             </div>
@@ -52,7 +50,7 @@ $loginButtonViewModel = $block->getData('login_button_view_model');
 
             <div class="actions-toolbar">
                 <div class="primary mt-8">
-                  <button type="submit" class="action login primary primary-btn flex w-full mb-3" <?= $loginButtonViewModel->disabled() ? 'disabled="disabled"' : '' ?>>
+                  <button type="submit" class="action login primary primary-btn flex w-full mb-3" <?= $block->getButtonLockManager()->isDisabled('customer_login_form_submit') ? 'disabled="disabled"' : '' ?>>
                     <template x-if="displayLoading">
                         <span class="w-6 h-6 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
                     </template>

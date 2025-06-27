@@ -27,8 +27,8 @@
 <?php if ($block->getReviews() && count($block->getReviews())): ?>
 <div class="block block-reviews-dashboard w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6">
     <div class="block-title mb-5 pb-2 border-b border-gray-100 flex justify-between items-center gap-5">
-        <strong><?= $escaper->escapeHtml(__('My Recent Reviews')) ?></strong>
-        <a class="action view hover:underline" href="<?= $escaper->escapeUrl($block->getAllReviewsUrl()) ?>">
+        <strong class="block-title order text-lg text-gray-800 font-semibold"><?= $escaper->escapeHtml(__('My Recent Reviews')) ?></strong>
+        <a class="action view text-primary text-sm hover:underline" href="<?= $escaper->escapeUrl($block->getAllReviewsUrl()) ?>">
             <span><?= $escaper->escapeHtml(__('View All')) ?></span>
         </a>
     </div>

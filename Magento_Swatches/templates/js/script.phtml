@@ -125,31 +125,33 @@
 
             const attrOptionVal = jsonConfig.attributes[attrId].options.find(option => option.id === attrValue);
             let childProductIds = Object.keys(jsonConfig.index);
-            fetch(`${BASE_URL}viraxpressswatches/product/options?id=${productId}&child=${childProductIds}&code=${event.target.attributes.attr_code.value}&opid=${attrOptionVal.id}`)
+            fetch(`${BASE_URL}viraxpressswatches/product/options?id=${productId}&child=${childProductIds}&code=${event.target.attributes.attr_id.value}&opid=${attrOptionVal.id}`)
                 .then(response => {
                     if (!response.ok) throw new Error('Failed to load options');
                     return response.json();
                 })
                 .then(data => {
-                    Object.entries(data).forEach(([x, val]) => {
-                        const updateElement = (selector, disabled) => {
-                            const element = document.querySelector(selector);
-                            if (element) {
-                                element.disabled = disabled;
-                                element.parentNode.classList.toggle('opacity-25', disabled);
-                                element.parentNode.classList.toggle('cursor-not-allowed', disabled);
-                            }
-                        };
-                        updateElement(`[value="${val}"].pr-${productId}`, attrValue == x || attrValue == val);
-                        updateElement(`[value="${x}"].pr-${productId}`, attrValue == x || attrValue == val);
+                    document.querySelectorAll(`.spr-attribute.pr-${productId}`).forEach(input => {
+                        if (input.hasAttribute('disabled')) {
+                            input.parentNode.classList.remove('opacity-25', 'cursor-not-allowed');
+                            input.disabled = false;
+                        }
+                    });
+                    data.forEach(obj => {
+                        Object.entries(obj).forEach(([x, val]) => {
+                            const updateElement = (selector) => {
+                                const element = document.querySelector(selector);
+                                if (element) {
+                                    element.setAttribute('disabled', '');
+                                    element.parentNode.classList.add('opacity-25', 'cursor-not-allowed');
+                                }
+                            };
 
-                        const checkedElements = document.querySelectorAll('.spr-attribute:checked');
-                        checkedElements.forEach(checkedElement => {
-                            const { value } = checkedElement;
-                            if (value == data[value] || value == attrValue) {
-                                updateElement(`[value="${data[value]}"].pr-${productId}`, true);
-                                updateElement(`[value="${x}"].pr-${productId}`, true);
-                            }
+                            document.querySelectorAll(`.spr-attribute.pr-${productId}`).forEach(input => {
+                                if (input.checked && (input.value === x || input.value === val)) {
+                                    updateElement(`[value="${val}"].pr-${productId}`);
+                                }
+                            });
                         });
                     });
                 })

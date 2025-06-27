@@ -34,7 +34,7 @@ if ($viewModel->isLoginAsCustomerEnabled()): ?>
             </div>
             <input type="hidden" name="assistance_allowed" value="" />
             <div class="text-sm leading-6 flex justify-start items-start">
-                <label for="assistance_allowed_checkbox" class="font-medium cursor-pointer text-gray-900">
+                <label for="assistance_allowed_checkbox" class="font-normal cursor-pointer text-gray-900">
                     <?= $escaper->escapeHtmlAttr(__($viewModel->getAssistanceCheckboxTitle())) ?>
                 </label>
                 <button type="button" @click="isAssistenceTooltipOpen = true" title="Info" aria-labelledby="tooltip-label" tabindex="0" aria-haspopup="true" :aria-expanded="isAssistenceTooltipOpen" role="button" class="ml-2 font-medium text-gray-900">

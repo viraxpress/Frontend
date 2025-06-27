@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright 2023 Adobe
+ * All Rights Reserved.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+            <referenceContainer name="customer_account_dashboard_container">
+                <block class="Magento\Sales\Block\Order\Recent" name="customer_account_dashboard_top" template="Magento_OrderCancellationUi::order/recent.phtml" after="-">
+                    <arguments>
+                        <argument name="view_model" xsi:type="object">Magento\OrderCancellationUi\ViewModel\Config</argument>
+                    </arguments>
+                </block>
+            </referenceContainer>
+    </body>
+</page>

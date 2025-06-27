@@ -1,0 +1,154 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate
+/**
+ * @var \Magento\Paypal\Block\Express\InContext\SmartButton $block
+ */
+$widget = $this->helper(\Magento\Framework\Json\Helper\Data::class)->jsonDecode($block->getJsInitParams());
+$widgetConfig = $this->helper(\Magento\Framework\Json\Helper\Data::class)->jsonEncode(
+    $widget['Magento_Paypal/js/in-context/product-express-checkout']
+);
+$attributes = [
+    'src' => $widget['Magento_Paypal/js/in-context/product-express-checkout']['clientConfig']['sdkUrl']
+]; ?>
+
+<?= /* @noEscape */ $secureRenderer->renderTag('script', $attributes); ?>
+<div x-data="initializePayPalButton" data-widget='<?= /* @noEscape */ $widgetConfig ?>'>
+    <div id="paypal-smart-button"></div>
+</div>
+
+<script>
+    // Helper function to fetch token
+    async function fetchPaymentToken(getTokenUrl, formKey, button) {
+        const params = new URLSearchParams({
+            form_key: formKey,
+            button: button
+        });
+
+        const response = await fetch(getTokenUrl, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: params,
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            return result.token;
+        } else {
+            throw new Error('Error fetching payment token');
+        }
+    }
+
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (encodeURIComponent(value) || "") + expires + "; path=/";
+    }
+
+    // Helper function to authorize payment
+    async function authorizePayment(onAuthorizeUrl, data, formKey, quoteId) {
+        const params = new URLSearchParams({
+            paymentToken: data.orderID || '',
+            payerId: data.payerID || '',
+            quoteId: quoteId || '',
+            form_key: formKey
+        });
+
+        const response = await fetch(onAuthorizeUrl, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: params,
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            if (result.success) {
+                return result.redirectUrl;
+            } else {
+                throw new Error(result.error_message);
+            }
+        } else {
+            throw new Error('Error during authorization');
+        }
+    }
+
+    // PayPal Button Initialization
+    function initializePayPalButton() {
+        return {
+            async init() {
+                const widgetElement = document.querySelector('[x-data="initializePayPalButton"]');
+                const widgetConfig = JSON.parse(widgetElement.getAttribute('data-widget'));
+
+                paypal.Buttons({
+                    onClick(data, actions) {
+                        const addToCartButton = document.querySelector('.box-to-cart > .block > button[type="button"]');
+                        if (addToCartButton) addToCartButton.click();
+                    },
+                    createOrder: async function(data, actions) {
+                        try {
+                            const token = await fetchPaymentToken(
+                                widgetConfig.clientConfig.getTokenUrl,
+                                getFormKeyCookie(),
+                                widgetConfig.clientConfig.button
+                            );
+                            return token;
+                        } catch (error) {
+                            setCookie('mage-messages', {type:'warning', text:error}, 1);
+                            console.error('Error creating order:', error);
+                            getCookie('mage-messages');
+                        }
+                    },
+                    onApprove: async function(data, actions) {
+                        try {
+                            const redirectUrl = await authorizePayment(
+                                widgetConfig.clientConfig.onAuthorizeUrl,
+                                data,
+                                getFormKeyCookie(),
+                                data.quoteId
+                            );
+                            return actions.redirect(redirectUrl);
+                        } catch (error) {
+                            setCookie('mage-messages', {type:'warning', text:error}, 1);
+                            console.error('Payment authorization failed:', error);
+                            getCookie('mage-messages');
+                        }
+                    },
+                    onError: function(err) {
+                        console.error('An error occurred during the transaction:', err);
+                    }
+                }).render('#paypal-smart-button');
+            }
+        }
+    }
+</script>
