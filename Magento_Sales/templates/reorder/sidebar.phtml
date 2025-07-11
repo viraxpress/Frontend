@@ -51,7 +51,7 @@
                                     <div class="control">
                                         <input type="checkbox" 
                                                name="order_items[]" 
-                                               class="checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary" 
+                                               class="checkbox h-4 w-4 cursor-pointer rounded-sm border-gray-300 text-primary focus:ring-primary" 
                                                :value="items.id" 
                                                :disabled="!items.is_saleable"
                                                :title="items.is_saleable ? '<?= $escaper->escapeHtml(__('Add to Cart')) ?>' : '<?= $escaper->escapeHtml(__('Product is not salable.')) ?>'"  />

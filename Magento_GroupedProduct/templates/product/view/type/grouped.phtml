@@ -67,7 +67,7 @@ $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"></path>
                                         </svg>
                                     </button>
-                                    <input type="number" id="qty" onchange="addGroupedProductToWishlist('super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]', event)" name="super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]" data-selector="super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]" :value="productQty" title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>" class="inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none focus:ring-gray-300" min="0" />
+                                    <input type="number" id="qty" onchange="addGroupedProductToWishlist('super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]', event)" name="super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]" data-selector="super_group[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>]" :value="productQty" title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>" class="inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-hidden focus:ring-gray-300" min="0" />
 
                                     <button type="button" aria-label="Quantity Increment" class="text-gray-800 w-11 h-11 flex justify-center items-center" x-on:click="handleIncrement">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">

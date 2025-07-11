@@ -26,7 +26,7 @@
 ?>
 <?php /** @var  $block \Magento\Shipping\Block\Items */ ?>
 <?php  $_order = $block->getOrder() ?>
-<div class="actions-toolbar w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white text-right">
+<div class="actions-toolbar w-full shadow-xs border border-gray-100 rounded-lg mb-6 p-4 bg-white text-right">
     <?php if ($_order->getTracksCollection()->count()): ?>
         <?= $block->getChildHtml('track-all-link') ?>
     <?php endif; ?>
@@ -39,7 +39,7 @@
     </a>
 </div>
 <?php foreach ($_order->getShipmentsCollection() as $_shipment): ?>
-    <div class="w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white">
+    <div class="w-full shadow-xs border border-gray-100 rounded-lg mb-6 p-4 bg-white">
         <div class="order-title flex flex-wrap items-baseline md:items-center justify-between py-3 gap-2 border-b border-gray-100 mb-4">
             <strong><?= $escaper->escapeHtml(__('Shipment #')) ?><?= $escaper->escapeHtml($_shipment->getIncrementId()) ?></strong>
             <div class="order_links flex items-center gap-3">

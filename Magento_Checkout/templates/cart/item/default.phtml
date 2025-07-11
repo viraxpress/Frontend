@@ -108,14 +108,14 @@ $canApplyMsrp = $helper->isShowBeforeOrderConfirm($product) && $helper->isMinima
                         <span class="sr-only"><?= $escaper->escapeHtml(__('Qty')) ?></span>
                     </label>
                     <div class="quantity-wrapper flex justify-center items-center space-x-[2px]" x-data="updateQty(<?= $escaper->escapeHtmlAttr($block->getQty()) ?>)" x-init="init()">
-                        <button type="button" aria-label="Quantity Decrement" class="text-gray-800 ring-1 ring-inset shadow-sm rounded ring-gray-300 p-2 w-9 h-9 flex justify-center items-center" x-on:click="handleDecrement">
+                        <button type="button" aria-label="Quantity Decrement" class="text-gray-800 ring-1 ring-inset shadow-xs rounded-sm ring-gray-300 p-2 w-9 h-9 flex justify-center items-center" x-on:click="handleDecrement">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"></path>
                             </svg>
                         </button>
-                        <input id="cart-<?= $escaper->escapeHtmlAttr($_item->getId()) ?>-qty" name="cart[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>][qty]" data-cart-item-id="<?= $escaper->escapeHtmlAttr($_item->getSku()) ?>" :value="productQty" type="number" min="0" size="4" step="any" title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>" class="inline-block text-center w-9 h-9 ring-1 ring-inset shadow-sm p-[2px] rounded ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none" data-validate="{required:true,'validate-greater-than-zero':true}" data-item-qty="<?= $escaper->escapeHtmlAttr($block->getQty()) ?>" data-role="cart-item-qty" onchange="validateQuantity(event)" />
+                        <input id="cart-<?= $escaper->escapeHtmlAttr($_item->getId()) ?>-qty" name="cart[<?= $escaper->escapeHtmlAttr($_item->getId()) ?>][qty]" data-cart-item-id="<?= $escaper->escapeHtmlAttr($_item->getSku()) ?>" :value="productQty" type="number" min="0" size="4" step="any" title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>" class="inline-block text-center w-9 h-9 ring-1 ring-inset shadow-xs p-[2px] rounded-sm ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-hidden" data-validate="{required:true,'validate-greater-than-zero':true}" data-item-qty="<?= $escaper->escapeHtmlAttr($block->getQty()) ?>" data-role="cart-item-qty" onchange="validateQuantity(event)" />
 
-                        <button type="button" aria-label="Quantity Increment" class="text-gray-800 ring-1 ring-inset shadow-sm rounded ring-gray-300 p-2 w-9 h-9 flex justify-center items-center" x-on:click="handleIncrement">
+                        <button type="button" aria-label="Quantity Increment" class="text-gray-800 ring-1 ring-inset shadow-xs rounded-sm ring-gray-300 p-2 w-9 h-9 flex justify-center items-center" x-on:click="handleIncrement">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
                             </svg>

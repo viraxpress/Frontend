@@ -30,7 +30,7 @@
         <attribute name="class" value="text-gray-900"/>
 
         <referenceBlock name="js_cookies" remove="true"/>
-        <referenceContainer name="header.container" htmlClass="page-header bg-white transition-all duration-200 ease-in-out shadow">
+        <referenceContainer name="header.container" htmlClass="page-header bg-white transition-all duration-200 ease-in-out shadow-sm">
             <container name="header.panel.wrapper" htmlClass="panel wrapper bg-primary py-2" htmlTag="div" htmlId="header-panel" before="-">
                 <container name="header.panel" label="Page Header Panel" htmlTag="div" htmlClass="panel header mx-auto container flex justify-end text-center lg:text-left items-center gap-5 px-4 sm:px-6 lg:px-8">
                     <block class="Magento\Framework\View\Element\Template" name="skip_to_content" template="Magento_Theme::html/skip.phtml">

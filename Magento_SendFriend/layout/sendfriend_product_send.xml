@@ -22,7 +22,6 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <link src="core-js/form-validations.min.js" />
         <title>Email to a Friend</title>
     </head>
     <body>
@@ -35,6 +34,9 @@
             <block class="Magento\SendFriend\Block\Send" name="sendfriend.send" cacheable="false" template="Magento_SendFriend::send.phtml">
                 <container name="form.additional.info" as="form_additional_info"/>
             </block>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="form-v-scripts" template="Magento_Customer::form/scripts.phtml"/>
         </referenceContainer>
     </body>
 </page>

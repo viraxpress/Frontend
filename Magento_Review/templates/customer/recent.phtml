@@ -25,7 +25,7 @@
  */
 ?>
 <?php if ($block->getReviews() && count($block->getReviews())): ?>
-<div class="block block-reviews-dashboard w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6">
+<div class="block block-reviews-dashboard w-full shadow-xs border border-gray-100 rounded-lg p-4 bg-white mb-6">
     <div class="block-title mb-5 pb-2 border-b border-gray-100 flex justify-between items-center gap-5">
         <strong class="block-title order text-lg text-gray-800 font-semibold"><?= $escaper->escapeHtml(__('My Recent Reviews')) ?></strong>
         <a class="action view text-primary text-sm hover:underline" href="<?= $escaper->escapeUrl($block->getAllReviewsUrl()) ?>">
@@ -71,19 +71,19 @@
                                         </svg>
                                     </div>
                                     <div class="overflow-hidden absolute left-0 top-0 text-primary flex space-x-1" style="width:<?= $escaper->escapeHtmlAttr($rating) ?>%">
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
                                     </div>

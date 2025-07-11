@@ -38,7 +38,7 @@
                     ) ?>
                 </strong>
             </div>
-            <div class="table-wrapper order-items-shipment w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
+            <div class="table-wrapper order-items-shipment w-full shadow-xs border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
                 <table class="data table table-order-items shipment w-full"
                         id="my-shipment-table-<?= (int)$block->getObjectData($shipment, 'id') ?>">
                     <caption class="table-caption hidden"><?= $escaper->escapeHtml(__('Items Invoiced')) ?></caption>
@@ -56,7 +56,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="block block-order-details-view w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
+            <div class="block block-order-details-view w-full shadow-xs border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
                 <div class="block-title border-b border-gray-200 py-2 text-base mb-4 flex gap-4 justify-between">
                     <strong><?= $escaper->escapeHtml(__('Order Information')) ?></strong>
                 </div>

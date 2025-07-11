@@ -33,7 +33,7 @@ if (trim($block->getPageHeading())) {
 }
 ?>
 <?php if ($titleHtml): ?>
-<div class="flex justify-start items-center flex-wrap gap-3 w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white <?= $escaper->escapeHtmlAttr($cssClass) ?>">
+<div class="flex justify-start items-center flex-wrap gap-3 w-full shadow-xs border border-gray-100 rounded-lg mb-6 p-4 bg-white <?= $escaper->escapeHtmlAttr($cssClass) ?>">
     <h1 class="font-semibold text-xl text-primary page-title-wrapper"
         <?php if ($block->getId()): ?> id="<?= $escaper->escapeHtmlAttr($block->getId()) ?>" <?php endif; ?>
         <?php if ($block->getAddBaseAttributeAria()): ?>

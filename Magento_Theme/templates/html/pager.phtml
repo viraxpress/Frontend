@@ -99,7 +99,7 @@ $layoutName = $moduleName . '_' . $controllerName . '_' . $actionName;
 
             <?php foreach ($block->getFramePages() as $_page): ?>
                 <?php if ($block->isPageCurrent($_page)): ?>
-                    <li class="item current cursor-pointer relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary current-read-page bg-primary text-white">
+                    <li class="item current cursor-pointer relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary current-read-page bg-primary text-white">
                         <strong class="page">
                             <span class="label sr-only"><?= $escaper->escapeHtml(__('You\'re currently reading page')) ?></span>
                             <span><?= $escaper->escapeHtml($localeFormatter->formatNumber($_page)) ?></span>

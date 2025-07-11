@@ -22,7 +22,7 @@
 /** @var \Magento\Customer\Block\Newsletter $block */
 ?>
 <?= $block->getChildHtml('form_before') ?>
-<form class="form form-newsletter-manage w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6"
+<form class="form form-newsletter-manage w-full shadow-xs border border-gray-100 rounded-lg p-4 bg-white mb-6"
 action="<?= $escaper->escapeUrl($block->getAction()) ?>" method="post" hx-replace-url="true"
 id="form-validate" x-data="newsletterSubscription()">
     <fieldset class="fieldset">
@@ -35,7 +35,7 @@ id="form-validate" x-data="newsletterSubscription()">
             </div>
             <div class="block space-y-5">
                 <div class="field choice pb-2 flex items-center gap-x-3">
-                    <input class="h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary"
+                    <input class="h-4 w-4 cursor-pointer rounded-sm border-gray-300 text-primary focus:ring-primary"
                     type="checkbox" name="is_subscribed" id="subscription" value="1"
                     title="<?= $escaper->escapeHtmlAttr(__('General Subscription')) ?>"
                     <?php if ($block->getIsSubscribed()): ?> checked="checked" <?php endif; ?> class="checkbox">

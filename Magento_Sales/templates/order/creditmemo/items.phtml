@@ -22,7 +22,7 @@
 <?php $_order = $block->getOrder() ?>
 
 <?php foreach ($_order->getCreditmemosCollection() as $_creditmemo): ?>
-    <div class="w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6">
+    <div class="w-full shadow-xs border border-gray-100 rounded-lg p-4 bg-white mb-6">
         <div class="order-title flex gap-2 flex-wrap items-center py-3 justify-between w-full border-b border-gray-100 mb-4">
             <strong><?= $escaper->escapeHtml(__('Refund #')) ?><?= $escaper->escapeHtml($_creditmemo->getIncrementId()) ?> </strong>
             <div class="actions-toolbar space-x-5">

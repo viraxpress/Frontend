@@ -97,6 +97,18 @@ $groupChildNames = $block->getGroupChildNames($groupName);
         function mobileMenu() {
             return {
                 isMenuOpen: false,
+                init() {
+                    this.$watch("isMenuOpen", (val) => {
+                        const htmlBody = document.querySelector("#html-body");
+                        
+                        if (val) {
+                            htmlBody.style.overflowY = 'hidden';
+                            htmlBody.style.overflowX = '';
+                        } else {
+                            htmlBody.style.overflowY = '';
+                        }
+                    });
+                },
                 toggleMenu() {
                     this.isMenuOpen = !this.isMenuOpen;
                     if (this.isMenuOpen) this.$refs.menu.focus();

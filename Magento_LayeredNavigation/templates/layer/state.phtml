@@ -30,7 +30,7 @@
 <?php if (!empty($_filters)): ?>
     <ol class="items flex justify-start items-start gap-4 flex-wrap my-4">
         <?php foreach ($_filters as $_filter): ?>
-            <li class="item bg-gray-100 text-gray-800 inline-flex justify-start items-center gap-x-2 text-sm font-medium p-2 rounded">
+            <li class="item bg-gray-100 text-gray-800 inline-flex justify-start items-center gap-x-2 text-sm font-medium p-2 rounded-sm">
                 <span class="inline-block">
                     <?= $escaper->escapeHtml(__($_filter->getName())) ?>
                     <span>:</span>

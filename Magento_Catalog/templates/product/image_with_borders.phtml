@@ -27,7 +27,7 @@ $width = (int)$block->getWidth();
 ?>
 <span class="product-image-container inline-block product-image-container-<?= /* @noEscape */ $block->getProductId() ?>">
     <span class="product-image-wrapper inline-block">
-        <img class="mx-auto rounded border border-gray-200 <?= $escaper->escapeHtmlAttr($block->getClass()) ?>"
+        <img class="mx-auto rounded-sm border border-gray-200 <?= $escaper->escapeHtmlAttr($block->getClass()) ?>"
             <?php foreach ($block->getCustomAttributes() as $name => $value): ?>
                 <?= $escaper->escapeHtmlAttr($name) ?>="<?= $escaper->escapeHtml($value) ?>"
             <?php endforeach; ?>

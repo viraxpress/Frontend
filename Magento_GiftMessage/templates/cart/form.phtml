@@ -43,19 +43,19 @@ $item = $block->getData('item');
         <div class="col-span-full">
             <label for="gift-message-whole-to-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('To:')) ?></label>
             <div class="mt-2">
-                <input type="text" name="to" id="gift-message-whole-to-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" x-model="giftItemMessage.to" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                <input type="text" name="to" id="gift-message-whole-to-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" x-model="giftItemMessage.to" autocomplete="given-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
             </div>
         </div>
         <div class="col-span-full">
             <label for="gift-message-whole-from-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('From:')) ?></label>
             <div class="mt-2">
-                <input type="text" id="gift-message-whole-from-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" name="from" x-model="giftItemMessage.from" autocomplete="family-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                <input type="text" id="gift-message-whole-from-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" name="from" x-model="giftItemMessage.from" autocomplete="family-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
             </div>
         </div>
         <div class="col-span-full">
             <label for="gift-message-whole-message-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" class="block text-sm font-medium leading-6 text-gray-900"><?= $escaper->escapeHtml(__('Message:')) ?></label>
             <div class="mt-2">
-                <textarea name="message" id="gift-message-whole-message-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" x-model="giftItemMessage.message" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"></textarea>
+                <textarea name="message" id="gift-message-whole-message-<?=$escaper->escapeHtmlAttr($item->getId()) ?>" x-model="giftItemMessage.message" rows="3" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"></textarea>
             </div>
         </div>
 

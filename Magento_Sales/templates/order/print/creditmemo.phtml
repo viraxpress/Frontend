@@ -31,7 +31,7 @@
     <div class="order-title border-b border-gray-200 py-2 px-4 text-base mb-4 flex gap-4 justify-between print:border-0 print:p-0">
         <strong><?= $escaper->escapeHtml(__('Refund #%1', $_creditmemo->getIncrementId())) ?></strong>
     </div>
-    <div class="table-wrapper order-items-creditmemo w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
+    <div class="table-wrapper order-items-creditmemo w-full shadow-xs border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
         <table class="data table table-order-items creditmemo w-full" id="my-refund-table-<?= /* @noEscape */ (int) $_creditmemo->getId() ?>">
             <caption class="table-caption hidden"><?= $escaper->escapeHtml(__('Items Refunded')) ?></caption>
             <thead class="border-b border-gray-200 hidden md:table-header-group">
@@ -58,7 +58,7 @@
             </tfoot>
         </table>
     </div>
-    <div class="block block-order-details-view w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
+    <div class="block block-order-details-view w-full shadow-xs border border-gray-200 rounded-lg mb-6 p-4 bg-white print:rounded-none print:shadow-none">
         <div class="block-title border-b border-gray-200 py-2 text-base mb-4 flex gap-4 justify-between">
             <strong><?= $escaper->escapeHtml(__('Order Information')) ?></strong>
         </div>
