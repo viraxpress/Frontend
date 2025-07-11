@@ -12,7 +12,7 @@ $viewModel = $block->getViewModel();
 $_orders = $block->getOrders();
 $count = count($_orders);
 ?>
-<div class="block block-dashboard-orders w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white" x-data="myOrderView()">
+<div class="block block-dashboard-orders w-full shadow-xs border border-gray-100 rounded-lg p-4 bg-white" x-data="myOrderView()">
     <div class="mb-5 pb-2 border-b border-gray-200 flex justify-between items-center gap-5">
         <div class="block-title order text-lg text-gray-800 font-semibold">
             <?= $escaper->escapeHtml(__('Recent Orders')) ?>

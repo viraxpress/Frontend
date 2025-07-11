@@ -25,7 +25,6 @@
     <head>
         <title>Account Information</title>
         <css src="css/datepicker.min.css" />
-        <link src="core-js/form-validations.min.js" />
         <link src="core-js/datepicker.min.js" />
     </head>
     <body>
@@ -43,6 +42,9 @@
                     <argument name="current_customer" xsi:type="object">ViraXpress\Customer\ViewModel\CurrentCustomer</argument>
                 </arguments>
             </block>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="form-v-scripts" template="Magento_Customer::form/scripts.phtml"/>
         </referenceContainer>
     </body>
 </page>

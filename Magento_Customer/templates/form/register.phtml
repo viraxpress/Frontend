@@ -59,8 +59,8 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
         
         <?php if ($block->isNewsletterEnabled()): ?>
             <div class="field choice newsletter flex justify-start items-center gap-x-3">
-                <input id="newsletter-sign-up" name="is_subscribed" type="checkbox" class="checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary" value="1" <?= $formData->getIsSubscribed() ? 'checked="checked"' : ''?>>
-                <label for="newsletter-sign-up" class="label cursor-pointer text-sm font-medium text-gray-900">
+                <input id="newsletter-sign-up" name="is_subscribed" type="checkbox" class="checkbox h-4 w-4 cursor-pointer rounded-sm border-gray-300 text-primary focus:ring-primary" value="1" <?= $formData->getIsSubscribed() ? 'checked="checked"' : ''?>>
+                <label for="newsletter-sign-up" class="label cursor-pointer text-sm text-gray-900">
                     <span><?= $escaper->escapeHtml(__('Sign Up for Newsletter')) ?></span>
                 </label>
             </div>
@@ -68,7 +68,7 @@ $additionalInfoHtml = $block->getChildHtml('form_additional_info');
         <?php endif ?>
         <?php if ($block->getShowAddressFields()): ?>
             <div class="flex justify-start items-center gap-x-3">
-                <input id="address-template-sign-up" name="is_address_rendered" type="checkbox" x-model="displayAddressFields" class="checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary" />
+                <input id="address-template-sign-up" name="is_address_rendered" type="checkbox" x-model="displayAddressFields" class="checkbox h-4 w-4 cursor-pointer rounded-sm border-gray-300 text-primary focus:ring-primary" />
                 <label for="address-template-sign-up" class="label cursor-pointer text-sm font-medium text-gray-900">
                     <span><?= $escaper->escapeHtml(__('Add Address')) ?></span>
                 </label>

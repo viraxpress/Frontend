@@ -34,7 +34,7 @@ if (count($data)): ?>
             <span id="related-search-terms" class="sr-only"><?= $escaper->escapeHtml(__('Related search terms:')) ?></span>
         </div>
         <?php foreach ($data as $additionalInfo): ?>
-            <a href="<?= $escaper->escapeUrl($block->getLink($additionalInfo->getQueryText())) ?>" class="inline-block leading-[normal] p-2 px-4 bg-gray-100 rounded">
+            <a href="<?= $escaper->escapeUrl($block->getLink($additionalInfo->getQueryText())) ?>" class="inline-block leading-[normal] p-2 px-4 bg-gray-100 rounded-sm">
                 <?= $escaper->escapeHtml($additionalInfo->getQueryText()) ?>
             </a>
             <?php if ($block->isShowResultsCount()): ?>

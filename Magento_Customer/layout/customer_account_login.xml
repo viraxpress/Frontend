@@ -23,7 +23,6 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <title>Customer Login</title>
-        <link src="core-js/form-validations.min.js" />
     </head>
     <body>
         <referenceBlock name="page.main.title">
@@ -31,6 +30,10 @@
                 <argument name="css_class" xsi:type="string">text-xl text-gray-900 text-center my-5 mb-5 font-medium</argument>
             </arguments>
         </referenceBlock>
+
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="form-v-scripts" template="Magento_Customer::form/scripts.phtml"/>
+        </referenceContainer>
 
         <referenceBlock name="require-cookie" remove="true" />
 

@@ -23,7 +23,7 @@
 ?>
 <div class="order-details-items invoice">
     <?= $block->getChildHtml('invoice_items') ?>
-    <div class="actions-toolbar w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white">
+    <div class="actions-toolbar w-full shadow-xs border border-gray-200 rounded-lg mb-6 p-4 bg-white">
         <div class="secondary">
             <a href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>" class="action back primary-btn">
                 <span><?= $escaper->escapeHtml($block->getBackTitle()) ?></span>

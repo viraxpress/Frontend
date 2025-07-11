@@ -71,11 +71,11 @@ if ($images) {
 } ?>
 
 <div x-data x-init="init()">
-    <div class="border border-gray-200 relative rounded overflow-hidden">
+    <div class="border border-gray-200 relative rounded-sm overflow-hidden">
         <?php if (!empty($images)): ?>
-            <img id="initialImage" fetchpriority="high" src="<?= $escaper->escapeHtmlAttr($intialImage) ?>" class="mx-auto relative z-[0]" alt="Product Image" width="<?= /* @noEscape */ $mediumWidth ?>" height="<?= /* @noEscape */ $mediumHeight ?>" />
+            <img id="initialImage" fetchpriority="high" src="<?= $escaper->escapeHtmlAttr($intialImage) ?>" class="mx-auto relative z-0" alt="Product Image" width="<?= /* @noEscape */ $mediumWidth ?>" height="<?= /* @noEscape */ $mediumHeight ?>" />
             <template x-if="showInitialImage">
-                <div class="absolute top-0 left-0 z-10 rounded overflow-hidden">
+                <div class="absolute top-0 left-0 z-10 rounded-sm overflow-hidden">
                     <div class="splide product-gallery">
                         <div class="splide__track">
                             <div class="splide__list">
@@ -103,7 +103,7 @@ if ($images) {
                 <div class="splide__track">
                     <div class="splide__list">
                         <template x-for="(image, index) in images" :key="index">
-                            <div class="splide__slide rounded thumbnail border cursor-pointer border-gray-200">
+                            <div class="splide__slide rounded-sm thumbnail border cursor-pointer border-gray-200">
                                 <img fetchpriority="high" class="mx-auto" :src="image.thumb" width="<?= /* @noEscape */ $smallWidth ?>" height="<?= /* @noEscape */ $smallHeight ?>" :alt="(image.alt) ? image.alt : ''" />
                             </div>
                         </template>

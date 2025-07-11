@@ -28,7 +28,7 @@
 /** @var \Magento\Review\Helper\Data $reviewHelper */
 $reviewHelper = $block->getData('reviewHelper');
 ?>
-<div class="w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6">
+<div class="w-full shadow-xs border border-gray-100 rounded-lg p-4 bg-white mb-6">
     <?php if ($block->getReviews() && count($block->getReviews())): ?>
         <div class="table-wrapper reviews block overflow-x-auto mb-5">
             <table class="data table table-reviews w-full" id="my-reviews-table">
@@ -84,19 +84,19 @@ $reviewHelper = $block->getData('reviewHelper');
                                         </svg>
                                     </div>
                                     <div class="overflow-hidden absolute left-0 top-0 text-primary flex space-x-1" style="width:<?= ((int)$review->getSum() / (int)$review->getCount()) ?>%">
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
-                                        <svg viewBox="0 0 32 30" class="w-4 h-4 flex-shrink-0">
+                                        <svg viewBox="0 0 32 30" class="w-4 h-4 shrink-0">
                                             <use xlink:href="#star"></use>
                                         </svg>
                                     </div>

@@ -49,7 +49,7 @@ $viewModel = $block->getData('validateQuantityViewModel');
             <select id="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>"
                     name="bundle_option[<?= $escaper->escapeHtmlAttr($_option->getId()) ?>]"
                     data-selector="bundle_option[<?= $escaper->escapeHtmlAttr($_option->getId()) ?>]"
-                    class="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?> product bundle option bundle-option-select change-container-classname rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-none focus:ring-primary focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 product-bundle-option"
+                    class="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?> product bundle option bundle-option-select change-container-classname rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:outline-hidden focus:ring-primary focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 product-bundle-option"
                     @change="changeBundleOption($event)"
                 <?php if ($_option->getRequired()) { echo 'data-validate = {required:true}'; } ?>>
                 <option value=""><?= $escaper->escapeHtml(__('Choose a selection...')) ?></option>
@@ -84,7 +84,7 @@ $viewModel = $block->getData('validateQuantityViewModel');
                     </button>
                     <input <?php if (!$_canChangeQty) { echo ' disabled="disabled"'; } ?>
                            id="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>-qty-input"
-                           class="input-text qty<?php if (!$_canChangeQty) { echo ' qty-disabled'; } ?> inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none focus:ring-gray-300"
+                           class="input-text qty<?php if (!$_canChangeQty) { echo ' qty-disabled'; } ?> inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-hidden focus:ring-gray-300"
                            type="number"
                            min="1"
                            data-validate="<?= $escaper->escapeHtmlAttr($viewModel->getQuantityValidators()) ?>"

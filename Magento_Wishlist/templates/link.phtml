@@ -23,6 +23,6 @@
 ?>
 <?php if ($block->isLoggedIn()): ?>
 <li class="link wishlist px-3 lg:p-0">
-    <a class="text-gray-900 lg:text-gray-700 font-medium block px-2 py-3 lg:p-2 rounded lg:text-sm capitalize lg:hover:bg-gray-100 lg:focus:bg-primary lg:focus:text-white" <?= /* @noEscape */ $block->getLinkAttributes() ?>><?= $escaper->escapeHtml($block->getLabel()) ?></a>
+    <a class="text-gray-900 lg:text-gray-700 font-medium block px-2 py-3 lg:p-2 rounded-sm lg:text-sm capitalize lg:hover:bg-gray-100 lg:focus:bg-primary lg:focus:text-white" <?= /* @noEscape */ $block->getLinkAttributes() ?>><?= $escaper->escapeHtml($block->getLabel()) ?></a>
 </li>
 <?php endif; ?>

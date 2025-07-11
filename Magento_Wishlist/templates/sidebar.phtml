@@ -78,9 +78,11 @@ $isLoggedIn = $customerViewModel->isLoggedIn();
                         this.fetchWishlistData();
                     }, 2000);
                 },
-                fetchWishlistData() {
-                    if (customerData && customerData.get && customerData.get('wishlist')) {
-                        const wishlistCustomerData = customerData.get('wishlist');
+                async fetchWishlistData() {
+                    const cacheData = JSON.parse(localStorage.getItem('vira-mage-cache-storage') || '{}');
+                    const wishlistData = await getCustomerDataSections('wishlist');
+                    if (wishlistData.wishlist) {
+                        const wishlistCustomerData = wishlistData.wishlist;
                         if (wishlistCustomerData && wishlistCustomerData.counter != null) {
                             this.wishlist = wishlistCustomerData;
                             this.itemCount = wishlistCustomerData.items.length;
@@ -108,21 +110,17 @@ $isLoggedIn = $customerViewModel->isLoggedIn();
                         formData.append('qty', params.data.qty);
                         formData.append('uenc', params.data.uenc);
                         fetch(params.action, {
-                                method: 'POST',
-                                body: formData,
-                                credentials: 'include'
-                            })
-                            .then(response => {
-                                if (response.ok) {
-                                    window.location.reload();
-                                } else {
-                                    console.error('Error:', response.status);
-                                }
-                            })
-                            .catch(error => {
-                                // Handle fetch errors
-                                console.error('Fetch error:', error);
-                            });
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include'
+                        })
+                        .then(response => {
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            // Handle fetch errors
+                            console.error('Fetch error:', error);
+                        });
                     }
                 }
             }

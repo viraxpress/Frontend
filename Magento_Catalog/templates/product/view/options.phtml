@@ -71,7 +71,7 @@ $wishlistFormId = preg_replace("/[^a-zA-Z0-9]/", "", $wishlistFormId);
             var productDateOption = divElement.querySelectorAll(".datepicker-input");
             if (productDateOption.length) {
                 productDateOption.forEach(function(dateOption) {
-                    var event = new Event("blur");
+                    var event = new Event("blur-sm");
                     dateOption.dispatchEvent(event);
                 });
             }

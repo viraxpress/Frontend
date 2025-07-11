@@ -24,8 +24,8 @@
  */
 $_item = $block->getItem();
 ?>
-<tr class="border-b border-gray-200 pb-4 mb-4 block md:table-row last:border-b-0" id="order-item-row-<?= (int) $escaper->escapeHtml($_item->getId()) ?>">
-    <td class="col name col p-2 py-3 font-semibold align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('Product Name')) ?> ">
+<tr class="table-row border-b border-gray-200 pb-4 mb-4 block md:table-row last:border-b-0" id="order-item-row-<?= (int) $escaper->escapeHtml($_item->getId()) ?>">
+    <td class="table-cell col name col p-2 py-3 font-semibold align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('Product Name')) ?> ">
         <div class="col-name-wrapper">
             <?= $escaper->escapeHtml($_item->getName()) ?>
             <?php if ($_options = $block->getItemOptions()): ?>
@@ -62,17 +62,17 @@ $_item = $block->getItem();
             <?= $escaper->escapeHtml($_item->getDescription()) ?>
         </div>
     </td>
-    <td class="col sku  col p-2 py-3 text-sm align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell" data-th="<?= $escaper->escapeHtml(__('SKU')) ?>">
+    <td class="table-cell col sku  col p-2 py-3 text-sm align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell" data-th="<?= $escaper->escapeHtml(__('SKU')) ?>">
         <div>
             <?= /* @noEscape */ $block->prepareSku($block->getSku()) ?>
         </div>
     </td>
-    <td class="col price col p-2 py-3 font-semibold align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell" data-th="<?= $escaper->escapeHtml(__('Price')) ?>">
+    <td class="table-cell col price col p-2 py-3 font-semibold align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell" data-th="<?= $escaper->escapeHtml(__('Price')) ?>">
         <div class="col-price-wrapper">
             <?= $block->getItemPriceHtml() ?>
         </div>
     </td>
-    <td class="col qty col p-2 py-3 text-sm align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('Qty')) ?>">
+    <td class="table-cell col qty col p-2 py-3 text-sm align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('Qty')) ?>">
         <div class="col-qty-wrapper">
             <ul class="items-qty">
             <?php if ($block->getItem()->getQtyOrdered() > 0): ?>
@@ -110,7 +110,7 @@ $_item = $block->getItem();
             </ul>
         </div>
     </td>
-    <td class="col subtotal col p-2 py-3 font-semibold align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('Subtotal')) ?>">
+    <td class="table-cell col subtotal col p-2 py-3 font-semibold align-middle before:font-semibold before:content-[attr(data-th)] before:text-base md:before:content-none grid grid-cols-2 gap-x-2 md:table-cell relative" data-th="<?= $escaper->escapeHtml(__('Subtotal')) ?>">
         <div class="col-subtotal-wrapper">
             <?= $block->getItemRowTotalHtml() ?>
         </div>

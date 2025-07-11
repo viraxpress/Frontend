@@ -38,7 +38,7 @@
                 $baseAmount = $info['base_tax_amount'];
                 $title      = $info['title'];
             ?>
-            <tr class="totals tax details details-<?= (int) $taxIter ?><?= ($block->getIsPlaneMode()) ? ' plane' : '' ?>">
+            <tr class="totals tax details details-<?= (int) $taxIter ?><?= ($block->getIsPlaneMode()) ? ' plane' : '' ?> grid grid-cols-2 gap-x-2 md:table-row">
                 <td <?= /* @noEscape */ $block->getLabelProperties() ?>>
                     <?= $escaper->escapeHtml($title) ?>
                     <?php if ($percent !== null): ?>
@@ -54,11 +54,11 @@
 <?php endif; ?>
 
 <?php if ($block->displayFullSummary() && $_fullInfo && !$block->getIsPlaneMode()): ?>
-<tr class="totals-tax-summary">
+<tr class="totals-tax-summary grid grid-cols-2 gap-x-2 md:table-row">
 <?php elseif ($block->displayFullSummary() && $_fullInfo && $block->getIsPlaneMode()): ?>
-<tr class="totals-tax-summary plane">
+<tr class="totals-tax-summary plane grid grid-cols-2 gap-x-2 md:table-row">
 <?php else: ?>
-<tr class="totals-tax">
+<tr class="totals-tax grid grid-cols-2 gap-x-2 md:table-row">
 <?php endif; ?>
     <th <?= /* @noEscape */ $block->getLabelProperties() ?> scope="row">
         <?php if ($block->displayFullSummary()): ?>

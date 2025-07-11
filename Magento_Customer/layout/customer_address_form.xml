@@ -22,9 +22,6 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="customer_account"/>
-    <head>
-        <link src="core-js/form-validations.min.js" />
-    </head>
     <body>
         <referenceBlock name="head.components" remove="true" />
         <referenceBlock name="customer-account-navigation-address-link">
@@ -49,6 +46,9 @@
                     <argument name="country_provider" xsi:type="object">ViraXpress\Customer\ViewModel\Directory</argument>
                 </arguments>
             </block>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="form-v-scripts" template="Magento_Customer::form/scripts.phtml"/>
         </referenceContainer>
     </body>
 </page>

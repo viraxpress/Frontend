@@ -53,7 +53,7 @@ x-data="Object.assign( formValidateData.formDataValidation($root,'<?= $escaper->
     <input type="hidden" name="success_url" value="<?= $escaper->escapeUrl($block->getSuccessUrl()) ?>">
     <input type="hidden" name="error_url" value="<?= $escaper->escapeUrl($block->getErrorUrl()) ?>">
     <div class="grid grid-cols-12 gap-6 mb-6">
-        <div class="col-span-12 w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white">
+        <div class="col-span-12 w-full shadow-xs border border-gray-100 rounded-lg p-4 bg-white">
             <div class="mb-5 pb-2 border-b border-gray-200 flex justify-between items-center">
                 <div class="block-title text-lg text-gray-800 font-semibold">
                     <?= $escaper->escapeHtml(__('Contact Information')) ?>
@@ -74,7 +74,7 @@ x-data="Object.assign( formValidateData.formDataValidation($root,'<?= $escaper->
                 <?php endif ?>
             </div>
         </div>
-        <div class="col-span-12 w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white">
+        <div class="col-span-12 w-full shadow-xs border border-gray-100 rounded-lg p-4 bg-white">
             <div class="mb-5 pb-2 border-b border-gray-200 flex justify-between items-center">
                 <div class="block-title text-lg text-gray-800 font-semibold">
                     <?= $escaper->escapeHtml(__('Street Address')) ?>
@@ -127,7 +127,7 @@ x-data="Object.assign( formValidateData.formDataValidation($root,'<?= $escaper->
                         </div>
                     </div>
                 </div>
-                <div x-data="addressEditCountryRegion" class="space-y-5">
+                <div x-data="addressEditCountryRegion" class="space-y-5 col-span-2 sm:col-span-1">
                     <div class="col-span-2 sm:col-span-1">
                         <?php $countries = $block->getCountryCollection()->setForegroundCountries($directoryViewModel->getTopCountryCodes())->toOptionArray(); ?>
                         <div class="field">
@@ -228,7 +228,7 @@ x-data="Object.assign( formValidateData.formDataValidation($root,'<?= $escaper->
                                     <div class="message info inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-inset ring-green-600/20"><?= $escaper->escapeHtml(__("It's a default billing address.")) ?>
                                     </div>
                                 <?php elseif ($block->canSetAsDefaultBilling()): ?>
-                                    <input id="default-billing" name="default_billing" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary">
+                                    <input id="default-billing" name="default_billing" type="checkbox" class="h-4 w-4 rounded-sm border-gray-300 text-primary focus:ring-primary">
                                     <div class="text-sm leading-tight">
                                         <label for="default-billing" class="text-sm text-gray-900 cursor-pointer">
                                             <?= $escaper->escapeHtml(__('Use as my default billing address')) ?>
@@ -245,7 +245,7 @@ x-data="Object.assign( formValidateData.formDataValidation($root,'<?= $escaper->
                                     <div class="message info inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-md font-medium text-green-700 ring-1 ring-inset ring-green-600/20"><?= $escaper->escapeHtml(__("It's a default shipping address.")) ?>
                                     </div>
                                 <?php elseif ($block->canSetAsDefaultShipping()): ?>
-                                    <input id="default-shipping" name="default_shipping" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary">
+                                    <input id="default-shipping" name="default_shipping" type="checkbox" class="h-4 w-4 rounded-sm border-gray-300 text-primary focus:ring-primary">
                                     <div class="text-sm leading-tight">
                                         <label for="default-shipping" class="text-sm text-gray-900 cursor-pointer">
                                             <?= $escaper->escapeHtml(__('Use as my default shipping address')) ?>

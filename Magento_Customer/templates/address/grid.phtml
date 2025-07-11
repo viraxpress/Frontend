@@ -23,7 +23,7 @@
 $customerAddressView = $block->getData('customer_address');
 ?>
 <?php ?>
-<div class="block block-addresses-list w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white">
+<div class="block block-addresses-list w-full shadow-xs border border-gray-100 rounded-lg mb-6 p-4 bg-white">
     <div class="block-title mb-5 pb-2 border-b border-gray-100 relative flex md:items-center justify-between gap-4 flex-col md:flex-row">
         <div class="font-medium text-base text-gray-800 leading-9"><?= $escaper->escapeHtml(__('Additional Address Entries')) ?></div>
     
@@ -173,7 +173,7 @@ $customerAddressView = $block->getData('customer_address');
                                 <button type="button" @click="addressRemove = false; " class="inline-block text-sm leading-6 font-medium">
                                     <?= $escaper->escapeHtml(__('Cancel')) ?>
                                 </button>
-                                <button type="button" @click="addressDelete(deleteItemInfo)" class="inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 py-1.5 text-sm font-medium leading-6 text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                                <button type="button" @click="addressDelete(deleteItemInfo)" class="inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 py-1.5 text-sm font-medium leading-6 text-white shadow-xs hover:bg-primary/90 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                                     <template x-if="deleteItemConfirm">
                                         <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
                                     </template>

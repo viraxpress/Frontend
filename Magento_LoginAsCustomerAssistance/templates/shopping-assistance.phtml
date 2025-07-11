@@ -30,7 +30,7 @@ if ($viewModel->isLoginAsCustomerEnabled()): ?>
     <div class="relative" x-data="{isAssistenceTooltipOpen:false}" @keyup.escape="isAssistenceTooltipOpen=false">
         <div class="flex gap-x-3">
             <div class="flex h-6 items-center">
-                <input type="checkbox" name="assistance_allowed_checkbox" title="<?= $escaper->escapeHtmlAttr(__($viewModel->getAssistanceCheckboxTitle())) ?>" value="1" id="assistance_allowed_checkbox" <?php if ($viewModel->isAssistanceAllowed()): ?>checked="checked" <?php endif; ?> class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary">
+                <input type="checkbox" name="assistance_allowed_checkbox" title="<?= $escaper->escapeHtmlAttr(__($viewModel->getAssistanceCheckboxTitle())) ?>" value="1" id="assistance_allowed_checkbox" <?php if ($viewModel->isAssistanceAllowed()): ?>checked="checked" <?php endif; ?> class="h-4 w-4 rounded-sm border-gray-300 text-primary focus:ring-primary">
             </div>
             <input type="hidden" name="assistance_allowed" value="" />
             <div class="text-sm leading-6 flex justify-start items-start">

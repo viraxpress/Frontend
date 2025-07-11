@@ -28,7 +28,7 @@ $columns = $block->getColumns();
     <?php if (count($block->getItems())): ?>
         <ol class="product-items grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <?php foreach ($block->getItems() as $item): ?>
-                <li data-row="product-item" class="product-item bg-white w-full border-2 border-transparent transition duration-500 hover:rounded hover:border-2 hover:border-[#F2F2F2] relative group px-4 py-3" id="item_<?= $escaper->escapeHtmlAttr($item->getId()) ?>">
+                <li data-row="product-item" class="product-item bg-white w-full border-2 border-transparent transition duration-500 hover:rounded-sm hover:border-2 hover:border-[#F2F2F2] relative group px-4 py-3" id="item_<?= $escaper->escapeHtmlAttr($item->getId()) ?>">
                     <div class="product-item-info h-full flex flex-col justify-start items-start" data-container="product-grid">
                         <?php foreach ($columns as $column): ?>
                             <?= $column->setItem($item)->toHtml(); ?>
