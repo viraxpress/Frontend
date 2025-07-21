@@ -19,7 +19,7 @@
  * @license     https://www.viraxpress.com/license
  */
 ?>
-<div x-data="{ isVisible: false, contentHeight: 0 }" x-init="contentHeight = $refs.collapsibleContent.scrollHeight">
+<div x-data="{ isVisible: true, contentHeight: 0 }" x-init="contentHeight = $refs.collapsibleContent.scrollHeight">
     <div class="<?= $escaper->escapeHtmlAttr($block->getBlockCss()) ?> 
         block w-full shadow-2xs border border-gray-100 rounded-lg divide-y divide-gray-100 bg-white overflow-hidden lg:mb-6">
         <div @click="isVisible = !isVisible" 
