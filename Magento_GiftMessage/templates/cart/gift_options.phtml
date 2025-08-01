@@ -70,7 +70,7 @@
             </button>
         </div>
     </form>
-    <div class="gift-summary bg-[#FDF0D5] rounded mt-5 p-4 flex flex-col md:flex-row justify-between items-center gap-4 " x-cloak x-show="isGiftMessageOpened && !isOrderHasMessage">
+    <div class="gift-summary bg-[#FDF0D5] rounded-sm mt-5 p-4 flex flex-col md:flex-row justify-between items-center gap-4 " x-cloak x-show="isGiftMessageOpened && !isOrderHasMessage">
         <div class="gift-message-summary font-medium">
             <?= $escaper->escapeHtml(__('Message: ')) ?>
             <span class="font-regular" x-text="giftMessage.message"></span>

@@ -40,7 +40,7 @@
                 <?php $_linksLength++; ?>
                 <div class="field choice p-2 px-0 flex items-center gap-2" data-role="link">
                     <?php if ($_linksPurchasedSeparately): ?>
-                        <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" <?php if ($_isRequired): ?> data-validate="{'validate-one-checkbox-required-by-name':'downloadable-links-list'}" <?php endif; ?> name="links[]" id="links_<?= $escaper->escapeHtmlAttr($_link->getId()) ?>" value="<?= $escaper->escapeHtmlAttr($_link->getId()) ?>" <?= $escaper->escapeHtml($block->getLinkCheckedValue($_link)) ?> />
+                        <input type="checkbox" class="h-4 w-4 rounded-sm border-gray-300 text-primary focus:ring-primary" <?php if ($_isRequired): ?> data-validate="{'validate-one-checkbox-required-by-name':'downloadable-links-list'}" <?php endif; ?> name="links[]" id="links_<?= $escaper->escapeHtmlAttr($_link->getId()) ?>" value="<?= $escaper->escapeHtmlAttr($_link->getId()) ?>" <?= $escaper->escapeHtml($block->getLinkCheckedValue($_link)) ?> />
                     <?php endif; ?>
                     <label class="label group" for="links_<?= $escaper->escapeHtmlAttr($_link->getId()) ?>">
                         <span><?= $escaper->escapeHtml($_link->getTitle()) ?></span>

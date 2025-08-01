@@ -23,14 +23,14 @@
 ?>
 
 
-<div class="block w-full shadow-sm border border-gray-100 rounded-lg mb-5 p-4 bg-white">
+<div class="block w-full shadow-xs border border-gray-100 rounded-lg mb-5 p-4 bg-white">
     <div class="font-semibold text-xl text-primary">
         <?= $escaper->escapeHtml(__('Default Addresses')) ?>
         <a class="action back" href="<?= $escaper->escapeUrl($block->getUrl('customer/account')) ?>"><span><?= $escaper->escapeHtml(__('Back')) ?></span></a>
     </div>
 </div>
 <div class="grid grid-cols-12 gap-5">
-    <div class="col-span-12 md:col-span-6 w-full shadow-sm border border-gray-100 rounded-lg mb-5 p-4 bg-white">
+    <div class="col-span-12 md:col-span-6 w-full shadow-xs border border-gray-100 rounded-lg mb-5 p-4 bg-white">
         <div class="block relative">
             <?php if ($_pAddsses = $block->getDefaultBilling()): ?>
                 <div class="block">
@@ -62,7 +62,7 @@
             <?php endif ?>
         </div>
     </div>
-    <div class="col-span-12 md:col-span-6 w-full shadow-sm border border-gray-100 rounded-lg mb-5 p-4 bg-white">
+    <div class="col-span-12 md:col-span-6 w-full shadow-xs border border-gray-100 rounded-lg mb-5 p-4 bg-white">
         <div class="block">
             <?php if ($_pAddsses = $block->getDefaultShipping()): ?>
                 <div class="block">

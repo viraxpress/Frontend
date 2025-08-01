@@ -27,11 +27,11 @@
 <div class="relative w-full lg:w-max <?= $block->getNameInLayout() ?>" x-data="initializeLanguageSwitcher()">
     <?php if (count($block->getStores())): ?>
         <?php if (count($block->getStores()) == 1): ?>
-            <div class="w-full mt-0.5 relative font-medium rounded px-5 py-3 lg:text-sm lg:py-0 lg:px-3 text-left text-gray-900 lg:text-white sm:leading-6">
+            <div class="w-full mt-0.5 relative font-medium rounded-sm px-5 py-3 lg:text-sm lg:py-0 lg:px-3 text-left text-gray-900 lg:text-white sm:leading-6">
                 <span class="min-h-[20px] inline-block" x-text="selectedLanguage"></span>
             </div>
         <?php else: ?>
-            <button type="button" @click="isLanguageSwitcher = !isLanguageSwitcher" class="w-full relative cursor-pointer rounded pl-5 py-3 lg:text-sm lg:py-0 lg:pl-3 pr-10 min-h-[30px] text-left text-gray-900 lg:text-white sm:leading-6" :aria-haspopup="isLanguageSwitcher" :aria-expanded="isLanguageSwitcher" aria-labelledby="listbox-label">
+            <button type="button" @click="isLanguageSwitcher = !isLanguageSwitcher" class="w-full relative cursor-pointer rounded-sm pl-5 py-3 lg:text-sm lg:py-0 lg:pl-3 pr-10 min-h-[30px] text-left text-gray-900 lg:text-white sm:leading-6" :aria-haspopup="isLanguageSwitcher" :aria-expanded="isLanguageSwitcher" aria-labelledby="listbox-label">
                 <span class="inline-block" x-text="selectedLanguage"></span>
                 <span class="pointer-events-none absolute z-10 inset-y-0 right-0 ml-3 flex items-center pr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 text-gray-900 lg:text-white">
@@ -41,10 +41,10 @@
             </button>
         <?php endif; ?>
     <?php endif; ?>
-    <ul x-cloak x-show="isLanguageSwitcher" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click.away="isLanguageSwitcher = false" class="absolute z-[500] right-0 top-full  w-full lg:w-max rounded p-2 bg-white origin-top-right rounded-md bg-white shadow-lg focus:outline-none ring-1 ring-black ring-opacity-5 focus:outline-none" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
+    <ul x-cloak x-show="isLanguageSwitcher" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click.away="isLanguageSwitcher = false" class="absolute z-500 right-0 top-full  w-full lg:w-max rounded-sm p-2 bg-white origin-top-right rounded-md bg-white shadow-lg focus:outline-hidden ring-1 ring-black ring-opacity-5 focus:outline-hidden" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
         <?php if (count($block->getStores())): ?>
             <?php foreach ($block->getStores() as $_lang): ?>
-                <li class="text-gray-700 font-medium block p-2 rounded text-sm capitalize cursor-pointer hover:bg-gray-100 focus:bg-primary focus:text-white" role="option" @click="handleLanguage('<?= $escaper->escapeHtml($_lang->getCode()) ?>', '<?= $escaper->escapeUrl($block->getViewModel()->getTargetStoreRedirectUrl($_lang)) ?>')">
+                <li class="text-gray-700 font-medium block p-2 rounded-sm text-sm capitalize cursor-pointer hover:bg-gray-100 focus:bg-primary focus:text-white" role="option" @click="handleLanguage('<?= $escaper->escapeHtml($_lang->getCode()) ?>', '<?= $escaper->escapeUrl($block->getViewModel()->getTargetStoreRedirectUrl($_lang)) ?>')">
                     <?= $escaper->escapeHtml($_lang->getName()) ?>
                 </li>
             <?php endforeach; ?>
@@ -52,7 +52,7 @@
     </ul>
 </div>
 
-<a href="#" title="<?= $escaper->escapeHtmlAttr(__('Visit Enterprise Edition')) ?>" class="flex w-max mx-auto mt-5 lg:m-0 items-center gap-2 relative cursor-pointer rounded lg:text-sm px-4 py-2 lg:py-1 leading-none bg-primary text-white lg:bg-white lg:text-primary text-center text-gray-900 sm:leading-6 group">
+<a href="#" title="<?= $escaper->escapeHtmlAttr(__('Visit Enterprise Edition')) ?>" class="flex w-max mx-auto mt-5 lg:m-0 items-center gap-2 relative cursor-pointer rounded-sm lg:text-sm px-4 py-2 lg:py-1 leading-none bg-primary text-white lg:bg-white lg:text-primary text-center text-gray-900 sm:leading-6 group">
     <span class="inline-block"><?= $escaper->escapeHtml(__('Visit Enterprise Edition')) ?></span>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 relative left-0 inline-block transition-all duration-300 ease-in-out group-hover:left-1">
         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />

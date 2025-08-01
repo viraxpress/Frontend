@@ -31,7 +31,7 @@ $categories = $block->getData('children'); ?>
     <li class="flex flex-col group lg:relative lg:flex-row px-3 lg:px-0 border-b border-gray-200 lg:border-0" x-data="{isSubmenu:false}">
         <div class="relative flex justify-between items-center gap-2">
             <a class="inline-flex items-center px-2 py-3 lg:p-0 text-black" href="<?= $escaper->escapeUrl($parentCategory->getUrl()); ?>" role="link">
-                <span class="inline-block lg:py-1 lg:px-3 rounded transition duration-300 lg:group-hover:bg-ruby-200 lg:group-hover:text-primary">
+                <span class="inline-block lg:py-1 lg:px-3 rounded-sm transition duration-300 lg:group-hover:bg-ruby-200 lg:group-hover:text-primary">
                     <?= $escaper->escapeHtml($parentCategory->getName()); ?>
                 </span>
             </a>
@@ -44,7 +44,7 @@ $categories = $block->getData('children'); ?>
             <?php endif; ?>
         </div>
         <?php if (count($childCategories)): ?>
-            <div class="pl-5 block lg:absolute lg:min-w-max lg:left-1/2 lg:-translate-x-1/2 lg:inset-x-0 lg:top-full bg-white lg:rounded transition-all lg:border-t lg:border-b lg:border-gray-100 lg:shadow-md duration-300 z-50 text-gray-500 lg:hidden lg:pl-0 lg:group-hover:block" :class="isSubmenu ? 'h-max' : 'h-0 overflow-hidden lg:h-max'">
+            <div class="pl-5 block lg:absolute lg:min-w-max lg:left-1/2 lg:-translate-x-1/2 lg:inset-x-0 lg:top-full bg-white lg:rounded-sm transition-all lg:border-t lg:border-b lg:border-gray-100 lg:shadow-md duration-300 z-50 text-gray-500 lg:hidden lg:pl-0 lg:group-hover:block" :class="isSubmenu ? 'h-max' : 'h-0 overflow-hidden lg:h-max'">
                 <div class="block space-y-5 pb-5 lg:p-8 lg:space-y-0 lg:flex lg:justify-start lg:items-start lg:gap-8 ">
                     <?php foreach ($childCategories as $childCategory): ?>
                         <div class="block">

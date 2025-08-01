@@ -25,8 +25,8 @@
 
 <div class="flex order-5" x-data="miniCart" @set-cart.window="cartData = $event.detail" @set-cartloader.window="isLoadingCart = $event.detail" x-id="['mini-cart-drawer']">
     <?php if ($block->getIsNeedToDisplaySideBar()): ?>
-        <button type="button" role="button" title="Mini Cart" class="group flex items-center p-2 pr-0 relative" x-ref="slideTrigger" x-on:click="toggleSlideOver()" :aria-expanded="isMiniCartOpen" :aria-controls="$id('slide-over-button')">
-            <svg class="h-7 w-7 flex-shrink-0 text-black lg:text-gray-700 hover:text-black" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+        <button type="button" title="Mini Cart" class="group flex items-center p-2 pr-0 relative cursor-pointer" x-ref="slideTrigger" x-on:click="toggleSlideOver()" :aria-expanded="isMiniCartOpen" :aria-controls="$id('slide-over-button')">
+            <svg class="h-7 w-7 shrink-0 text-black lg:text-gray-700 hover:text-black" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
             <template x-if="cartData.summary_count > 0">
@@ -40,14 +40,14 @@
             </template>
             <span class="sr-only"><?= $escaper->escapeHtml(__('items in cart, view bag')) ?></span>
         </button>
-        <div class="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true" x-cloak x-ref="minicartDrawer" x-show="isMiniCartOpen" :id="$id('slider-over-button')" id="slider-over-button-1">
+        <div class="relative z-50" aria-labelledby="slide-over-title" aria-modal="true" x-cloak x-ref="minicartDrawer" x-show="isMiniCartOpen" :id="$id('slider-over-button')" id="slider-over-button-1">
             <div class="fixed inset-0 bg-black/50 bg-opacity-75 transition-opacity" x-cloak x-show="isMiniCartOpen" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
             <div class="fixed inset-0 overflow-hidden" x-cloak x-show="isMiniCartOpen">
                 <div class="absolute inset-0 overflow-hidden" x-cloak x-show="isMiniCartOpen">
                     <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-[80%]" x-cloak x-show='isMiniCartOpen'>
                         <div class="pointer-events-auto relative w-screen max-w-md" x-cloak x-show="isMiniCartOpen" x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" x-on:click.outside="close($refs.minicartDrawer)">
                             <div class="absolute -left-7 top-4 z-10" x-cloak x-show="isMiniCartOpen" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-                                <button type="button" role="button" title="close" class="relative rounded-md text-gray-300 hover:text-white" x-on:click="toggleSlideOver()">
+                                <button type="button" title="close" class="relative rounded-md text-gray-300 hover:text-white" x-on:click="toggleSlideOver()">
                                     <span class="absolute -inset-2.5"></span>
                                     <span class="sr-only"><?= $escaper->escapeHtml(__('Close panel')) ?></span>
                                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -63,11 +63,11 @@
                                         </div>
                                         <div class="relative mt-6 flex-1 flex flex-col justify-between items-start minicart-content-scrollable">
                                             <div class="w-full p-5 h-full minicart-lists">
-                                                <ul role="list" class="-my-6 divide-y divide-gray-200">
+                                                <ul class="-my-6 divide-y divide-gray-200">
                                                     <template x-if="cartData && cartData.items && Array.isArray(cartData.items)">
                                                         <template x-for="(product, index) in cartData?.items?.slice(0, totalNumberProductDisplay)" :key="product.item_id">
                                                             <li class="flex justify-between items-start py-6">
-                                                                <div class="flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                                                <div class="shrink-0 overflow-hidden rounded-md border border-gray-200">
                                                                     <img :src="product.product_image.src" :alt="product.product_name" loading="eager" fetchpriority="high" :width="product.product_image.width" :height="product.product_image.height">
                                                                 </div>
                                                                 <div class="ml-4 flex flex-1 flex-col">
@@ -137,7 +137,7 @@
                                                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
                                                                                     </svg>
                                                                                 </button>
-                                                                                <input type="number" name="mini-cart-qty" id="mini-cart-qty" min="0" x-model="product.qty" :value="product.qty" title="Qty" class="inline-block w-9 text-center p-0 h-9 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none focus:ring-gray-300" x-on:change="handleQtyChange(product)" />
+                                                                                <input type="number" name="mini-cart-qty" id="mini-cart-qty" min="0" x-model="product.qty" :value="product.qty" title="Qty" class="inline-block w-9 text-center p-0 h-9 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-hidden focus:ring-gray-300" x-on:change="handleQtyChange(product)" />
 
                                                                                 <button type="button" aria-label="Quantity Increment" class="text-gray-800 w-9 h-9 flex justify-center items-center" x-on:click="handleIncrement(product)">
                                                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
@@ -202,7 +202,7 @@
                                 </template>
                                 <div x-clock x-show="cartData.length == 0 || cartData.summary_count == 0" class="flex flex-col h-full justify-center items-center p-5">
                                     <span>
-                                        <svg class="h-16 w-16 flex-shrink-0 text-gray-700" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" aria-hidden="true">
+                                        <svg class="h-16 w-16 shrink-0 text-gray-700" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
                                         </svg>
                                     </span>
@@ -223,7 +223,7 @@
     <?php else: ?>
         <a class="action showcart relative" href="<?= $escaper->escapeUrl($block->getShoppingCartUrl()) ?>">
             <span class="sr-only"><?= $escaper->escapeHtml(__('My Cart')) ?></span>
-            <svg class="h-7 w-7 flex-shrink-0 text-black lg:text-gray-700 hover:text-black" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <svg class="h-7 w-7 shrink-0 text-black lg:text-gray-700 hover:text-black" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
             <template x-if="cartData.summary_count > 0">
@@ -254,7 +254,7 @@
                         <button type="button" @click="handleCancelItem" class="inline-block text-sm leading-6 font-medium">
                             <?= $escaper->escapeHtml(__('Cancel')) ?>
                         </button>
-                        <button type="button" @click="itemDelete(deleteItemInfo)" class="inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 py-1.5 text-sm font-medium leading-6 text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                        <button type="button" @click="itemDelete(deleteItemInfo)" class="inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 py-1.5 text-sm font-medium leading-6 text-white shadow-xs hover:bg-primary/90 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                             <template x-if="deleteItemConfirm">
                                 <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
                             </template>

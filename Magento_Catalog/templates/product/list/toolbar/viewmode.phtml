@@ -35,7 +35,7 @@ $defaultListPerPage = $config->getDefaultListPerPage();
         <?php if ($_modes && count($_modes) > 1): ?>
             <?php foreach ($block->getModes() as $_code => $_label): ?>
                 <?php if ($_label == 'Grid'): ?>
-                    <button id="grid-view" type="submit" role="button" title="<?= $escaper->escapeHtml($_label) ?>" class="<?= $escaper->escapeHtmlAttr(strtolower($_code)) ?>-view hidden md:inline-block p-1.5 rounded grid-list-view shadow-sm border border-gray-200 <?= $block->isModeActive($_code) ? 'active' : 'de-active' ?>" x-data="{ viewMode: '<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_mode=grid' ?>', limiter:'<?= $escaper->escapeHtmlAttr($defaultGridPerPage) ?>' }" x-on:click="handleViewMode">
+                    <button id="grid-view" type="submit" role="button" title="<?= $escaper->escapeHtml($_label) ?>" class="<?= $escaper->escapeHtmlAttr(strtolower($_code)) ?>-view hidden md:inline-block p-1.5 rounded-sm grid-list-view shadow-xs border border-gray-200 <?= $block->isModeActive($_code) ? 'active' : 'de-active' ?>" x-data="{ viewMode: '<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_mode=grid' ?>', limiter:'<?= $escaper->escapeHtmlAttr($defaultGridPerPage) ?>' }" x-on:click="handleViewMode">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid">
                                 <rect x="3" y="3" width="7" height="7"></rect>
@@ -46,7 +46,7 @@ $defaultListPerPage = $config->getDefaultListPerPage();
                         </span>
                     </button>
                 <?php else: ?>
-                    <button id="list-view" type="submit" role="button" title="<?= $escaper->escapeHtmlAttr($_label) ?>" class="<?= $escaper->escapeHtmlAttr(strtolower($_code)) ?>-view hidden md:inline-block p-1.5 rounded grid-list-view shadow-sm border border-gray-200 <?= $block->isModeActive($_code) ? 'active' : 'de-active' ?>" x-data="{ viewMode: '<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_mode=list' ?>', limiter:'<?= $escaper->escapeHtmlAttr($defaultListPerPage) ?>' }" x-on:click="handleViewMode">
+                    <button id="list-view" type="submit" role="button" title="<?= $escaper->escapeHtmlAttr($_label) ?>" class="<?= $escaper->escapeHtmlAttr(strtolower($_code)) ?>-view hidden md:inline-block p-1.5 rounded-sm grid-list-view shadow-xs border border-gray-200 <?= $block->isModeActive($_code) ? 'active' : 'de-active' ?>" x-data="{ viewMode: '<?= $escaper->escapeUrl($block->getBaseUrl()) . '?product_list_mode=list' ?>', limiter:'<?= $escaper->escapeHtmlAttr($defaultListPerPage) ?>' }" x-on:click="handleViewMode">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22">
                                 <g>

@@ -44,7 +44,7 @@ $allowedQty = $viewModel->setItem($item)->getMinMaxQty();
                     </svg>
                 </button>
 
-                <input type="tel" x-on:change="itemQtyValidate(event)" id="qty[<?= $escaper->escapeHtmlAttr($item->getId()) ?>]" oninput="this.value = this.value.replace(/\D+/g, '')" class="inline-block w-9 text-center p-0 h-9 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none focus:ring-gray-300" name="qty[<?= $escaper->escapeHtmlAttr($item->getId()) ?>]" value="<?= /* @noEscape */ $block->getAddToCartQty($item) * 1 ?>" <?= $product->isSaleable() ? '' : 'disabled="disabled"' ?>>
+                <input type="tel" x-on:change="itemQtyValidate(event)" id="qty[<?= $escaper->escapeHtmlAttr($item->getId()) ?>]" oninput="this.value = this.value.replace(/\D+/g, '')" class="inline-block w-9 text-center p-0 h-9 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-hidden focus:ring-gray-300" name="qty[<?= $escaper->escapeHtmlAttr($item->getId()) ?>]" value="<?= /* @noEscape */ $block->getAddToCartQty($item) * 1 ?>" <?= $product->isSaleable() ? '' : 'disabled="disabled"' ?>>
 
                 <button type="button" aria-label="Quantity Increment" x-on:click="handleWishlistQtyIncrement('qty[<?= $escaper->escapeHtmlAttr($item->getId()) ?>]')" class="text-gray-800 w-9 h-9 flex justify-center items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">

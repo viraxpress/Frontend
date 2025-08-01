@@ -23,13 +23,13 @@
 $customerAddressView = $block->getData('customer_address');
 ?>
 
-<div class="block w-full shadow-sm border border-gray-100 rounded-lg mb-5 p-4 bg-white">
+<div class="block w-full shadow-xs border border-gray-100 rounded-lg mb-5 p-4 bg-white">
     <div class="font-semibold text-xl text-primary">
         <?= $escaper->escapeHtml(__('Additional Address Entries')) ?>
     </div>
 </div>
 
-<div class="block w-full shadow-sm border border-gray-100 rounded-lg mb-5 p-4 bg-white">
+<div class="block w-full shadow-xs border border-gray-100 rounded-lg mb-5 p-4 bg-white">
     <?php if ($_pAddsses = $block->getAdditionalAddresses()): ?>
         <table class="min-w-full divide-y divide-gray-300 table border-collapse">
             <tbody class="divide-y divide-gray-200">
@@ -136,7 +136,7 @@ $customerAddressView = $block->getData('customer_address');
             <p class="mt-2 text-gray-400">
                 <?= $escaper->escapeHtml(__('You have no other address entries in your address book.')) ?>
             </p>
-            <button type="button" role="add-address" title="<?= $escaper->escapeHtmlAttr(__('Add New Address')) ?>" class="mt-5 inline-flex items-center justify-center rounded-md border border-transparent bg-primary px-5 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary/70 focus:ring-2 focus:ring-offset-2 focus:bg-primary focus:ring-primary">
+            <button type="button" role="add-address" title="<?= $escaper->escapeHtmlAttr(__('Add New Address')) ?>" class="mt-5 inline-flex items-center justify-center rounded-md border border-transparent bg-primary px-5 py-2 text-sm font-semibold text-white shadow-xs transition-all hover:bg-primary/70 focus:ring-2 focus:ring-offset-2 focus:bg-primary focus:ring-primary">
                 <span>
                     <?= $escaper->escapeHtml(__('Add New Address')) ?>
                 </span>

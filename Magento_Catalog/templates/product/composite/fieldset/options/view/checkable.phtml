@@ -69,7 +69,7 @@ if ($option): ?>
             <input type="<?= $escaper->escapeHtmlAttr($optionType) ?>" <?= $escaper->escapeHtmlAttr($require) ?>
                 class="<?= $optionType === Option::OPTION_TYPE_RADIO
                     ? 'radio admin__control-radio'
-                    : 'checkbox admin__control-checkbox rounded' ?> <?= $option->getIsRequire()
+                    : 'checkbox admin__control-checkbox rounded-sm' ?> <?= $option->getIsRequire()
                     ? 'required': '' ?> product-custom-option simple-radio-checkbox <?= $block->getSkipJsReloadPrice() ? '' : 'opConfig.reloadPrice()' ?> h-4 w-4 cursor-pointer border-gray-300 text-primary focus:ring-primary"
                 name="options[<?= $escaper->escapeHtmlAttr($option->getId()) ?>]<?= /* @noEscape */ $arraySign ?>"
                 id="options_<?= $escaper->escapeHtmlAttr($option->getId() . '_' . $count) ?>"

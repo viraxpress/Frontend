@@ -29,7 +29,7 @@ $blockObj = $block->getLayout()->createBlock(\Magento\Customer\Block\Widget\Dob:
 ?>
 <form class="form form-edit-account" id="account-information-details"
 x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->escapeUrl($block->getUrl('customer/account/editPost')) ?>'))" @submit="onSubmit">
-   <div class="block w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white"
+   <div class="block w-full shadow-xs border border-gray-100 rounded-lg mb-6 p-4 bg-white"
    x-data="customerInformation()">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
          <div class="block w-full space-y-5">
@@ -55,7 +55,7 @@ x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->e
                <div class="relative flex gap-x-3">
                   <div class="flex h-6 items-center">
                      <input id="change_email" name="change_email" value="1" type="checkbox"
-                     class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" x-model="isEmailChange">
+                     class="h-4 w-4 rounded-sm border-gray-300 text-primary focus:ring-primary" x-model="isEmailChange">
                   </div>
                   <div class="text-sm leading-6">
                      <label for="change_email" class="text-gray-900 cursor-pointer">
@@ -66,7 +66,7 @@ x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->e
                <div class="relative flex gap-x-3">
                   <div class="flex h-6 items-center">
                      <input id="change-password" name="change_password" value="1" type="checkbox"
-                     class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                     class="h-4 w-4 rounded-sm border-gray-300 text-primary focus:ring-primary"
                      x-model="isPasswordChange">
                   </div>
                   <div class="text-sm leading-6">
@@ -80,19 +80,19 @@ x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->e
          </div>
          <template x-if="isEmailChange || isPasswordChange">
             <div class="block w-full space-y-5">
-               <div class="mb-5 !mt-0 pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
+               <div class="mb-5 mt-0! pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
                x-show="isEmailChange && !isPasswordChange && !showChangeEmailAndPassword">
                   <div class="block-title text-lg text-gray-800 font-semibold">
                      <?= $escaper->escapeHtml(__('Change Email')) ?>
                   </div>
                </div>
-               <div class="mb-5 !mt-0 pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
+               <div class="mb-5 mt-0! pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
                x-show="isPasswordChange && !isEmailChange && !showChangeEmailAndPassword">
                   <div class="block-title text-lg text-gray-800 font-semibold">
                      <?= $escaper->escapeHtml(__('Change Password')) ?>
                   </div>
                </div>
-               <div class="mb-5 !mt-0 pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
+               <div class="mb-5 mt-0! pb-2 border-b border-gray-200 flex justify-between items-center" x-cloak
                x-show="showChangeEmailAndPassword">
                   <div class="block-title text-lg text-gray-800 font-semibold">
                      <?= $escaper->escapeHtml(__('Change Email and Password')) ?>
@@ -206,7 +206,7 @@ x-data="Object.assign(formValidateData.formDataValidation($root,'<?= $escaper->e
 
 
    <?php if (!empty($block->getChildHtml('form_additional_info'))): ?>
-      <div class="block w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white">
+      <div class="block w-full shadow-xs border border-gray-100 rounded-lg mb-6 p-4 bg-white">
          <?= $block->getChildHtml('form_additional_info') ?>
       </div>
    <?php endif; ?>

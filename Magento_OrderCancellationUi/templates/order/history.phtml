@@ -16,7 +16,7 @@ $viewModel = $block->getViewModel();
 <?= $block->getChildHtml('info') ?>
 
 <?php if ($_orders && count($_orders)) : ?>
-    <div class="w-full shadow-sm border border-gray-100 rounded-lg p-4 bg-white mb-6" x-data="orderHistory()">
+    <div class="w-full shadow-xs border border-gray-100 rounded-lg p-4 bg-white mb-6" x-data="orderHistory()">
         <div class="block overflow-x-auto">
             <table class="min-w-full table border-collapse" id="my-orders-table">
                 <tr class="border-b border-gray-200 hidden md:table-row">

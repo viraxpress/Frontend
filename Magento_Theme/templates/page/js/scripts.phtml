@@ -30,7 +30,7 @@ use Magento\Framework\Escaper;
 
 // Ensure these objects are properly initialized
 $baseUrl = $block->getBaseUrl();
-$blockObj= $block->getLayout()->createBlock('ViraXpress\Theme\Block\Config');
+$blockObj= $block->getLayout()->createBlock(ViraXpress\Theme\Block\Config::class);
 $storeCodeUrls = $blockObj->getConfig('web/url/use_store');
 if ($storeCodeUrls) {
     $parsedUrl = parse_url($baseUrl);

@@ -22,7 +22,7 @@
 <?php $_order = $block->getOrder() ?>
 
 <?php foreach ($_order->getInvoiceCollection() as $_invoice): ?>
-    <div class="invoices_list w-full shadow-sm border border-gray-200 rounded-lg mb-6 p-4 bg-white">
+    <div class="invoices_list w-full shadow-xs border border-gray-200 rounded-lg mb-6 p-4 bg-white">
         <div class="order-title block-title border-b border-gray-200 py-2 text-base mb-4 flex gap-2 flex-wrap justify-between">
             <strong><?= $escaper->escapeHtml(__('Invoice #')) ?><?= $escaper->escapeHtml($_invoice->getIncrementId()) ?></strong>
             <div class="space-x-5">

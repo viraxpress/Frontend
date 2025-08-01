@@ -22,13 +22,8 @@
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="checkout_cart_item_renderers"/>
-    <head>
-        <link src="core-js/form-validations.min.js" />
-    </head>
     <body>
         <referenceBlock name="minicart" remove="true" />
-
-
         <referenceBlock name="page.main.title">
             <arguments>
                 <argument name="css_class" xsi:type="string">my-5</argument>
@@ -37,6 +32,9 @@
 
         <referenceContainer name="page.messages">
             <block class="Magento\Checkout\Block\Cart\ValidationMessages" name="checkout.cart.validationmessages"/>
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="form-v-scripts" template="Magento_Customer::form/scripts.phtml"/>
         </referenceContainer>
         <referenceContainer name="content">
             <block class="Magento\Checkout\Block\Cart" name="checkout.cart" template="Magento_Checkout::cart.phtml" cacheable="false">
@@ -56,7 +54,7 @@
                             <container name="checkout.cart.widget" as="checkout_cart_widget" label="Shopping Cart Items After" after="cart-items"/>                            
                             <container name="checkout.cart.form.before" as="form_before" label="Shopping Cart Items Before" htmlTag="div" htmlClass="rewards"/>
                         </container>
-                        <container name="cart.summary" label="Cart Summary Container" htmlTag="div" htmlClass="cart-summary relative lg:sticky lg:top-0 rounded-lg bg-gray-50 border border-gray-100 shadow-sm px-4 py-6 sm:p-6 lg:col-span-4 lg:p-8" after="checkout.cart.list">
+                        <container name="cart.summary" label="Cart Summary Container" htmlTag="div" htmlClass="cart-summary relative lg:sticky lg:top-0 rounded-lg bg-gray-50 border border-gray-100 shadow-xs px-4 py-6 sm:p-6 lg:col-span-4 lg:p-8" after="checkout.cart.list">
                             <block class="Magento\Framework\View\Element\Template" name="checkout.cart.summary.title" before="-" template="Magento_Theme::text.phtml">
                                 <arguments>
                                     <argument translate="true" name="text" xsi:type="string">Summary</argument>

@@ -63,7 +63,7 @@ if ($exist = ($block->getProductCollection() && $block->getProductCollection()->
             <div class="products-<?= /* @noEscape */ $mode ?> <?= /* @noEscape */ $mode ?>">
                 <div class="product-items <?= /* @noEscape */ $type ?> grid grid-cols-12 gap-5 gap-y-10">
                     <?php foreach ($items as $_item):?>
-                        <div class="product-item widget-new-product-list-<?= $escaper->escapeHtmlAttr($_item->getId()) ?> bg-white border-2 border-b-2 border-transparent transition duration-200 border-b-primary hover:rounded hover:border-2 hover:border-primary relative group col-span-12 flex flex-col sm:flex-row justify-start items-start">
+                        <div class="product-item widget-new-product-list-<?= $escaper->escapeHtmlAttr($_item->getId()) ?> bg-white border-2 border-b-2 border-transparent transition duration-200 border-b-primary hover:rounded-sm hover:border-2 hover:border-primary relative group col-span-12 flex flex-col sm:flex-row justify-start items-start">
                             <a href="<?= $escaper->escapeUrl($block->getProductUrl($_item)) ?>" class="product-item-photo w-full sm:w-auto flex justify-center items-center">
                                 <?php $productImage = $block->getImage($_item, $image);
                                 $imageWidth = ($imageConfig['width']) ? $imageConfig['width'] : $productImage->getWidth();
@@ -165,7 +165,7 @@ if ($exist = ($block->getProductCollection() && $block->getProductCollection()->
                                                 <form id="<?= $escaper->escapeHtmlAttr($wishlistFormId) ?>">
                                                     <input type="hidden" name="product" value="<?= $escaper->escapeHtmlAttr($params['product']) ?>" />
                                                     <input type="hidden" name="uenc" value="<?= $escaper->escapeHtmlAttr($params['uenc']) ?>" />
-                                                    <button type="type" role="button" x-on:click="widgetNewProductListAddToWishlist('<?= $escaper->escapeHtmlAttr($wishlistFormId) ?>', '<?= $escaper->escapeUrl($url) ?>', event)" title="<?= $escaper->escapeHtmlAttr(__('Add to Wish List')) ?>" class="action towishlist inline-block group/wishlist p-3 lg:p-2 bg-white rounded-full shadow-sm border border-gray-100">
+                                                    <button type="type" role="button" x-on:click="widgetNewProductListAddToWishlist('<?= $escaper->escapeHtmlAttr($wishlistFormId) ?>', '<?= $escaper->escapeUrl($url) ?>', event)" title="<?= $escaper->escapeHtmlAttr(__('Add to Wish List')) ?>" class="action towishlist inline-block group/wishlist p-3 lg:p-2 bg-white rounded-full shadow-xs border border-gray-100">
                                                         <span class="sr-only"><?= $escaper->escapeHtml(__('Add to Wish List')) ?></span>
                                                         <span>
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-5 h-5 transition-all fill-transparent duration-200 ease-in-out group-hover/wishlist:fill-primary group-hover/wishlist:stroke-primary">
@@ -179,7 +179,7 @@ if ($exist = ($block->getProductCollection() && $block->getProductCollection()->
                                                 <?php $compareHelper = $this->helper(\Magento\Catalog\Helper\Product\Compare::class);
                                                 $jsonData = json_decode($compareHelper->getPostDataParams($_item), true);
                                                 ?>
-                                                <button x-on:click="addToCompare(<?= (int)$jsonData['data']['product'] ?>)" title="<?= $escaper->escapeHtmlAttr(__('Add to Compare')) ?>" class="inline-block w-max p-3 lg:p-2 group/compare bg-white rounded-full shadow-sm border border-gray-100 tocompare cursor-pointer">
+                                                <button x-on:click="addToCompare(<?= (int)$jsonData['data']['product'] ?>)" title="<?= $escaper->escapeHtmlAttr(__('Add to Compare')) ?>" class="inline-block w-max p-3 lg:p-2 group/compare bg-white rounded-full shadow-xs border border-gray-100 tocompare cursor-pointer">
                                                     <span class="sr-only"><?= $escaper->escapeHtml(__('Add to Compare')) ?></span>
                                                     <span>
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 transition-all duration-200 ease-in-out group-hover/compare:stroke-primary">

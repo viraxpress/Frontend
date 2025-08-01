@@ -31,6 +31,7 @@ $helper = $block->getData('imageHelper');
 $configHelper = $block->getLayout()->createBlock(\ViraXpress\Catalog\Block\Product\ConfigBlock::class);
 $imageConfig = $configHelper->getConfig('viraxpress_config/image_resize/product_view_image_resize');
 $thumbnailType = $configHelper->getConfig('viraxpress_config/gallery/horizontal_vertical');
+$zoomImageWidth = ($imageConfig['zoom_image_width']) ? $imageConfig['zoom_image_width'] : 1200;
 $imageArray = [];
 if ($images) {
     $intialImage = '';
@@ -53,7 +54,14 @@ if ($images) {
             }
         }
         $imageArray[] = [
-            "original_resize" => $img['url'],
+            "original_resize" => $helper->init($product, 'product_page_image_large')
+                                    ->setImageFile($img['file'])
+                                    ->constrainOnly(TRUE)
+                                    ->keepAspectRatio(TRUE)
+                                    ->keepTransparency(TRUE)
+                                    ->keepFrame(FALSE)
+                                    ->resize($zoomImageWidth)
+                                    ->getUrl(),
             "full" => $img['large_image_url'],
             "thumb" => $img['small_image_url'],
             "alt" => $img['label'],
@@ -71,11 +79,12 @@ if ($images) {
 } ?>
 
 <div x-data x-init="init()">
-    <div class="border border-gray-200 relative rounded overflow-hidden">
+    <div class="border border-gray-200 relative rounded-sm overflow-hidden">
         <?php if (!empty($images)): ?>
-            <img id="initialImage" fetchpriority="high" src="<?= $escaper->escapeHtmlAttr($intialImage) ?>" class="mx-auto relative z-[0]" alt="Product Image" width="<?= /* @noEscape */ $mediumWidth ?>" height="<?= /* @noEscape */ $mediumHeight ?>" />
+            <img id="initialImage" fetchpriority="high" src="<?= $escaper->escapeHtmlAttr($intialImage) ?>" class="mx-auto relative z-0" alt="Product Image" width="<?= /* @noEscape */ $mediumWidth ?>" height="<?= /* @noEscape */ $mediumHeight ?>" />
+            <link itemprop="image" href="<?= /* @noEscape */ $intialImage ?>">
             <template x-if="showInitialImage">
-                <div class="absolute top-0 left-0 z-10 rounded overflow-hidden">
+                <div class="absolute top-0 left-0 z-10 rounded-sm overflow-hidden">
                     <div class="splide product-gallery">
                         <div class="splide__track">
                             <div class="splide__list">
@@ -103,7 +112,7 @@ if ($images) {
                 <div class="splide__track">
                     <div class="splide__list">
                         <template x-for="(image, index) in images" :key="index">
-                            <div class="splide__slide rounded thumbnail border cursor-pointer border-gray-200">
+                            <div class="splide__slide rounded-sm thumbnail border cursor-pointer border-gray-200">
                                 <img fetchpriority="high" class="mx-auto" :src="image.thumb" width="<?= /* @noEscape */ $smallWidth ?>" height="<?= /* @noEscape */ $smallHeight ?>" :alt="(image.alt) ? image.alt : ''" />
                             </div>
                         </template>

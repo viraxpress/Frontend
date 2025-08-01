@@ -36,7 +36,7 @@
 
     <?php if ($this->helper(\Magento\GiftMessage\Helper\Message::class)->isMessagesAllowed('order', $_order)
         && $_order->getGiftMessageId()): ?>
-        <div class="block block-order-details-gift-message w-full shadow-sm border border-gray-100 rounded-lg my-4 p-4 bg-white">
+        <div class="block block-order-details-gift-message w-full shadow-xs border border-gray-100 rounded-lg my-4 p-4 bg-white">
             <div class="block-title mb-5 pb-2 border-b border-gray-100">
                 <strong class="text-lg text-gray-800 font-semibold"><?= $escaper->escapeHtml(__('Gift Message for This Order')) ?></strong>
             </div>
@@ -55,7 +55,7 @@
         </div>
     <?php endif; ?>
 
-    <div class="actions-toolbar w-full shadow-sm border border-gray-100 rounded-lg mb-6 p-4 bg-white print:hidden">
+    <div class="actions-toolbar w-full shadow-xs border border-gray-100 rounded-lg mb-6 p-4 bg-white print:hidden">
         <div class="secondary">
             <a class="action back primary-btn" href="<?= $escaper->escapeUrl($block->getBackUrl()) ?>">
                 <span><?= $escaper->escapeHtml($block->getBackTitle()) ?></span>

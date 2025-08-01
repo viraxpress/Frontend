@@ -106,7 +106,7 @@ $viewModel = $block->getData('validateQuantityViewModel');
                     </button>
                     <input <?php if (!$_canChangeQty) { echo ' disabled="disabled"'; } ?>
                         id="bundle-option-<?= $escaper->escapeHtmlAttr($_option->getId()) ?>-qty-input"
-                        class="product-bundle-option input-text inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-none focus:ring-gray-300 qty<?php if (!$_canChangeQty) { echo ' qty-disabled'; } ?> text-center"
+                        class="product-bundle-option input-text inline-block w-11 text-center p-0 h-11 ring-1 ring-inset ring-gray-300 border-0 text-gray-900 sm:text-sm focus:outline-hidden focus:ring-gray-300 qty<?php if (!$_canChangeQty) { echo ' qty-disabled'; } ?> text-center"
                         type="number"
                         min="1"
                         data-validate="<?= $escaper->escapeHtmlAttr($viewModel->getQuantityValidators()) ?>"

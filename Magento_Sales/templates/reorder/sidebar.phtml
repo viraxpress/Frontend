@@ -51,7 +51,7 @@
                                     <div class="control">
                                         <input type="checkbox" 
                                                name="order_items[]" 
-                                               class="checkbox h-4 w-4 cursor-pointer rounded border-gray-300 text-primary focus:ring-primary" 
+                                               class="checkbox h-4 w-4 cursor-pointer rounded-sm border-gray-300 text-primary focus:ring-primary" 
                                                :value="items.id" 
                                                :disabled="!items.is_saleable"
                                                :title="items.is_saleable ? '<?= $escaper->escapeHtml(__('Add to Cart')) ?>' : '<?= $escaper->escapeHtml(__('Product is not salable.')) ?>'"  />
@@ -68,7 +68,12 @@
                         <div class="primary flex justify-end">
                             <button type="button" x-on:click="addCheckedItemsToCart()" title="<?= $escaper->escapeHtml(__('Add to Cart')) ?>"
                                     class="action tocart primary primary-btn">
-                                <span>
+                                <span class="inline-block relative">
+                                    <template x-if="addToCartLoader">
+                                        <span class="bg-primary absolute inline-flex justify-center items-center w-full left-0 top-0 z-10 h-full">
+                                           <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
+                                        </span>
+                                    </template>
                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
                                     </svg>
@@ -90,10 +95,12 @@
             lastOrderItemsLength: 0,
             customerDetails: [],
             customerDetailsLastOrderItems: [],
+            addToCartLoader: false,
 
-            init() {
+            async init() {
                 this.loadLastOrderedItems();
                 this.setupCustomerDetailsWatcher();
+                await this.loadCustomerDetails();
             },
 
             async loadLastOrderedItems() {
@@ -131,6 +138,7 @@
             },
 
             async addCheckedItemsToCart() {
+                this.addToCartLoader = true;
                 this.gatherCheckedItems();
                 const form = document.getElementById('reorder-validate-detail');
                 const formData = new FormData(form);
@@ -143,10 +151,10 @@
                         credentials: 'include'
                     });
 
-                    if (response.redirected) {
+                    if (response.redirected && response.url != window.location.href) {
                         window.location.href = response.url;
                     } else {
-                        await this.loadCustomerDetails();
+                        window.location.reload(true);
                     }
                 } catch (error) {
                     console.error('There was a problem with the fetch operation:', error);

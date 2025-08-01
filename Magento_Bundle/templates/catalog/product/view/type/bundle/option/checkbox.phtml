@@ -49,7 +49,7 @@
                 <?php foreach ($_selections as $selection): ?>
                     <?php $sectionId = $selection->getSelectionId() ?>
                     <div class="field choice ">
-                        <input class="<?=/* @noEscape */ $inputClass ?> change-container-classname cursor-pointer h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary mr-2 product-bundle-option"
+                        <input class="<?=/* @noEscape */ $inputClass ?> change-container-classname cursor-pointer h-4 w-4 rounded-sm border-gray-300 text-primary focus:ring-primary mr-2 product-bundle-option"
                                id="<?=/* @noEscape */ $inputId . '-' . $escaper->escapeHtmlAttr($sectionId)?>"
                                type="checkbox"
                                @change="changeBundleOption($event)"

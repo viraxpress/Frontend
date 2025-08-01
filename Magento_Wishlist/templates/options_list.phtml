@@ -33,7 +33,7 @@
                 </svg>
             </span>
         </button>
-        <div x-cloak x-show="showOptions" @click.outside="showOptions = false" class="bg-white absolute top-full z-10 left-0 w-full p-4 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
+        <div x-cloak x-show="showOptions" @click.outside="showOptions = false" class="bg-white absolute top-full z-10 left-0 w-full p-4 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-hidden ">
             <span class="action details tooltip toggle pb-2 block mb-2 text-sm font-semibold border-b border-gray-200"><?= $escaper->escapeHtml(__('Option details')) ?></span>
             <div class="tooltip content">
                 <div class="block space-y-2">

@@ -46,7 +46,7 @@
                             <?php endif; ?>
                             <td class="p-1 text-left w-[230px] min-w-[230px] font-medium text-gray-900">
                                 <?php $compareHelper = $this->helper(Magento\Catalog\Helper\Product\Compare::class); ?>
-                                <button x-on:click.prevent="removeCompareProduct(<?= (int)$item->getId() ?>)" data-post='<?= /* @noEscape */ $compareHelper->getPostDataRemove($item) ?>' class="action delete block px-3 py-2.5 rounded text-center w-full cursor-pointer hover:bg-red-600/90 hover:text-white" title="<?= $escaper->escapeHtmlAttr(__('Remove Product')) ?>" tabindex="0">
+                                <button x-on:click.prevent="removeCompareProduct(<?= (int)$item->getId() ?>)" data-post='<?= /* @noEscape */ $compareHelper->getPostDataRemove($item) ?>' class="action delete block px-3 py-2.5 rounded-sm text-center w-full cursor-pointer hover:bg-red-600/90 hover:text-white" title="<?= $escaper->escapeHtmlAttr(__('Remove Product')) ?>" tabindex="0">
                                     <span><?= $escaper->escapeHtml(__('Remove Product')) ?></span>
                             </button>
                             </td>
@@ -88,7 +88,7 @@
                                             <input name="form_key" type="hidden" x-bind:value="getFormKeyCookie()">
                                             <input name="product" type="hidden" value="<?= $escaper->escapeHtmlAttr($item->getId()) ?>">
                                             <button type="button" @click.prevent="cartAddFormHandler('<?= $escaper->escapeHtmlAttr($formId) ?>', '<?= $block->getUrl('checkout/cart/add') ?>')" title="Add to Cart" class="primary-btn relative">
-                                                <svg class="w-6 h-6 flex-shrink-0" :class="addToCartLoader == '<?= (int)$item->getId() ?>' ? 'opacity-0' : 'opacity-100'" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                                <svg class="w-6 h-6 shrink-0" :class="addToCartLoader == '<?= (int)$item->getId() ?>' ? 'opacity-0' : 'opacity-100'" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path>
                                                 </svg>
                                                 <template x-if="addToCartLoader == '<?= (int)$item->getId() ?>'">
@@ -174,7 +174,7 @@
                             <button type="button" @click="compareItemRemove = false; " class="inline-block text-sm leading-6 font-medium">
                                 <?= $escaper->escapeHtml(__('Cancel')) ?>
                             </button>
-                            <button type="button" @click="itemDelete(deleteItemInfo)" class="inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 py-1.5 text-sm font-medium leading-6 text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            <button type="button" @click="itemDelete(deleteItemInfo)" class="inline-flex justify-center items-center gap-3 transition-all rounded-md bg-primary px-3 py-1.5 text-sm font-medium leading-6 text-white shadow-xs hover:bg-primary/90 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                                 <template x-if="deleteItemConfirm">
                                     <span class="w-5 h-5 inline-block border-2 border-white border-r-transparent rounded-full animate-spin"></span>
                                 </template>

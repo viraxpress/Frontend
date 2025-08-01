@@ -24,7 +24,6 @@
     <head>
         <title>Create New Customer Account</title>
         <css src="css/datepicker.min.css" />
-        <link src="core-js/form-validations.min.js" />
         <link src="core-js/datepicker.min.js" />
     </head>
     <body>
@@ -50,6 +49,9 @@
                 <container name="customer.form.register.fields.before" as="form_fields_before" label="Form Fields Before" htmlTag="div" htmlClass="customer-form-before"/>
             </block>
 
+        </referenceContainer>
+        <referenceContainer name="before.body.end">
+            <block class="Magento\Framework\View\Element\Template" name="form-v-scripts" template="Magento_Customer::form/scripts.phtml"/>
         </referenceContainer>
         <referenceContainer name="form.additional.info">
             <block class="Magento\Framework\View\Element\Template" name="form_additional_info_customer" template="Magento_Customer::additionalinfocustomer.phtml"/>
