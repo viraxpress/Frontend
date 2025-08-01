@@ -51,7 +51,11 @@
                     </container>
                     <!-- Product Information -->
                     <container name="product.info.main" as="product-main" htmlTag="div" htmlClass="product-info-main space-y-4">
-                        <block class="Magento\Theme\Block\Html\Title" name="page.main.title" template="Magento_Catalog::html/title.phtml"  before="-" />
+                        <block class="Magento\Theme\Block\Html\Title" name="page.main.title" template="Magento_Catalog::html/title.phtml"  before="-" >
+                            <arguments>
+                                <argument name="add_base_attribute" xsi:type="string">itemprop="name"</argument>
+                            </arguments>
+                        </block> 
                         <block class="Magento\Catalog\Block\Product\View" name="product.info.review" template="Magento_Catalog::product/view/review.phtml" after="product.info.main" />
                         <container name="product.info.price" label="Product info auxiliary container" htmlTag="div" htmlClass="product-info-price text-2xl font-semibold space-y-4" after="product.info.review">
                             <container name="product.info.stock.sku" label="Product auxiliary info" htmlTag="div" htmlClass="font-regular flex flex-row-reverse justify-end items-center gap-x-3">
