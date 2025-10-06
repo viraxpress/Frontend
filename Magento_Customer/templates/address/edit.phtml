@@ -152,7 +152,7 @@ x-data="Object.assign( formValidateData.formDataValidation($root,'<?= $escaper->
                         <div class="field">
                             <label for="region_id" class="block text-sm leading-6 text-gray-900">
                                 <?= $escaper->escapeHtml(__('State/Province ')) ?>
-                                <span class="text-required ml-1">*</span>
+                                <span class="text-required ml-1" x-show="isRegionAvailable">*</span>
                             </label>
                             <div class="mt-1 control" id="field_region_id">
                                 <template x-if="isRegionAvailable">
@@ -167,7 +167,7 @@ x-data="Object.assign( formValidateData.formDataValidation($root,'<?= $escaper->
                                     </select>
                                 </template>
                                 <template x-if="!isRegionAvailable">
-                                    <input id="region" required="" name="region" x-on:input.debounce="onChange"
+                                    <input id="region" name="region" x-on:input.debounce="onChange"
                                     value="<?= $escaper->escapeHtmlAttr($block->getRegion()) ?>"
                                     class="form-input validate-not-number-first block w-full rounded-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
                                 </template>
