@@ -27,15 +27,15 @@ Before applying our theme package, we strongly recommend implementing it on a de
 
 ### M2.4.6
 ```bash
-  composer require viraxpress/frontend=1.0.8
+  composer require viraxpress/frontend=1.0.9
 ```
 ### M2.4.7
 ```bash
-  composer require viraxpress/frontend=2.0.5
+  composer require viraxpress/frontend=2.0.6
 ```
 ### M2.4.8
 ```bash
-  composer require viraxpress/frontend=3.0.0
+  composer require viraxpress/frontend=3.0.1
 ```
 ### Composer Update
 ```bash
