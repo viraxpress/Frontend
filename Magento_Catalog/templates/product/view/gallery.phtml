@@ -31,7 +31,7 @@ $helper = $block->getData('imageHelper');
 $configHelper = $block->getLayout()->createBlock(\ViraXpress\Catalog\Block\Product\ConfigBlock::class);
 $imageConfig = $configHelper->getConfig('viraxpress_config/image_resize/product_view_image_resize');
 $thumbnailType = $configHelper->getConfig('viraxpress_config/gallery/horizontal_vertical');
-$zoomImageWidth = ($imageConfig['zoom_image_width']) ? $imageConfig['zoom_image_width'] : 1200;
+$zoomImageWidth = isset($imageConfig['zoom_image_width']) ? $imageConfig['zoom_image_width'] : 1200;
 $imageArray = [];
 if ($images) {
     $intialImage = '';
