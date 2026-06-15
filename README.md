@@ -12,7 +12,7 @@ Energize your E-commerce with ViraXpress's blazing fast Magento New Front End + 
 
 ## Theme Requirements
 
-- Magento(CE) 2.4.6, 2.4.7, 2.4.8
+- Magento(CE) 2.4.6, 2.4.7, 2.4.8, 2.4.9
 - Node Version >= 20.x
 - Redis
 - Varnish
@@ -36,6 +36,10 @@ Before applying our theme package, we strongly recommend implementing it on a de
 ### M2.4.8
 ```bash
   composer require viraxpress/frontend=3.0.1
+```
+### M2.4.9
+```bash
+  composer require viraxpress/frontend=4.0.0
 ```
 ### Composer Update
 ```bash
